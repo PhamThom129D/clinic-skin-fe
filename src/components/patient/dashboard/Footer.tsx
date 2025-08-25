@@ -5,7 +5,7 @@ import { Facebook, Instagram, YouTube, LocationOn, Phone, Email } from "@mui/ico
 
 export default function Footer() {
   return (
-    <Box sx={{ bgcolor: "#885f6c", color: "white", py: 10 }}>
+    <Box sx={{ bgcolor: "primary.main", color: "text.secondary", py: 5 }}>
       <Box
         sx={{
           px: { xs: 2, sm: 4, md: 8 },
@@ -16,7 +16,7 @@ export default function Footer() {
       >
         {/* Thông tin phòng khám */}
         <Box>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
+          <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ color: "text.primary" }}>
             Thu Cúc Clinic
           </Typography>
           <Stack spacing={1}>
@@ -34,7 +34,7 @@ export default function Footer() {
 
         {/* Liên kết nhanh */}
         <Box>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
+          <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ color: "text.primary" }}>
             Liên kết nhanh
           </Typography>
           <Stack spacing={1}>
@@ -48,7 +48,7 @@ export default function Footer() {
 
         {/* Dịch vụ */}
         <Box>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
+          <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ color: "text.primary" }}>
             Dịch vụ
           </Typography>
           <Stack spacing={1}>
@@ -61,25 +61,25 @@ export default function Footer() {
 
         {/* Mạng xã hội */}
         <Box>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
+          <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ color: "text.primary" }}>
             Theo dõi chúng tôi
           </Typography>
           <Stack direction="row" spacing={1}>
             <IconButton
               href="#"
-              sx={{ color: "white", "&:hover": { color: "#4267B2", bgcolor: "rgba(255,255,255,0.1)" } }}
+              sx={{ color: "secondary.main", "&:hover": { color: "#4267B2", bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               <Facebook />
             </IconButton>
             <IconButton
               href="#"
-              sx={{ color: "white", "&:hover": { color: "#E1306C", bgcolor: "rgba(255,255,255,0.1)" } }}
+              sx={{ color: "secondary.main", "&:hover": { color: "#E1306C", bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               <Instagram />
             </IconButton>
             <IconButton
               href="#"
-              sx={{ color: "white", "&:hover": { color: "#FF0000", bgcolor: "rgba(255,255,255,0.1)" } }}
+              sx={{ color: "secondary.main", "&:hover": { color: "#FF0000", bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               <YouTube />
             </IconButton>
@@ -87,7 +87,7 @@ export default function Footer() {
         </Box>
       </Box>
 
-      <Divider sx={{ my: 5, borderColor: "rgba(255,255,255,0.3)" }} />
+      <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.3)" }} />
 
       <Typography textAlign="center" variant="body2" sx={{ opacity: 0.8 }}>
         &copy; {new Date().getFullYear()} Thu Cúc Clinic. All rights reserved.

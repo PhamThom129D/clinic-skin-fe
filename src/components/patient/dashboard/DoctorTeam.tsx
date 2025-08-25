@@ -21,7 +21,7 @@ const DoctorTeam: React.FC = () => (
         display: "grid",
         gap: 4,
         mx : "auto",
-        px: { xs: 2, sm: 6, md: 12 },
+        px: { xs: 2, sm: 6, md: 20 },
         gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)" },
       }}
     >

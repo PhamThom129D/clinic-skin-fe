@@ -14,14 +14,14 @@ const offers = [
 ];
 
 const Offers: React.FC = () => (
-  <Box sx={{ py: 8, bgcolor: "background.default" }}>
+  <Box sx={{ py: 8 }}>
     <SectionTitle>Ưu Đãi Hot</SectionTitle>
     <Box
       sx={{
         mt: 4,
-        px: { xs: 2, sm: 6, md: 12 },
+        px: { xs: 2, sm: 6, md: 20 },
         display: "grid",
-        gap: 10,
+        gap : 4,
         gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
       }}
     >

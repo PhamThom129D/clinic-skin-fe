@@ -15,7 +15,7 @@ const WhyChooseUs: React.FC = () => (
     <Box
       sx={{
         mt: 4,
-        px: { xs: 2, sm: 4, md: 8 },
+        px: { xs: 2, sm: 4, md: 16 },
         display: "grid",
         gap: { xs: 4, sm: 6 },
         gridTemplateColumns: { xs: "1fr", sm: "repeat(2,1fr)", md: "repeat(3,1fr)" },

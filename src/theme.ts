@@ -3,21 +3,21 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#bf817f",
-      dark: "#483932",
-      contrastText: "#ffffff",
+      main: "#a0c4aaff",       // xanh pastel nhẹ, dùng cho nút, links chính
+      dark: "#6b8e6fff",       // xanh đậm hơn, hover/active
+      contrastText: "#ffffff", // chữ trắng nổi bật trên primary
     },
     secondary: {
-      main: "#e4baa7",
-      contrastText: "#151413",
+      main: "#f4d6b0ff",       // vàng nhạt – dùng cho accent, highlight
+      contrastText: "#242222", // chữ tối trên background sáng
     },
     text: {
-      primary: "#151413",
-      secondary: "#483932",
+      primary: "#2e2e2eff",   // xám đậm, dễ đọc
+      secondary: "#475547ff", // xám xanh nhạt cho text phụ
     },
     background: {
-      default: "transparent", // fallback màu nhạt nếu ảnh chưa load
-      paper: "#ffffff",
+      default: "#f9f9f9",     // nền tổng thể sáng, nhẹ nhàng
+      paper: "#ffffff",        // nền card / section
     },
   },
   typography: {
@@ -43,16 +43,4 @@ const theme = createTheme({
   },
 });
 
-// // Áp dụng ảnh nền toàn trang bằng CSS
-// const globalStyles = {
-//   body: {
-//     backgroundImage: `url("https://res.cloudinary.com/dgmrwe4eo/image/upload/v1756106511/test_Bg_naaz2k.jpg")`,
-//     backgroundSize: "cover",
-//     backgroundPosition: "top center", // ưu tiên hiển thị phần trên
-//     backgroundRepeat: "no-repeat",
-//     backgroundAttachment: "fixed",
-//   },
-// };
-
-
-export { theme};
+export { theme };

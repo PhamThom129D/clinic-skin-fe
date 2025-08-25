@@ -22,7 +22,7 @@ export default function Page() {
           backgroundSize: "cover",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
+
         }}
       >
         <Offers />
