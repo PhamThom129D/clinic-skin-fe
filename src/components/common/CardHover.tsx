@@ -3,20 +3,22 @@ import React from "react";
 
 interface CardHoverProps {
   image?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
-  imageWidth?: number | string;  
-  imageHeight?: number | string; 
+  imageWidth?: number | string;
+  imageHeight?: number | string;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
-  sx?: SxProps<Theme>;           
+  sx?: SxProps<Theme>;
 }
 
 const CardHover: React.FC<CardHoverProps> = ({
   image,
   children,
   onClick,
-  imageWidth = 250,
+  imageWidth = "100%",
   imageHeight = 250,
+  objectFit = "cover",
+  sx = {},
 }) => (
   <Card
     onClick={onClick}
@@ -27,7 +29,8 @@ const CardHover: React.FC<CardHoverProps> = ({
       "&:hover": { boxShadow: 10, transform: "translateY(-6px)" },
       display: "flex",
       flexDirection: "column",
-      alignItems: "center"
+      alignItems: "center",
+      ...sx
     }}
   >
     {image && (
@@ -38,13 +41,13 @@ const CardHover: React.FC<CardHoverProps> = ({
         sx={{
           width: imageWidth,
           height: imageHeight,
-          objectFit: "cover",
+          objectFit,
           borderRadius: 2,
           mb: 2,
         }}
       />
     )}
-    <CardContent>{children}</CardContent>
+    {children && <CardContent sx={{ p: 0 }}>{children}</CardContent>}
   </Card>
 );
 

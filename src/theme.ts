@@ -3,12 +3,13 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#a0c4aaff",       // xanh pastel nhẹ, dùng cho nút, links chính
-      dark: "#6b8e6fff",       // xanh đậm hơn, hover/active
+      main: "#64ce82ff",       // xanh pastel nhẹ, dùng cho nút, links chính
+      dark: "#52c0d3ff",       // xanh đậm hơn, hover/active
       contrastText: "#ffffff", // chữ trắng nổi bật trên primary
+      
     },
     secondary: {
-      main: "#f4d6b0ff",       // vàng nhạt – dùng cho accent, highlight
+      main: "#ee9f37ff",       // vàng nhạt – dùng cho accent, highlight
       contrastText: "#242222", // chữ tối trên background sáng
     },
     text: {
