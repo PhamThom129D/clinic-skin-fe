@@ -7,14 +7,19 @@ import Testimonials from "@/components/patient/dashboard/Testimonials";
 import ContactBooking from "@/components/patient/dashboard/ContactBooking";
 import Footer from "@/components/patient/dashboard/Footer";
 import { Box } from "@mui/material";
+import Menu from "@/components/patient/dashboard/Menu";
+import ChatBox from "@/components/patient/dashboard/ChatBox";
 
 
 export default function Page() {
   return (
     <main>
+      <Menu />
       {/* <Header /> */}
-      <Hero />
-      
+      <Box id="hero">
+        <Hero />
+      </Box>
+
       {/* Section có background */}
       <Box
         sx={{
@@ -22,17 +27,31 @@ export default function Page() {
           backgroundSize: "cover",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
         }}
       >
-        <Offers />
-        <DoctorTeam />
-        <WhyChooseUs />
-        <Testimonials />
-        <ContactBooking />
+        <Box id="offers">
+          <Offers />
+        </Box>
+
+        <Box id="doctor-team">
+          <DoctorTeam />
+        </Box>
+
+        <Box id="why-choose-us">
+          <WhyChooseUs />
+        </Box>
+
+        <Box id="testimonials">
+          <Testimonials />
+        </Box>
+
+        <Box id="contact-booking">
+          <ContactBooking />
+        </Box>
       </Box>
 
       <Footer />
+      <ChatBox/>
     </main>
   );
 }
