@@ -1,18 +1,45 @@
-import React from "react";
+'user client';
+
+import React, { useEffect, useState } from "react";
 import { Typography, Box } from "@mui/material";
+import axios from "axios";
 
-const doctors = [
-  { name: "BS. Nguyễn Văn A", role: "Chuyên gia thẩm mỹ", img: "/images/doctor.png" },
-  { name: "BS. Trần Thị B", role: "Chuyên gia da liễu", img: "/images/doctor.png" },
-  { name: "BS. Lê Văn C", role: "Phẫu thuật thẩm mỹ", img: "/images/doctor.png" },
-];
+interface Doctor {
+  doctorId: number;
+  fullName: string;
+  specialty: string;
+  avtPath: string;
+}
 
-const DoctorTeamSimple: React.FC = () => (
-  <Box
-    sx={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 4,
+const DoctorTeamSimple: React.FC = () => {
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get("http://localhost:1209/api/doctors/basic");
+        setDoctors(response.data);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 4,
       justifyContent: "center",
       px: { xs: 2, sm: 4, md: 8 },
       py: 8,
@@ -29,8 +56,8 @@ const DoctorTeamSimple: React.FC = () => (
       >
         <Box
           component="img"
-          src={doc.img}
-          alt={doc.name}
+          src={doc.avtPath}
+          alt={doc.fullName}
           sx={{
             width: "100%",
             height: "auto",
@@ -39,14 +66,16 @@ const DoctorTeamSimple: React.FC = () => (
           }}
         />
         <Typography variant="h6" sx={{ mt: 1 }}>
-          {doc.name}
+          {doc.fullName}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {doc.role}
+          {doc.specialty}
         </Typography>
       </Box>
     ))}
   </Box>
 );
+
+};
 
 export default DoctorTeamSimple;
