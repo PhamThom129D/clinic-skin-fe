@@ -1,7 +1,7 @@
-import { Box, Typography, TextField, Button, Container, Stack } from "@mui/material";
-import { theme } from "@/theme"; // dùng palette hệ thống
+import { Box, Typography, TextField, Button, Container, Stack, useTheme } from "@mui/material";
 
 export default function ContactBooking() {
+  const theme = useTheme();
   return (
     <Box sx={{ py: { xs: 10, md: 16 } }} id="booking">
       {/* Section title */}

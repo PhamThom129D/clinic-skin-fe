@@ -1,6 +1,5 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box} from "@mui/material";
 import React from "react";
-import ButtonPrimary from "../../../common/ButtonPrimary";
 
 const Banner: React.FC = () => (
 <Box
