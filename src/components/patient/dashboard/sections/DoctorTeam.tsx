@@ -3,31 +3,26 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import axios from "axios";
-
-interface Doctor {
-  doctorId: number;
-  fullName: string;
-  specialty: string;
-  avtPath: string;
-}
+import { Doctor } from "@/types/screen";
+import { fetchDoctors } from "@/services/screenService";
 
 const DoctorTeamSimple: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const loadDoctors = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/doctors/basic");
-        setDoctors(response.data);
-      } catch (error) {
-        console.error("Error fetching doctors:", error);
+        const data = await fetchDoctors();
+        setDoctors(data);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDoctors();
+    loadDoctors();
   }, []);
 
   if (isLoading) {
@@ -42,7 +37,7 @@ const DoctorTeamSimple: React.FC = () => {
         gap: 4,
       justifyContent: "center",
       px: { xs: 2, sm: 4, md: 8 },
-      py: 8,
+    
     }}
   >
     {doctors.map((doc, i) => (

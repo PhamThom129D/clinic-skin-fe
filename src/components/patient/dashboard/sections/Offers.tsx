@@ -2,6 +2,8 @@ import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CardHover from "../../../common/CardHover";
 import axios from "axios";
+import { Offer } from "@/types/screen";
+import { fetchOffers } from "@/services/screenService";
 
 // const offers = [
 //   { title: "Giảm 50% Nâng mũi", desc: "Tạo dáng mũi chuẩn Hàn Quốc", img: "https://i.pinimg.com/736x/0e/cf/07/0ecf07040c7806a0b017331a5d75d661.jpg" },
@@ -9,29 +11,23 @@ import axios from "axios";
 //   { title: "Trị nám - trẻ hóa", desc: "Công nghệ Laser hiện đại", img: "https://i.pinimg.com/736x/07/cd/c1/07cdc13407209b16816d5ed4460f3874.jpg" },
 // ];
 
-interface Offer {
-  title: string;
-  desc: string;
-  img: string;
-}
-
 const Offers: React.FC = () => {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOffers = async () => {
+    const loadOffers = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/offers");
-        setOffers(response.data);
-      } catch (error) {
-        console.error("Error fetching offers:", error);
+        const data = await fetchOffers();
+        setOffers(data);
+      } catch (err) {
+        console.error("Error fetching offers:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchOffers();
+    loadOffers();
   }, []);
 
   if (isLoading) {
