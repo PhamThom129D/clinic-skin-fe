@@ -1,24 +1,24 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+export const lightTheme = createTheme({
   palette: {
+    mode: "light",
     primary: {
-      main: "#64ce82ff",       // xanh pastel nhẹ, dùng cho nút, links chính
-      dark: "#52c0d3ff",       // xanh đậm hơn, hover/active
-      contrastText: "#ffffff", // chữ trắng nổi bật trên primary
-      
+      main: "#64ce82ff",       // xanh pastel nhẹ
+      dark: "#52c0d3ff",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#ee9f37ff",       // vàng nhạt – dùng cho accent, highlight
-      contrastText: "#242222", // chữ tối trên background sáng
+      main: "#ee9f37ff",       
+      contrastText: "#242222",
     },
     text: {
-      primary: "#2e2e2eff",   // xám đậm, dễ đọc
-      secondary: "#475547ff", // xám xanh nhạt cho text phụ
+      primary: "#2e2e2eff",
+      secondary: "#475547ff",
     },
     background: {
-      default: "#f9f9f9",     // nền tổng thể sáng, nhẹ nhàng
-      paper: "#ffffff",        // nền card / section
+      default: "#f9f9f9",
+      paper: "#ffffff",
     },
   },
   typography: {
@@ -44,4 +44,46 @@ const theme = createTheme({
   },
 });
 
-export { theme };
+export const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#64ce82ff",
+      dark: "#52c0d3ff",
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      main: "#ee9f37ff",
+      contrastText: "#f5f5f5",
+    },
+    text: {
+      primary: "#f5f5f5",
+      secondary: "#cfd8dc",
+    },
+    background: {
+      default: "#121212",   // nền tối
+      paper: "#1e1e1e",     // card/section tối
+    },
+  },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+        },
+      },
+    },
+  },
+});
