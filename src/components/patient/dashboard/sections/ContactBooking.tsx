@@ -1,10 +1,28 @@
+import { useState } from "react";
 import { Box, Typography, TextField, Button, Container, Stack, useTheme } from "@mui/material";
+import { createContact } from "@/services/contactService";
 
 export default function ContactBooking() {
   const theme = useTheme();
+  const [form, setForm] = useState({ fullname: "", phone: "", reason: "" });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await createContact(form);
+      alert("📩 Gửi yêu cầu thành công!");
+      setForm({ fullname: "", phone: "", reason: "" });
+    } catch (error) {
+      console.error("Lỗi khi gửi yêu cầu:", error);
+      alert("❌ Gửi yêu cầu thất bại!");
+    }
+  };
+
   return (
     <Box sx={{ py: { xs: 10, md: 16 } }} id="booking">
-      {/* Section title */}
       <Typography 
         variant="h4" 
         textAlign="center" 
@@ -21,7 +39,6 @@ export default function ContactBooking() {
         Vui lòng điền thông tin dưới đây, chúng tôi sẽ liên hệ bạn sớm nhất.
       </Typography>
 
-      {/* Form */}
       <Container maxWidth="sm">
         <Box 
           sx={{ 
@@ -34,18 +51,27 @@ export default function ContactBooking() {
           <Stack spacing={3}>
             <TextField 
               label="Họ và tên" 
+              name="fullname"
+              value={form.fullname}
+              onChange={handleChange}
               fullWidth 
               variant="outlined" 
               sx={{ bgcolor: "#f5f5f5", borderRadius: 1 }}
             />
             <TextField 
               label="Số điện thoại" 
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
               fullWidth 
               variant="outlined" 
               sx={{ bgcolor: "#f5f5f5", borderRadius: 1 }}
             />
             <TextField
               label="Nội dung"
+              name="reason"
+              value={form.reason}
+              onChange={handleChange}
               fullWidth
               multiline
               rows={4}
@@ -55,6 +81,7 @@ export default function ContactBooking() {
             <Button 
               variant="contained" 
               size="large" 
+              onClick={handleSubmit}
               sx={{ 
                 bgcolor: theme.palette.primary.main, 
                 color: "#fff", 
