@@ -22,7 +22,7 @@ const Offers: React.FC = () => {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/offers");
+        const response = await axios.get("http://localhost:1209/api/screen/offers");
         setOffers(response.data);
       } catch (error) {
         console.error("Error fetching offers:", error);

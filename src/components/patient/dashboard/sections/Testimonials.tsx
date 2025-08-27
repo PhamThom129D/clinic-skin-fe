@@ -25,7 +25,7 @@ const Testimonials: React.FC = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/testimonials");
+        const response = await axios.get("http://localhost:1209/api/screen/testimonials");
         setTestimonials(response.data);
       } catch (error) {
         console.error("Error fetching testimonials:", error);
