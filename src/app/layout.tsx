@@ -8,15 +8,15 @@ import { ThemeProvider as NextThemeProvider, useTheme } from "next-themes";
 import React, { useMemo } from "react";
 import { lightTheme, darkTheme } from "../theme"; // import 2 theme
 
+// QueryClient để wrap React Query
 const queryClient = new QueryClient();
 
-// Component để chọn theme MUI theo dark/light từ next-themes
+// Component chọn MUI theme dựa vào next-themes
 function MuiThemeRegistry({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
 
   const muiTheme = useMemo(() => {
-    if (theme === "dark") return darkTheme;
-    return lightTheme;
+    return theme === "dark" ? darkTheme : lightTheme;
   }, [theme]);
 
   return (
@@ -32,19 +32,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body>
         <QueryClientProvider client={queryClient}>
-          <NextThemeProvider attribute="class" defaultTheme="light">
+          <NextThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={true}
+          >
             <MuiThemeRegistry>
               {children}
+
+              {/* Toastify config */}
               <ToastContainer
                 position="top-right"
                 autoClose={3000}
                 hideProgressBar={false}
-                newestOnTop={false}
+                newestOnTop
                 closeOnClick
-                rtl={false}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
+                theme="colored" // dùng màu success/error đẹp hơn
               />
             </MuiThemeRegistry>
           </NextThemeProvider>

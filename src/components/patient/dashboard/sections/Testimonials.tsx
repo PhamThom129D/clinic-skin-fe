@@ -1,24 +1,13 @@
 import AvatarCard from "@/components/common/AvatarCard";
 import SectionTitle from "@/components/common/SectionTitle";
 import { Box, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-// const testimonials = [
-//   { name: "Khách hàng 1", text: "Dịch vụ tuyệt vời, tôi rất hài lòng!", img: "/images/customer1.jpg" },
-//   { name: "Khách hàng 2", text: "Bác sĩ tận tâm, kết quả ngoài mong đợi.", img: "/images/customer2.jpg" },
-//   { name: "Khách hàng 3", text: "Không gian sang trọng, cảm giác thoải mái.", img: "/images/customer3.jpg" },
-// ];
-
-interface Testimonial {
-  testimonialId: number;
-  content: string;
-  img: string;
-  accountId: number;
-  fullName: string;
-}
+import React from "react";
+import { Testimonial } from "@/types/screen";
+import { getTestimonials } from "@/services/screenService";
+import { useFetchData } from "@/hooks/useFetchData";
 
 const Testimonials: React.FC = () => {
+<<<<<<< HEAD
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,21 +25,40 @@ const Testimonials: React.FC = () => {
 
     fetchTestimonials();
   }, []);
+=======
+  const { data: testimonials, isLoading } = useFetchData<Testimonial[]>(getTestimonials);
+>>>>>>> 69d1592126eb443eafece335cd0fd8935d056119
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
   }
 
+  if (!testimonials || testimonials.length === 0) {
+    return <Typography>Chưa có phản hồi từ khách hàng</Typography>;
+  }
+
   return (
-  <Box sx={{ py: 16, px: { xs: 2, sm: 4, md: 16 } }}>
-    <SectionTitle>Khách Hàng Nói Gì?</SectionTitle>
-    <Box sx={{ mt: 4, display: "grid", gap: 4, gridTemplateColumns: { xs: "1fr", md: "repeat(3,1fr)" } }}>
-      {testimonials.map((t, i) => (
-        <AvatarCard key={i} name={t.fullName} text={t.content} img={t.img} />
-      ))}
+    <Box sx={{ py: 16, px: { xs: 2, sm: 4, md: 16 } }}>
+      <SectionTitle>Khách Hàng Nói Gì?</SectionTitle>
+      <Box
+        sx={{
+          mt: 4,
+          display: "grid",
+          gap: 4,
+          gridTemplateColumns: { xs: "1fr", md: "repeat(3,1fr)" },
+        }}
+      >
+        {testimonials.map((t, i) => (
+          <AvatarCard
+            key={i}
+            name={t.fullName}
+            text={t.content}
+            img={t.img}
+          />
+        ))}
+      </Box>
     </Box>
-  </Box>
-);
+  );
 };
 
 export default Testimonials;
