@@ -1,17 +1,24 @@
-import React from "react";
+'user client';
+
+import React, { useEffect, useState } from "react";
 import { Typography, Box } from "@mui/material";
-import { Doctor } from "@/types/screen";
-import { getDoctorsBasic } from "@/services/screenService";
-import { useFetchData } from "@/hooks/useFetchData";
+import axios from "axios";
+
+interface Doctor {
+  doctorId: number;
+  fullName: string;
+  specialty: string;
+  avtPath: string;
+}
 
 const DoctorTeamSimple: React.FC = () => {
-  const { data: doctors, isLoading } = useFetchData<Doctor[]>(getDoctorsBasic);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-<<<<<<< HEAD
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/screen/doctors");
+        const response = await axios.get("http://localhost:1209/api/doctors/basic");
         setDoctors(response.data);
       } catch (error) {
         console.error("Error fetching doctors:", error);
@@ -26,9 +33,6 @@ const DoctorTeamSimple: React.FC = () => {
   if (isLoading) {
     return <Typography>Loading...</Typography>;
   }
-=======
-  if (isLoading) return <Typography>Loading...</Typography>;
->>>>>>> 69d1592126eb443eafece335cd0fd8935d056119
 
   return (
     <Box
@@ -36,35 +40,42 @@ const DoctorTeamSimple: React.FC = () => {
         display: "flex",
         flexWrap: "wrap",
         gap: 4,
-        justifyContent: "center",
-        px: { xs: 2, sm: 4, md: 8 },
-      }}
-    >
-      {doctors?.map((doc, i) => (
+      justifyContent: "center",
+      px: { xs: 2, sm: 4, md: 8 },
+      py: 8,
+    }}
+  >
+    {doctors.map((doc, i) => (
+      <Box
+        key={i}
+        sx={{
+          textAlign: "center",
+          maxWidth: { xs: "100%", sm: 250 },
+          flex: { xs: "1 1 100%", sm: "1 1 250px" },
+        }}
+      >
         <Box
-          key={i}
+          component="img"
+          src={doc.avtPath}
+          alt={doc.fullName}
           sx={{
-            textAlign: "center",
-            maxWidth: { xs: "100%", sm: 250 },
-            flex: { xs: "1 1 100%", sm: "1 1 250px" },
+            width: "100%",
+            height: "auto",
+            borderRadius: 2,
+            mb: 1,
           }}
-        >
-          <Box
-            component="img"
-            src={doc.avtPath}
-            alt={doc.fullName}
-            sx={{ width: "100%", height: "auto", borderRadius: 2, mb: 1 }}
-          />
-          <Typography variant="h6" sx={{ mt: 1 }}>
-            {doc.fullName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {doc.specialty}
-          </Typography>
-        </Box>
-      ))}
-    </Box>
-  );
+        />
+        <Typography variant="h6" sx={{ mt: 1 }}>
+          {doc.fullName}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {doc.specialty}
+        </Typography>
+      </Box>
+    ))}
+  </Box>
+);
+
 };
 
 export default DoctorTeamSimple;
