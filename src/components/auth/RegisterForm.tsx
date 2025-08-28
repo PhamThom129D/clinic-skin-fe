@@ -11,7 +11,6 @@ import { notifySuccess, notifyWarning } from "@/utils/toast";
 import { FormInput } from "../common/FormInput";
 
 import { RegisterFormData } from "@/types/auth";
-import { RegisterRequest } from "@/types/user";
 import { register as registerAPI } from "@/services/authService";
 
 import {
@@ -55,12 +54,14 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
       return;
     }
 
-    const formattedData: RegisterRequest = {
+    const formattedData: RegisterFormData = {
       ...data,
       gender: gender || "OTHER",   // MALE/FEMALE/OTHER
       avatarFile: avatarFile ?? undefined,
       role: "ROLE_PATIENT",
       status: data.status ?? "Active",
+        email: data.email || "",       // không để undefined
+  phoneNumber: data.phoneNumber || "",
       // **dateOfBirth giữ nguyên yyyy-MM-dd**
     };
 try {

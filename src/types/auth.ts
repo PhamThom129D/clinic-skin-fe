@@ -30,7 +30,8 @@ export interface RegisterFormData {
   address: string;
   dateOfBirth: string; // gửi dạng "dd-MM-yyyy" (theo @JsonFormat)
   gender: "MALE" | "FEMALE" | "OTHER"; // Enum Gender bên backend
-  status?: "ACTIVE" | "INACTIVE" | "BANNED"; // Enum AccountStatus (nếu cần gửi)
+  status?: "Active" | "Inactive" | "Banned"; // Enum AccountStatus (nếu cần gửi)
   avatarFile?: File; // File upload từ input type="file"
   role: string;
 }
+
