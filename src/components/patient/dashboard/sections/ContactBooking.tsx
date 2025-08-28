@@ -1,7 +1,7 @@
 // src/components/ContactBooking.tsx
 import { Box, Typography, useTheme } from "@mui/material";
 import React from "react";
-import { createContact } from "@/services/contactService";
+import { createContact } from "@/services/bookingService";
 import ContactForm from "@/components/forms/ContactForm";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
