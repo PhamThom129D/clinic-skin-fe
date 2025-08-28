@@ -16,13 +16,9 @@ import { Menu as MenuIcon, Close } from "@mui/icons-material";
 import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
 import BookingModal from "../sections/BookingModal";
+import menuItems from "@/components/common/menuItems";
 
-const menuItems = [
-  { id: "banner", label: "Trang Chủ" },
-  { id: "offers", label: "Ưu Đãi" },
-  { id: "doctor-team", label: "Bác Sĩ" },
-  { id: "contact-booking", label: "Liên Hệ" },
-];
+
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);

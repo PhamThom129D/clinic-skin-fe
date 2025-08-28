@@ -1,3 +1,4 @@
+// src/components/Booking/BookingForm.tsx
 import React, { useState } from "react";
 import {
   Stack,
@@ -8,10 +9,6 @@ import {
   Paper,
   Divider,
   Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
 import InputField from "../common/InputField";
@@ -19,9 +16,15 @@ import { BookingData } from "@/types/booking";
 import { Doctor } from "@/types/screen";
 import { getDoctorsBasic } from "@/services/screenService";
 import { useFetchData } from "@/hooks/useFetchData";
-import { notifyError, notifySuccess } from "@/utils/toast";
+import { notifyError, notifySuccess, notifyWarning } from "@/utils/toast";
 import { registerAppointment } from "@/services/bookingService";
 import GenderSelect from "../common/GenderSelect";
+import {
+  validateField,
+  validateFormBooking,
+} from "@/utils/validation/bookingValidator";
+
+type Errors = Partial<Record<keyof BookingData, string>>;
 
 interface BookingFormProps {
   onSubmit?: (data: BookingData) => void;
@@ -40,10 +43,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     appointmentDate: "",
     appointmentTime: "",
     note: "",
-    doctorId: 0, // ✅ để number, mặc định 0
+    doctorId: 0,
   });
 
   const { data: doctors, isLoading } = useFetchData<Doctor[]>(getDoctorsBasic);
+  const [errors, setErrors] = useState<Errors>({});
 
   // Dùng cho input/textarea
   const handleChange = (
@@ -54,40 +58,44 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
       ...prev,
       [name]: name === "doctorId" ? Number(value) : value,
     }));
+
+    // validate ngay khi nhập
+    const err = validateField(name as keyof BookingData, value);
+    setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
   // Dùng riêng cho Select (MUI SelectChangeEvent)
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+
+    const err = validateField(name as keyof BookingData, value);
+    setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
+  // Dùng riêng cho chọn bác sĩ
   const handleSelectDoctor = (id: number) => {
     setForm((prev) => ({ ...prev, doctorId: id }));
+    const err = validateField("doctorId", id);
+    setErrors((prev) => ({ ...prev, doctorId: err }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate cơ bản
-    if (!form.fullName || !form.phoneNumber || !form.appointmentDate || !form.doctorId) {
-      notifyError("Vui lòng nhập đầy đủ thông tin bắt buộc.");
+    const validationErrors = validateFormBooking(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      notifyWarning("Vui lòng kiểm tra lại thông tin.");
       return;
     }
 
     try {
-      // Gọi API
       await registerAppointment(form);
-
       notifySuccess("Đặt lịch thành công! Chúng tôi sẽ liên hệ bạn sớm.");
-      console.log("Form data submitted:", form);
+      onSubmit?.(form);
 
-      if (onSubmit) onSubmit(form);
 
-      // Reset form (optional)
       setForm({
         fullName: "",
         email: "",
@@ -102,6 +110,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
         note: "",
         doctorId: 0,
       });
+      setErrors({});
     } catch (error) {
       notifyError("Đặt lịch thất bại. Vui lòng thử lại.");
       console.error("❌ API Error:", error);
@@ -112,7 +121,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     <Paper elevation={4} sx={{ p: 4, borderRadius: 3 }}>
       <form onSubmit={handleSubmit}>
         <Stack spacing={4}>
-          {/* Title */}
           <Typography
             variant="h5"
             fontWeight="bold"
@@ -124,26 +132,74 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
 
           <Divider />
 
-          {/* Hai phần chính */}
           <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
             {/* Thông tin cá nhân */}
             <Stack spacing={2} flex={1}>
-              <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                color="text.secondary"
+              >
                 Thông tin cá nhân
               </Typography>
-              <InputField label="Họ và tên" name="fullName" value={form.fullName} onChange={handleChange} required />
-              <InputField label="Email" name="email" value={form.email} onChange={handleChange} type="email" />
-              <InputField label="Số điện thoại" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required />
-              <InputField label="CMND/Hộ chiếu" name="passportNumber" value={form.passportNumber} onChange={handleChange} />
-              <InputField label="Nghề nghiệp" name="occupation" value={form.occupation} onChange={handleChange} />
-              <InputField label="Địa chỉ" name="address" value={form.address} onChange={handleChange} />
 
-   <GenderSelect
-  name="gender"
-  value={form.gender}
-  onChange={handleChange}
-/>
+              <InputField
+                label="Họ và tên"
+                name="fullName"
+                value={form.fullName}
+                onChange={handleChange}
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+              />
+              <InputField
+                label="Email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                type="email"
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+              <InputField
+                label="Số điện thoại"
+                name="phoneNumber"
+                value={form.phoneNumber}
+                onChange={handleChange}
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber}
+              />
+              <InputField
+                label="CMND/Hộ chiếu"
+                name="passportNumber"
+                value={form.passportNumber}
+                onChange={handleChange}
+                error={!!errors.passportNumber}
+                helperText={errors.passportNumber}
+              />
+              <InputField
+                label="Nghề nghiệp"
+                name="occupation"
+                value={form.occupation}
+                onChange={handleChange}
+                error={!!errors.occupation}
+                helperText={errors.occupation}
+              />
+              <InputField
+                label="Địa chỉ"
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                error={!!errors.address}
+                helperText={errors.address}
+              />
 
+              <GenderSelect
+                name="gender"
+                value={form.gender}
+                onChange={handleSelectChange}
+                error={!!errors.gender}
+                helperText={errors.gender}
+              />
 
               <InputField
                 label="Ngày sinh"
@@ -151,12 +207,18 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 value={form.dateOfBirth}
                 onChange={handleChange}
                 type="date"
+                error={!!errors.dateOfBirth}
+                helperText={errors.dateOfBirth}
               />
             </Stack>
 
             {/* Thông tin đặt lịch */}
             <Stack spacing={2} flex={1}>
-              <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                color="text.secondary"
+              >
                 Thông tin đặt lịch
               </Typography>
               <InputField
@@ -165,7 +227,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 value={form.appointmentDate}
                 onChange={handleChange}
                 type="date"
-                required
+                error={!!errors.appointmentDate}
+                helperText={errors.appointmentDate}
               />
               <InputField
                 label="Giờ khám"
@@ -173,6 +236,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 value={form.appointmentTime}
                 onChange={handleChange}
                 type="time"
+                error={!!errors.appointmentTime}
+                helperText={errors.appointmentTime}
               />
               <InputField
                 label="Ghi chú"
@@ -200,9 +265,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                         <Box
                           sx={{
                             width: 200,
-                            height: 180,
+                            height: 200,
                             border:
-                              form.doctorId === doc.doctorId ? "2px solid #1976d2" : "1px solid #ddd",
+                              form.doctorId === doc.doctorId
+                                ? "2px solid #1976d2"
+                                : "1px solid #ddd",
                             borderRadius: 2,
                             p: 2,
                             cursor: "pointer",
@@ -214,7 +281,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                               boxShadow: 3,
                             },
                             bgcolor:
-                              form.doctorId === doc.doctorId ? "action.hover" : "background.paper",
+                              form.doctorId === doc.doctorId
+                                ? "action.hover"
+                                : "background.paper",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
@@ -222,7 +291,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                           }}
                           onClick={() => handleSelectDoctor(doc.doctorId)}
                         >
-                          <Avatar src={doc.avtPath} alt={doc.fullName} sx={{ width: 100, height: 100, mb: 1 }} />
+                          <Avatar
+                            src={doc.avtPath}
+                            alt={doc.fullName}
+                            sx={{ width: 100, height: 100, mb: 1 }}
+                          />
                           <Typography
                             variant="body2"
                             fontWeight={600}
@@ -242,6 +315,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                       </Grid>
                     ))}
                   </Grid>
+                )}
+                {errors.doctorId && (
+                  <Typography color="error" variant="caption">
+                    {errors.doctorId}
+                  </Typography>
                 )}
               </Box>
             </Stack>

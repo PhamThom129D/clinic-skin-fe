@@ -1,26 +1,42 @@
 import React from "react";
-import { TextField, MenuItem } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 
-interface GenderSelectProps {
+export interface GenderSelectProps {
   name: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: SelectChangeEvent<string>) => void;
+  error?: boolean;
+  helperText?: string;
 }
 
-const GenderSelect: React.FC<GenderSelectProps> = ({ name, value, onChange }) => {
+const GenderSelect: React.FC<GenderSelectProps> = ({
+  name,
+  value,
+  onChange,
+  error = false,
+  helperText,
+}) => {
   return (
-    <TextField
-      select
-      fullWidth
-      label="Giới tính"
-      name={name}
-      value={value}
-      onChange={onChange}
-    >
-      <MenuItem value="Male">Nam</MenuItem>
-      <MenuItem value="Female">Nữ</MenuItem>
-      <MenuItem value="Other">Khác</MenuItem>
-    </TextField>
+    <FormControl fullWidth error={error}>
+
+      <Select
+        labelId={`${name}-label`}
+        id={`${name}-select`}
+        name={name}
+        value={value}
+        onChange={onChange}
+        displayEmpty
+      >
+        <MenuItem value="">
+          <em>-- Chọn giới tính --</em>
+        </MenuItem>
+        <MenuItem value="Male">Nam</MenuItem>
+        <MenuItem value="Female">Nữ</MenuItem>
+        <MenuItem value="Other">Khác</MenuItem>
+      </Select>
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+    </FormControl>
   );
 };
 

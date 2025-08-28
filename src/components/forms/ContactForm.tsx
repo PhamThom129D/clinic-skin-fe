@@ -1,9 +1,7 @@
-// src/components/common/ContactForm.tsx
 import { Box, Container, Stack, Button } from "@mui/material";
 import React, { useState } from "react";
-
-import { required, nameRule, phoneRule } from "@/utils/validators";
 import InputField from "../common/InputField";
+import { validateFormContact } from "@/utils/validation/contactValidator";
 
 interface ContactFormProps {
   onSubmit?: (data: { fullname: string; phone: string; reason: string }) => void;
@@ -13,39 +11,16 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   const [form, setForm] = useState({ fullname: "", phone: "", reason: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: "" })); // reset lỗi khi sửa
-  };
-
-  const validateField = (name: string, value: string) => {
-    let error = "";
-
-    if (name === "fullname") {
-      if (!value.trim()) error = required().required;
-      else if (!nameRule.pattern.value.test(value)) error = nameRule.pattern.message;
-    }
-
-    if (name === "phone") {
-      if (!value.trim()) error = required().required;
-      else if (!phoneRule.pattern.value.test(value)) error = phoneRule.pattern.message;
-    }
-
-    if (name === "reason" && !value.trim()) {
-      error = required().required;
-    }
-
-    return error;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = () => {
-    const newErrors: { [key: string]: string } = {};
-    Object.keys(form).forEach(key => {
-      const err = validateField(key, form[key as keyof typeof form]);
-      if (err) newErrors[key] = err;
-    });
-
+    const newErrors = validateFormContact(form);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
