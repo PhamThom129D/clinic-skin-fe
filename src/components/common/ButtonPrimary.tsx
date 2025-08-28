@@ -1,20 +1,19 @@
-import { Button } from "@mui/material";
+import { Button, ButtonProps } from "@mui/material";
 import React from "react";
 
-interface ButtonPrimaryProps {
+// Kế thừa tất cả ButtonProps để dùng fullWidth, sx, type, variant, ...
+interface ButtonPrimaryProps extends ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
-  href?: string;
-  size?: "small" | "medium" | "large"; // cho phép tùy chỉnh
 }
 
 const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
   children,
-  onClick,
-  href,
-  size = "large", 
+  variant = "contained",
+  color = "primary",
+  size = "large",
+  ...props
 }) => (
-  <Button variant="contained" color="primary" size={size} onClick={onClick} href={href}>
+  <Button variant={variant} color={color} size={size} {...props}>
     {children}
   </Button>
 );
