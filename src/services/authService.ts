@@ -1,7 +1,7 @@
 // src/services/authService.ts
 import api from "../api/api";
-import { LoginRequest, AuthResponse } from "../types/auth";
-import { RegisterRequest } from "../types/user";
+import { LoginRequest, AuthResponse, RegisterFormData } from "../types/auth";
+
 
 // ---- LOGIN ----
 export const login = (data: Pick<LoginRequest, "emailOrPhone" | "password">) => {
@@ -32,7 +32,7 @@ export const resendOtp = (emailOrPhone: string) => {
 
 
 // ---- REGISTER ----
-export const register = async (data: RegisterRequest) => {
+export const register = async (data: RegisterFormData) => {
   const formData = new FormData();
 
   formData.append("fullName", data.fullName);
@@ -60,6 +60,21 @@ export const register = async (data: RegisterRequest) => {
 
 
 // ---- LOGOUT ----
-export const logout = () => {
-  return api.get("/auth/logout");
+// src/services/authService.ts
+import { useRouter } from "next/navigation"; // nếu Next.js App Router
+
+export const logoutClient = () => {
+  // Xóa token lưu trong localStorage hoặc sessionStorage
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userRole");
+
+  // Nếu dùng sessionStorage
+  sessionStorage.removeItem("authToken");
+  sessionStorage.removeItem("userRole");
+
+  // Redirect về trang login
+  if (typeof window !== "undefined") {
+    window.location.href = "/auth"; 
+  }
 };
+

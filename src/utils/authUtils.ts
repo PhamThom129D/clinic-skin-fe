@@ -11,10 +11,10 @@ export function redirectByRole(
     case "ROLE_LAB_STAFF":
     case "ROLE_CONSULTANT":
     case "ROLE_CASHIER":
-      router.push("/dashboard");
+      router.push("/staff/dashboard");
       break;
     case "ROLE_PATIENT":
-      router.push("/home");
+      router.push("/user/dashboard");
       break;
     default:
       router.push("/");
