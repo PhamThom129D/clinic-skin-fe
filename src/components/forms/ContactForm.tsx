@@ -1,6 +1,7 @@
-import { Box, Container, Stack, Button } from "@mui/material";
+import { Box, Container, Stack } from "@mui/material";
 import React, { useState } from "react";
 import InputField from "../common/InputField";
+import ButtonPrimary from "../common/ButtonPrimary";
 import { validateFormContact } from "@/utils/validation/contactValidator";
 
 interface ContactFormProps {
@@ -43,6 +44,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             error={!!errors.fullname}
             helperText={errors.fullname}
           />
+
           <InputField
             label="Số điện thoại"
             name="phone"
@@ -52,6 +54,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             error={!!errors.phone}
             helperText={errors.phone}
           />
+
           <InputField
             label="Nội dung"
             name="reason"
@@ -63,9 +66,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             error={!!errors.reason}
             helperText={errors.reason}
           />
-          <Button variant="contained" size="large" onClick={handleSubmit}>
+
+          <ButtonPrimary onClick={handleSubmit} fullWidth>
             Gửi yêu cầu
-          </Button>
+          </ButtonPrimary>
         </Stack>
       </Container>
     </Box>

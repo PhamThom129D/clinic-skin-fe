@@ -20,7 +20,7 @@ export interface AuthResponse {
   status: string;
   roles: string[];
 }
-// types/RegisterFormData.ts
+
 export interface RegisterFormData {
   fullName: string;
   phoneNumber: string;
