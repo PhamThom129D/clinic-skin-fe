@@ -7,11 +7,13 @@ import { RegisterRequest } from "../types/user";
 export const login = (data: Pick<LoginRequest, "emailOrPhone" | "password">) => {
   return api.post<AuthResponse>("/auth/login", data);
 };
+// ---- LOGIN WITH GOOGLE ----
 
-// ---- LOGIN GOOGLE ----
 export const loginWithGoogle = (googleToken: string) => {
+  // gửi token lên backend, backend trả về AuthResponse
   return api.post<AuthResponse>("/auth/login-google", { token: googleToken });
 };
+
 
 // ---- LOGIN OTP ----
 export const loginWithOtp = (emailOrPhone: string) => {
@@ -28,21 +30,34 @@ export const resendOtp = (emailOrPhone: string) => {
   return api.post("/auth/resend-otp", { emailOrPhone });
 };
 
-// ---- REGISTER ----
-export const register = (data: RegisterRequest) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
-    }
-  });
 
-  return api.post<AuthResponse>("/auth/register", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+// ---- REGISTER ----
+export const register = async (data: RegisterRequest) => {
+  const formData = new FormData();
+
+  formData.append("fullName", data.fullName);
+  formData.append("email", data.email);
+  formData.append("password", data.password);
+  formData.append("address", data.address);
+
+  // dateOfBirth giữ nguyên yyyy-MM-dd
+  formData.append("dateOfBirth", data.dateOfBirth);
+
+  // gender in hoa: MALE/FEMALE/OTHER
+  formData.append("gender", data.gender);
+
+  formData.append("status", data.status ?? "ACTIVE");
+  formData.append("role", data.role);
+
+  if (data.avatarFile) {
+    formData.append("avatarFile", data.avatarFile);
+  }
+
+  return api.post("/auth/register", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
+
 
 // ---- LOGOUT ----
 export const logout = () => {

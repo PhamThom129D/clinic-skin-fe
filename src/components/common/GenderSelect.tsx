@@ -31,9 +31,9 @@ const GenderSelect: React.FC<GenderSelectProps> = ({
         <MenuItem value="">
           <em>-- Chọn giới tính --</em>
         </MenuItem>
-        <MenuItem value="Male">Nam</MenuItem>
-        <MenuItem value="Female">Nữ</MenuItem>
-        <MenuItem value="Other">Khác</MenuItem>
+        <MenuItem value="MALE">Nam</MenuItem>
+        <MenuItem value="FEMALE">Nữ</MenuItem>
+        <MenuItem value="OTHER">Khác</MenuItem>
       </Select>
       {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
