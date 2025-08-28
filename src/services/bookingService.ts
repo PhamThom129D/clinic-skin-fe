@@ -1,4 +1,5 @@
 // src/services/contactService.ts
+import { BookingData } from "@/types/booking";
 import api from "../api/api";
 import {
   ContactPayload,
@@ -28,4 +29,19 @@ export const getConsultationAssignments = (status?: ConsultationStatus) => {
     "/contacts/list-assignments",
     { params: status && status !== "ALL" ? { status } : {} }
   );
+};
+
+// ---- Tạo lịch khám ----
+export const registerAppointment = (data: BookingData) => {
+  return api.post("/appointments/register", data);
+};
+
+// ---- (Option) Lấy danh sách lịch khám theo user ----
+export const getAppointmentsByUser = (email: string) => {
+  return api.get("/appointments/by-user", { params: { email } });
+};
+
+// ---- (Option) Hủy lịch khám ----
+export const cancelAppointment = (id: number) => {
+  return api.delete(`/appointments/${id}`);
 };

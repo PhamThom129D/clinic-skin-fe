@@ -1,10 +1,9 @@
-import { Box, Container, Stack, TextField, Button } from "@mui/material";
+// src/components/common/ContactForm.tsx
+import { Box, Container, Stack, Button } from "@mui/material";
 import React, { useState } from "react";
-import {
-  required,
-  nameRule,
-  phoneRule,
-} from "@/utils/validators";
+
+import { required, nameRule, phoneRule } from "@/utils/validators";
+import InputField from "../common/InputField";
 
 interface ContactFormProps {
   onSubmit?: (data: { fullname: string; phone: string; reason: string }) => void;
@@ -17,7 +16,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: "" })); // reset lỗi
+    setErrors(prev => ({ ...prev, [name]: "" })); // reset lỗi khi sửa
   };
 
   const validateField = (name: string, value: string) => {
@@ -60,37 +59,34 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     <Box sx={{ py: { xs: 6, md: 10 } }}>
       <Container maxWidth="sm">
         <Stack spacing={3}>
-          <TextField
+          <InputField
             label="Họ và tên"
             name="fullname"
             value={form.fullname}
             onChange={handleChange}
+            type="text"
             error={!!errors.fullname}
             helperText={errors.fullname}
-            fullWidth
-            variant="outlined"
           />
-          <TextField
+          <InputField
             label="Số điện thoại"
             name="phone"
             value={form.phone}
             onChange={handleChange}
+            type="tel"
             error={!!errors.phone}
             helperText={errors.phone}
-            fullWidth
-            variant="outlined"
           />
-          <TextField
+          <InputField
             label="Nội dung"
             name="reason"
             value={form.reason}
             onChange={handleChange}
-            error={!!errors.reason}
-            helperText={errors.reason}
-            fullWidth
+            type="text"
             multiline
             rows={4}
-            variant="outlined"
+            error={!!errors.reason}
+            helperText={errors.reason}
           />
           <Button variant="contained" size="large" onClick={handleSubmit}>
             Gửi yêu cầu

@@ -15,6 +15,7 @@ import {
 import { Menu as MenuIcon, Close } from "@mui/icons-material";
 import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
+import BookingModal from "../sections/BookingModal";
 
 const menuItems = [
   { id: "banner", label: "Trang Chủ" },
@@ -25,6 +26,7 @@ const menuItems = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const theme = useTheme();
 
   const handleScroll = (id: string) => {
@@ -49,14 +51,7 @@ export default function Header() {
           }}
         >
           {/* Logo */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              flexShrink: 0,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0 }}>
             <Image
               src="/images/logo.png"
               alt="Logo"
@@ -69,9 +64,6 @@ export default function Header() {
                 fontWeight: "bold",
                 color: theme.palette.primary.main,
                 fontSize: { xs: "0.7rem", sm: "0.9rem", md: "1.1rem" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
                 display: { xs: "none", sm: "block" },
               }}
             >
@@ -80,44 +72,31 @@ export default function Header() {
           </Box>
 
           {/* Desktop Menu */}
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              gap: 2,
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2, alignItems: "center" }}>
             {menuItems.map((item) => (
               <Button
                 key={item.id}
-                sx={{
-                  fontWeight: "bold",
-                  color: theme.palette.primary.main,
-                }}
+                sx={{ fontWeight: "bold", color: theme.palette.primary.main }}
                 onClick={() => handleScroll(item.id)}
               >
                 {item.label}
               </Button>
             ))}
+
+            <Button variant="contained" sx={{ ml: 1 }} onClick={() => setBookingOpen(true)}>
+              Đặt lịch
+            </Button>
+
             <Button
               variant="outlined"
-              sx={{
-                borderColor: theme.palette.primary.main,
-                color: theme.palette.primary.main,
-              }}
+              sx={{ borderColor: theme.palette.primary.main, color: theme.palette.primary.main }}
             >
               Đăng nhập
             </Button>
           </Box>
 
           {/* Mobile Hamburger */}
-          <Box
-            sx={{
-              display: { xs: "flex", md: "none" },
-              justifyContent: "flex-end",
-              flex: 1,
-            }}
-          >
+          <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "flex-end", flex: 1 }}>
             <IconButton onClick={() => setMobileOpen(true)}>
               <MenuIcon />
             </IconButton>
@@ -126,11 +105,7 @@ export default function Header() {
       </AppBar>
 
       {/* Mobile Drawer */}
-      <Drawer
-        anchor="right"
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-      >
+      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
         <Box sx={{ width: "100vw", maxWidth: 300, p: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <IconButton onClick={() => setMobileOpen(false)}>
@@ -146,10 +121,12 @@ export default function Header() {
               </ListItem>
             ))}
             <ListItem disablePadding>
+              <ListItemButton onClick={() => setBookingOpen(true)}>Đặt lịch</ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
               <ListItemButton>Đăng nhập</ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              {/* Dark/Light toggle trong mobile menu */}
               <ThemeToggle />
             </ListItem>
           </List>
@@ -157,6 +134,7 @@ export default function Header() {
       </Drawer>
 
       <Toolbar /> {/* Spacer */}
+      <BookingModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
     </>
   );
 }
