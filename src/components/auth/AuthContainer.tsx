@@ -77,7 +77,7 @@ export default function AuthContainer() {
             >
               Đăng nhập hệ thống
             </Typography>
-            <LoginForm onSubmit={async (data) => console.log("Login:", data)} />
+            <LoginForm />
           </Box>
         </Box>
 

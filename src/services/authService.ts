@@ -7,11 +7,13 @@ import { RegisterRequest } from "../types/user";
 export const login = (data: Pick<LoginRequest, "emailOrPhone" | "password">) => {
   return api.post<AuthResponse>("/auth/login", data);
 };
+// ---- LOGIN WITH GOOGLE ----
 
-// ---- LOGIN GOOGLE ----
 export const loginWithGoogle = (googleToken: string) => {
+  // gửi token lên backend, backend trả về AuthResponse
   return api.post<AuthResponse>("/auth/login-google", { token: googleToken });
 };
+
 
 // ---- LOGIN OTP ----
 export const loginWithOtp = (emailOrPhone: string) => {
@@ -27,8 +29,6 @@ export const verifyOtp = (data: Pick<LoginRequest, "emailOrPhone" | "otpCode">) 
 export const resendOtp = (emailOrPhone: string) => {
   return api.post("/auth/resend-otp", { emailOrPhone });
 };
-
-// services/authService.ts
 
 
 // ---- REGISTER ----

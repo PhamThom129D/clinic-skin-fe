@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -13,16 +14,15 @@ import {
   TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { FcGoogle } from "react-icons/fc";
-
-
-import ButtonPrimary from "../common/ButtonPrimary";
-import { FormInput } from "../common/FormInput";
 import { notifyWarning, notifySuccess } from "@/utils/toast";
 import { LoginRequest } from "@/types/auth";
 import { passwordRule } from "@/utils/validation/validators";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import { login as loginApi } from "@/services/authService";
+import ButtonPrimary from "../common/ButtonPrimary";
+import { FormInput } from "../common/FormInput";
+import GoogleLoginButton from "./GoogleLoginButton";
+import { redirectByRole } from "@/utils/authUtils";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -45,13 +45,11 @@ export default function LoginForm() {
         password: data.password,
       });
 
-      const user = response.data; // toàn bộ thông tin user
+      const user = response.data;
       notifySuccess("Đăng nhập thành công!");
 
-      // Chọn role chính: lấy role đầu tiên
-      const role = user.roles[0] || "ROLE_PATIENT"; 
+      const role = user.roles[0] || "ROLE_PATIENT";
 
-      // Lưu token & role theo rememberMe
       if (data.rememberMe) {
         localStorage.setItem("authToken", user.token);
         localStorage.setItem("userRole", role);
@@ -59,30 +57,7 @@ export default function LoginForm() {
         sessionStorage.setItem("authToken", user.token);
         sessionStorage.setItem("userRole", role);
       }
- console.log("Redirecting to dashboard for role:", role);
-      // Redirect theo role
-      switch (role) {
-        case "ROLE_ADMIN":
-          router.push("/dashboard");
-          break;
-        case "ROLE_PATIENT":
-          router.push("/home");
-          break;
-        case "ROLE_DOCTOR":
-    
-        case "ROLE_RECEPTIONIST":
-    
-        case "ROLE_LAB_STAFF":
-    
-        case "ROLE_CONSULTANT":
-    
-        case "ROLE_CASHIER":
-         
-          router.push("/dashboard");
-          break;
-        default:
-          router.push("/");
-      }
+      redirectByRole(role, router);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Đăng nhập thất bại";
       notifyWarning(message);
@@ -104,37 +79,34 @@ export default function LoginForm() {
 
         {/* Password */}
         <Box mb={1.5}>
-
-<Controller
-  name="password"
-  control={control}
-  rules={passwordRule}
-  render={({ field, fieldState }) => (
-    <TextField
-      {...field}
-      type={showPassword ? "text" : "password"}
-      label="Mật khẩu"
-      error={!!fieldState.error}
-      helperText={fieldState.error?.message}
-      fullWidth
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              onClick={() => setShowPassword((v) => !v)}
-              edge="end"
-              size="small"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
-  )}
-/>
-
-
+          <Controller
+            name="password"
+            control={control}
+            rules={passwordRule}
+            render={({ field, fieldState }) => (
+              <TextField
+                {...field}
+                type={showPassword ? "text" : "password"}
+                label="Mật khẩu"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((v) => !v)}
+                        edge="end"
+                        size="small"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
         </Box>
 
         {/* Remember me & Forgot password */}
@@ -171,29 +143,12 @@ export default function LoginForm() {
 
         <Divider sx={{ my: 3 }}>Hoặc</Divider>
 
-        {/* Login with Google */}
+        {/* Google login */}
         <Box>
-          <ButtonPrimary
-            variant="outlined"
-            fullWidth
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 1,
-              color: "#000",
-              borderColor: "#ccc",
-              "&:hover": { backgroundColor: "#f5f5f5" },
-            }}
-            onClick={() => notifyWarning("Chức năng Google login chưa được triển khai")}
-          >
-            <FcGoogle size={24} />
-            Đăng nhập bằng Google
-          </ButtonPrimary>
+          <GoogleLoginButton />
         </Box>
       </form>
 
-      {/* Forgot Password Modal */}
       <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </>
   );
