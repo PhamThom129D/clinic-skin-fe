@@ -14,23 +14,25 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon, Close } from "@mui/icons-material";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 import ThemeToggle from "@/components/ThemeToggle";
 import BookingModal from "../sections/BookingModal";
-
-const menuItems = [
-  { id: "banner", label: "Trang Chủ" },
-  { id: "offers", label: "Ưu Đãi" },
-  { id: "doctor-team", label: "Bác Sĩ" },
-  { id: "contact-booking", label: "Liên Hệ" },
-];
+import menuItems from "@/components/common/menuItems";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const theme = useTheme();
+  const router = useRouter();
 
   const handleScroll = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileOpen(false);
+  };
+
+  const goToAuth = () => {
+    router.push("/auth");
     setMobileOpen(false);
   };
 
@@ -90,6 +92,7 @@ export default function Header() {
             <Button
               variant="outlined"
               sx={{ borderColor: theme.palette.primary.main, color: theme.palette.primary.main }}
+              onClick={goToAuth} // redirect
             >
               Đăng nhập
             </Button>
@@ -124,7 +127,7 @@ export default function Header() {
               <ListItemButton onClick={() => setBookingOpen(true)}>Đặt lịch</ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton>Đăng nhập</ListItemButton>
+              <ListItemButton onClick={goToAuth}>Đăng nhập</ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ThemeToggle />

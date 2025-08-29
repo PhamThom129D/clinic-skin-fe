@@ -2,9 +2,9 @@
 import { ConsultationStatus } from "./enums";
 
 export interface ContactPayload {
-  fullname: string;   // KHÔNG phải fullName
-  phone: string;      // KHÔNG phải phoneNumber
-  reason: string;     // KHÔNG phải message
+  fullname: string;   
+  phone: string;      
+  reason: string;     
 }
 
 // DTO để gán tư vấn viên
