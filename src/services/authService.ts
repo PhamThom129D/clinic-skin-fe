@@ -2,7 +2,6 @@
 import api from "../api/api";
 import { LoginRequest, AuthResponse, RegisterFormData } from "../types/auth";
 
-
 // ---- LOGIN ----
 export const login = (data: Pick<LoginRequest, "emailOrPhone" | "password">) => {
   return api.post<AuthResponse>("/auth/login", data);
@@ -59,20 +58,19 @@ export const register = async (data: RegisterFormData) => {
 };
 
 
-// ---- LOGOUT ----
-// src/services/authService.ts
-import { useRouter } from "next/navigation"; // nếu Next.js App Router
+// ---- https://drive.google.com/drive/folders/1Iy4nXQr2iFL1iCeD6GYSVTGSr_RsBN3z ----
+
+
 
 export const logoutClient = () => {
-  // Xóa token lưu trong localStorage hoặc sessionStorage
+
   localStorage.removeItem("authToken");
   localStorage.removeItem("userRole");
 
-  // Nếu dùng sessionStorage
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("userRole");
 
-  // Redirect về trang login
+
   if (typeof window !== "undefined") {
     window.location.href = "/auth"; 
   }
