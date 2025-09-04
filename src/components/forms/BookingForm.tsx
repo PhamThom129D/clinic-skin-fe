@@ -91,6 +91,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     }
 
     try {
+      console.log("Payload gửi đi:", form);
+
       await registerAppointment(form);
       notifySuccess("Đặt lịch thành công! Chúng tôi sẽ liên hệ bạn sớm.");
       onSubmit?.(form);

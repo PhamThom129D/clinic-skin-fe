@@ -17,7 +17,7 @@ export default function AuthContainer() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#c1f6ffff", // nền dịu mắt
+        bgcolor: "#c1f6ffff", 
       }}
     >
       <Paper
@@ -98,7 +98,7 @@ export default function AuthContainer() {
             backgroundPosition: "center",
             transform: "skewX(-8deg)",
             transformOrigin: "left center",
-            // opacity: 0.9, // tăng độ trong suốt
+      
             filter: "brightness(0.75)",
           }}
         />

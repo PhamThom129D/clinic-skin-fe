@@ -12,7 +12,7 @@ const Topbar: React.FC<TopbarProps> = ({ username, role }) => {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.push("/logout"); // chuyển hướng sang /logout
+    router.push("/logout"); 
   };
 
   return (

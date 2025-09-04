@@ -2,7 +2,7 @@
 export interface LoginRequest {
   emailOrPhone: string;
   password: string;
-  rememberMe?: boolean; // thêm optional
+  rememberMe?: boolean; 
   otpCode?: string;
   googleToken?: string;
 }
@@ -13,7 +13,7 @@ export interface AuthResponse {
   fullName: string;
   email: string;
   phoneNumber: string;
-  dateOfBirth: string; // BE trả LocalDate, FE nhận string
+  dateOfBirth: string; 
   address: string;
   gender: string;
   avatarUrl: string;
@@ -28,10 +28,10 @@ export interface RegisterFormData {
   password: string;
   confirmPassword: string;
   address: string;
-  dateOfBirth: string; // gửi dạng "dd-MM-yyyy" (theo @JsonFormat)
-  gender: "MALE" | "FEMALE" | "OTHER"; // Enum Gender bên backend
-  status?: "Active" | "Inactive" | "Banned"; // Enum AccountStatus (nếu cần gửi)
-  avatarFile?: File; // File upload từ input type="file"
+  dateOfBirth: string; 
+  gender: "MALE" | "FEMALE" | "OTHER"; 
+  status?: "Active" | "Inactive" | "Banned"; 
+  avatarFile?: File; 
   role: string;
 }
 

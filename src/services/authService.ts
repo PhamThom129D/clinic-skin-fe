@@ -9,7 +9,6 @@ export const login = (data: Pick<LoginRequest, "emailOrPhone" | "password">) => 
 // ---- LOGIN WITH GOOGLE ----
 
 export const loginWithGoogle = (googleToken: string) => {
-  // gửi token lên backend, backend trả về AuthResponse
   return api.post<AuthResponse>("/auth/login-google", { token: googleToken });
 };
 
@@ -38,11 +37,7 @@ export const register = async (data: RegisterFormData) => {
   formData.append("email", data.email);
   formData.append("password", data.password);
   formData.append("address", data.address);
-
-  // dateOfBirth giữ nguyên yyyy-MM-dd
   formData.append("dateOfBirth", data.dateOfBirth);
-
-  // gender in hoa: MALE/FEMALE/OTHER
   formData.append("gender", data.gender);
 
   formData.append("status", data.status ?? "ACTIVE");
@@ -58,7 +53,7 @@ export const register = async (data: RegisterFormData) => {
 };
 
 
-// ---- https://drive.google.com/drive/folders/1Iy4nXQr2iFL1iCeD6GYSVTGSr_RsBN3z ----
+
 
 
 

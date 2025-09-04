@@ -23,6 +23,7 @@ import {
   dateOfBirthRule,
 } from "@/utils/validation/validators";
 import { useRouter } from "next/navigation";
+import { redirectByRole } from "@/utils/authUtils";
 
 type RegisterFormProps = {
   onSubmit?: (data: RegisterFormData) => Promise<void>;
@@ -60,17 +61,16 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
       avatarFile: avatarFile ?? undefined,
       role: "ROLE_PATIENT",
       status: data.status ?? "Active",
-        email: data.email || "",       // không để undefined
+        email: data.email || "",      
   phoneNumber: data.phoneNumber || "",
-      // **dateOfBirth giữ nguyên yyyy-MM-dd**
+
     };
 try {
   await registerAPI(formattedData);
   notifySuccess("Đăng ký thành công!");
   if (onSubmit) await onSubmit(data);
-  router.push("/dashboard");
+  redirectByRole("ROLE_PATIENT", router);
 } catch (err: unknown) {
-  // Cast an toàn sang kiểu có response.data
   const maybeError = err as { response?: { data?: FieldErrorResponse } };
   const fieldError = maybeError?.response?.data;
 
