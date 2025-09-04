@@ -6,6 +6,7 @@ import Topbar from "./Topbar";
 import Content from "./Content";
 import { Role } from "../menuItem";
 import { Box } from "@mui/material";
+import PatientDashboard from "./doctor/PatientDashboard";
 
 interface DashboardLayoutProps {
   username: string;
@@ -20,7 +21,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ username, role }) => 
       <Sidebar role={role} selectedMenu={selectedMenu} onSelectMenu={setSelectedMenu} />
       <Box display="flex" flexDirection="column" flex={1}>
         <Topbar username={username} role={role} />
-        <Content selectedMenu={selectedMenu} />
+        <PatientDashboard/>
+        {/* <Content selectedMenu={selectedMenu} /> */}
       </Box>
     </Box>
   );

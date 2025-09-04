@@ -1,0 +1,96 @@
+.patient-list-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 0;
+}
+
+.patient-list-wrapper {
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+}
+
+.patient-list-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2563eb;
+  text-align: center;
+}
+
+.patient-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  table-layout: fixed;
+}
+
+.patient-list-table th,
+.patient-list-table td {
+  border: 1px solid #ccc;
+  padding: 12px;
+}
+
+.patient-list-table th {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: bold;
+  text-align: center;
+}
+
+.patient-list-table td {
+  text-align: center;
+}
+
+.patient-list-table tr:hover {
+  background: #eff6ff;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+/* Cột cụ thể */
+.patient-col-stt {
+  width: 60px;
+}
+
+.patient-col-name {
+  width: 200px;
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patient-col-age {
+  width: 80px;
+}
+
+.patient-col-gender {
+  width: 100px;
+}
+
+.patient-col-symptoms {
+  width: 300px;
+  text-align: left;
+}
+
+.patient-col-action {
+  width: 150px;
+}
+
+.patient-btn-exam {
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.patient-btn-exam:hover {
+  background: #1d4ed8;
+}
