@@ -135,8 +135,8 @@ export default function AuthContainer() {
             elevation={24}
             sx={{
               width: "100%",
-              maxWidth: 900,
-              height: 650, // Chiều cao cố định để tránh co giãn
+              maxWidth: 1000,
+              height: 900, // Chiều cao cố định để tránh co giãn
               borderRadius: 5,
               background: isDark 
                 ? `linear-gradient(135deg, 

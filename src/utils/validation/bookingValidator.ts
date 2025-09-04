@@ -1,4 +1,3 @@
-import { required } from '@/utils/validation/validators';
 import {
   fullNameRule,
   emailRule,
@@ -7,82 +6,86 @@ import {
   occupationRule,
   genderRule,
   dateOfBirthRule,
-  appointmentDateRule,
-  appointmentTimeRule,
   doctorIdRule,
   addressRule,
+  required,
+  createBookingRules,
 } from "./validators";
 import { BookingData } from "@/types/booking";
 
+// type cho rule
+type ValidationRule<T> = {
+  required?: string;
+  minLength?: { value: number; message: string };
+  pattern?: { value: RegExp; message: string };
+  validate?: (val: T, data?: BookingData) => true | string;
+};
+
 type BookingErrors = Partial<Record<keyof BookingData, string>>;
+
+const { appointmentDateRule, appointmentTimeRule } = createBookingRules();
 
 export const validateField = (
   name: keyof BookingData,
-  value: BookingData[keyof BookingData]
+  value: BookingData[keyof BookingData],
+  data?: BookingData
 ): string | undefined => {
   let error: string | undefined;
 
+  const runValidate = <T>(
+    rule: ValidationRule<T>,
+    val: T
+  ): string | undefined => {
+    if (!val && rule.required) return rule.required;
+    if (rule.minLength && String(val).length < rule.minLength.value) {
+      return rule.minLength.message;
+    }
+    if (rule.pattern && !rule.pattern.value.test(String(val))) {
+      return rule.pattern.message;
+    }
+    if (rule.validate) {
+      const result = rule.validate(val, data);
+      if (result !== true) {
+        return typeof result === "string" ? result : "Giá trị không hợp lệ";
+      }
+    }
+    return undefined;
+  };
+
   switch (name) {
     case "fullName":
-      if (!value) error = fullNameRule.required;
-      else if (String(value).length < fullNameRule.minLength.value)
-        error = fullNameRule.minLength.message;
-      else if (!fullNameRule.pattern.value.test(String(value)))
-        error = fullNameRule.pattern.message;
+      error = runValidate(fullNameRule, value as string);
       break;
-
     case "email":
-      if (!value) error = emailRule.required;
-      else if (!emailRule.pattern.value.test(String(value)))
-        error = emailRule.pattern.message;
+      error = runValidate(emailRule, value as string);
       break;
-
     case "phoneNumber":
-      if (!value) error = phoneNumberRule.required;
-      else if (!phoneNumberRule.pattern.value.test(String(value)))
-        error = phoneNumberRule.pattern.message;
+      error = runValidate(phoneNumberRule, value as string);
       break;
-
     case "passportNumber":
-      if (!value) error = passportRule.required;
-      else if (!passportRule.pattern.value.test(String(value)))
-        error = passportRule.pattern.message;
+      error = runValidate(passportRule, value as string);
       break;
-
     case "occupation":
-      if (!value) error = occupationRule.required;
-      else if (!occupationRule.pattern.value.test(String(value)))
-        error = occupationRule.pattern.message;
+      error = runValidate(occupationRule, value as string);
       break;
-
     case "address":
-      if (!value) error = addressRule.required;
-      else if (String(value).length < addressRule.minLength.value)
-        error = addressRule.minLength.message;
+      error = runValidate(addressRule, value as string);
       break;
-
     case "gender":
-      if (!value) error = genderRule.required;
+      error = runValidate(genderRule, value as string);
       break;
-
     case "dateOfBirth":
-      if (!value) error = dateOfBirthRule.required;
+      error = runValidate(dateOfBirthRule, value as string);
       break;
-
     case "appointmentDate":
-      if (!value) error = appointmentDateRule.required;
+      error = runValidate(appointmentDateRule, value as string);
       break;
-
     case "appointmentTime":
-      if (!value) error = appointmentTimeRule.required;
-      else if (!appointmentTimeRule.pattern.value.test(String(value)))
-        error = appointmentTimeRule.pattern.message;
+      error = runValidate(appointmentTimeRule, value as string);
       break;
-
     case "doctorId":
-      if (!value) error = doctorIdRule.required;
+      error = runValidate(doctorIdRule, value as number);
       break;
-
     default:
       break;
   }
@@ -90,16 +93,13 @@ export const validateField = (
   return error;
 };
 
-
 export const validateFormBooking = (
   data: BookingData
 ): BookingErrors => {
   const errors: BookingErrors = {};
-
   (Object.keys(data) as (keyof BookingData)[]).forEach((key) => {
-    const error = validateField(key, data[key]);
+    const error = validateField(key, data[key], data);
     if (error) errors[key] = error;
   });
-
   return errors;
 };
