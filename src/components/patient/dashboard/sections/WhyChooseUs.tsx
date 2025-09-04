@@ -24,7 +24,7 @@ const WhyChooseUs: React.FC = () => {
   useEffect(() => {
     const fetchReasons = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/screen/reasons");
+        const response = await axios.get("http://localhost:1209/api/reasons");
         setReasons(response.data);
       } catch (error) {
         console.error("Error fetching reasons:", error);

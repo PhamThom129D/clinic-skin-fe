@@ -18,7 +18,7 @@ const DoctorTeamSimple: React.FC = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get("http://localhost:1209/api/screen/doctors");
+        const response = await axios.get("http://localhost:1209/api/doctors/basic");
         setDoctors(response.data);
       } catch (error) {
         console.error("Error fetching doctors:", error);
