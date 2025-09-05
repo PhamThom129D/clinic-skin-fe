@@ -35,7 +35,7 @@ export default function ForgotPasswordModal({ open, onClose }: ForgotPasswordMod
   });
   const [otpStage, setOtpStage] = useState(false);
   const [emailValue, setEmailValue] = useState("");
-  const [loading, setLoading] = useState(false); // trạng thái gửi OTP
+  const [loading, setLoading] = useState(false); 
 
   const handleError = (err: unknown, fallbackMessage: string) => {
     if (err instanceof Error) notifyWarning(err.message);
@@ -77,17 +77,14 @@ const handleVerifyOTP = async (otpCode: string) => {
     setOtpStage(false);
     reset();
   } catch (err: unknown) {
-    // Chỉ dùng AxiosError mà không kèm generic trong instanceof
     if (err instanceof AxiosError) {
       if (err.response?.status === 400 && err.response.data?.error === "Invalid OTP . Please try again.") {
         notifyWarning("OTP không đúng, vui lòng thử lại.");
-        return; // dừng xử lý, không show thông báo chung
+        return; 
       }
       notifyWarning(err.response?.data?.error || "Xác thực OTP thất bại");
       return;
     }
-
-    // Nếu không phải AxiosError
     if (err instanceof Error) {
       notifyWarning(err.message);
     } else {
@@ -96,7 +93,6 @@ const handleVerifyOTP = async (otpCode: string) => {
   }
 };
 
-  // Gửi lại OTP
   const handleResendOTP = async () => {
     try {
       await resendOtp(emailValue);
@@ -147,7 +143,7 @@ const handleVerifyOTP = async (otpCode: string) => {
             form="forgot-form"
             variant="contained"
             sx={{ fontSize: "1rem", position: "relative" }}
-            disabled={loading} // khóa nút khi đang gửi
+            disabled={loading}
           >
             {loading ? (
               <CircularProgress size={24} sx={{ color: "white" }} />

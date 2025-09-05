@@ -8,10 +8,10 @@ export const getDoctorsBasic = () => {
 
 
 export const getOffers = () => {
-  return api.get<Offer[]>("/offers");
+  return api.get<Offer[]>("/screen-dashboard/offers");
 };
 
 
 export const getTestimonials = () => {
-  return api.get<Testimonial[]>("/testimonials");
+  return api.get<Testimonial[]>("/screen-dashboard/testimonials");
 };

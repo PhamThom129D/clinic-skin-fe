@@ -23,6 +23,7 @@ import {
   dateOfBirthRule,
 } from "@/utils/validation/validators";
 import { useRouter } from "next/navigation";
+import { redirectByRole } from "@/utils/authUtils";
 
 type RegisterFormProps = {
   onSubmit?: (data: RegisterFormData) => Promise<void>;
@@ -60,17 +61,16 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
       avatarFile: avatarFile ?? undefined,
       role: "ROLE_PATIENT",
       status: data.status ?? "Active",
-        email: data.email || "",       // không để undefined
+        email: data.email || "",      
   phoneNumber: data.phoneNumber || "",
-      // **dateOfBirth giữ nguyên yyyy-MM-dd**
+
     };
 try {
   await registerAPI(formattedData);
   notifySuccess("Đăng ký thành công!");
   if (onSubmit) await onSubmit(data);
-  router.push("/dashboard");
+  redirectByRole("ROLE_PATIENT", router);
 } catch (err: unknown) {
-  // Cast an toàn sang kiểu có response.data
   const maybeError = err as { response?: { data?: FieldErrorResponse } };
   const fieldError = maybeError?.response?.data;
 
@@ -87,37 +87,72 @@ try {
   };
 
   return (
-    <Paper
-      elevation={4}
-      sx={{ p: { xs: 3, md: 6 }, maxWidth: 900, mx: "auto", mt: 6, borderRadius: 3, backgroundColor: "#fff" }}
-    >
+    <Box sx={{ width: "100%", pb: 2 }}> {/* Thêm padding bottom */}
       <form onSubmit={handleSubmit(handleFinalSubmit)}>
-        {/* Avatar */}
-        <Box display="flex" justifyContent="center" mb={4}>
-          <AvatarUpload preview={avatarPreview} onChange={handleAvatarChange} />
+        {/* Avatar - thu nhỏ lại */}
+        <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
+          <AvatarUpload 
+            preview={avatarPreview} 
+            onChange={handleAvatarChange}
+          />
         </Box>
 
-        {/* Grid container */}
-        <Box display="grid" gridTemplateColumns={{ xs: "1fr", md: "1fr 1fr" }} gap={3}>
-          {/* Cột trái */}
-          <Box display="flex" flexDirection="column" gap={2}>
-            <FormInput name="email" control={control} label="Email" rules={emailRule} />
-            <FormInput name="password" control={control} label="Mật khẩu" type="password" rules={passwordRule} />
-            <FormInput
-              name="confirmPassword"
-              control={control}
-              label="Xác nhận mật khẩu"
-              type="password"
-              rules={{ ...confirmPasswordRule, validate: (v) => v === password || "Mật khẩu xác nhận không khớp" }}
+        {/* Grid container với spacing nhỏ hơn */}
+        <Box 
+          display="grid" 
+          gridTemplateColumns="1fr" // Chỉ 1 cột để tiết kiệm không gian
+          gap={2} // Giảm gap
+          sx={{ mb: 2 }} // Giảm margin bottom
+        >
+          <FormInput 
+            name="fullName" 
+            control={control} 
+            label="Họ và tên" 
+            rules={fullNameRule} 
+          />
+          <FormInput 
+            name="email" 
+            control={control} 
+            label="Email" 
+            rules={emailRule} 
+          />
+          <FormInput 
+            name="phoneNumber" 
+            control={control} 
+            label="Số điện thoại" 
+            rules={phoneNumberRule} 
+          />
+          <FormInput 
+            name="password" 
+            control={control} 
+            label="Mật khẩu" 
+            type="password" 
+            rules={passwordRule} 
+          />
+          <FormInput
+            name="confirmPassword"
+            control={control}
+            label="Xác nhận mật khẩu"
+            type="password"
+            rules={{ 
+              ...confirmPasswordRule, 
+              validate: (v) => v === password || "Mật khẩu xác nhận không khớp" 
+            }}
+          />
+          
+          {/* Grid 2 cột cho các trường ngắn */}
+          <Box 
+            display="grid" 
+            gridTemplateColumns="1fr 1fr" 
+            gap={2}
+          >
+            <FormInput 
+              name="dateOfBirth" 
+              control={control} 
+              label="Ngày sinh" 
+              type="date" 
+              rules={dateOfBirthRule} 
             />
-            <FormInput name="address" control={control} label="Địa chỉ" rules={addressRule} />
-          </Box>
-
-          {/* Cột phải */}
-          <Box display="flex" flexDirection="column" gap={2}>
-            <FormInput name="fullName" control={control} label="Họ và tên" rules={fullNameRule} />
-            <FormInput name="phoneNumber" control={control} label="Số điện thoại" rules={phoneNumberRule} />
-            <FormInput name="dateOfBirth" control={control} label="Ngày sinh" type="date" rules={dateOfBirthRule} />
             <GenderSelect
               name="gender"
               value={gender}
@@ -126,14 +161,34 @@ try {
               helperText={errors.gender?.message}
             />
           </Box>
+          
+          <FormInput 
+            name="address" 
+            control={control} 
+            label="Địa chỉ" 
+            rules={addressRule} 
+          />
         </Box>
 
-        <Box mt={4}>
-          <ButtonPrimary type="submit" fullWidth>
-            Đăng ký
-          </ButtonPrimary>
-        </Box>
+        <ButtonPrimary 
+          type="submit" 
+          fullWidth
+          sx={{
+            py: 1.2, // Giảm padding
+            fontSize: "0.9rem", // Giảm font size
+            borderRadius: 3,
+            background: "linear-gradient(135deg, #64ce82, #4caf50)",
+            "&:hover": {
+              background: "linear-gradient(135deg, #4caf50, #388e3c)",
+              transform: "translateY(-2px)",
+              boxShadow: "0 8px 25px rgba(100, 206, 130, 0.3)",
+            },
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        >
+          Đăng ký tài khoản
+        </ButtonPrimary>
       </form>
-    </Paper>
+    </Box>
   );
 }
