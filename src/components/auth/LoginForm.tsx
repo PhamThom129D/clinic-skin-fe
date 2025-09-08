@@ -82,8 +82,11 @@ export default function LoginForm() {
         sessionStorage.setItem("authToken", user.token);
         sessionStorage.setItem("userRole", role);
       }
+      window.dispatchEvent(new Event("authChange"));
 
       redirectByRole(role, router);
+
+
     } catch (err: unknown) {
       notifyWarning(err instanceof Error ? err.message : "Đăng nhập thất bại");
     }
