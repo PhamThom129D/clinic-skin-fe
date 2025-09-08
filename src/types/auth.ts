@@ -6,7 +6,10 @@ export interface LoginRequest {
   otpCode?: string;
   googleToken?: string;
 }
-
+export type FieldErrorResponse = {
+  field: keyof RegisterFormData;
+  message: string;
+};
 
 export interface AuthResponse {
   token: string;
@@ -20,6 +23,7 @@ export interface AuthResponse {
   status: string;
   roles: string[];
 }
+
 
 export interface RegisterFormData {
   fullName: string;

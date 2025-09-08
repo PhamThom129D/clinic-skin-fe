@@ -43,8 +43,8 @@ export default function AuthContainer() {
         <Paper
           elevation={24}
           sx={{
-            width: { xs: "85%", md: "60vw" }, // mobile: 95%, desktop: 3/4 màn hình
-            minHeight: 800,
+            width: { xs: "85%", md: "60vw"}, // mobile: 95%, desktop: 3/4 màn hình
+            minHeight: 900,
             borderRadius: 5,
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
@@ -57,21 +57,21 @@ export default function AuthContainer() {
           }}
         >
           {/* Left Panel */}
-          <Box
-            sx={{
-              flex: { xs: "unset", md: 1 },
-              width: { xs: "100%", md: "50%" },
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              p: 4,
-              background: isDark
-                ? alpha("#2d5a3d", 0.05)
-                : alpha("#4caf50", 0.05),
-            }}
-          >
-            <LeftPanel isLogin={isLogin} toggleLogin={() => setIsLogin(!isLogin)} />
-          </Box>
+       <Box
+  sx={{
+    flex: 1, // thay cho flex: { xs: "unset", md: 1 }
+    width: { xs: "100%", md: "50%" },
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 900,
+    p: 4,
+    background: isDark ? alpha("#2d5a3d", 0.05) : alpha("#4caf50", 0.05),
+  }}
+>
+  <LeftPanel isLogin={isLogin} toggleLogin={() => setIsLogin(!isLogin)} />
+</Box>
+
 
           {/* Right Panel */}
           <Box
