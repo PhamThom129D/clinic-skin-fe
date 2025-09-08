@@ -25,6 +25,7 @@ const DoctorTeamSimple: React.FC = () => {
           sx={{
             textAlign: "center",
             maxWidth: { xs: "100%", sm: 250 },
+            mx: 8,
             flex: { xs: "1 1 100%", sm: "1 1 250px" },
           }}
         >
@@ -32,9 +33,9 @@ const DoctorTeamSimple: React.FC = () => {
             component="img"
             src={doc.avtPath}
             alt={doc.fullName}
-            sx={{ width: "100%", height: "auto", borderRadius: 2, mb: 1 }}
+            sx={{ width: "100%", height: "auto", borderRadius: 2, mb: 1}}
           />
-          <Typography variant="h6" sx={{ mt: 1 }}>
+          <Typography variant="h5" sx={{ mt: 1 }}>
             {doc.fullName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
