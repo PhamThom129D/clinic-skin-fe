@@ -1,4 +1,3 @@
-// src/components/Booking/BookingForm.tsx
 import React, { useState } from "react";
 import {
   Stack,
@@ -10,6 +9,7 @@ import {
   Divider,
   Grid,
   SelectChangeEvent,
+  useTheme,
 } from "@mui/material";
 import InputField from "../common/InputField";
 import { BookingData } from "@/types/booking";
@@ -31,6 +31,7 @@ interface BookingFormProps {
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
+  const theme = useTheme();
   const [form, setForm] = useState<BookingData>({
     fullName: "",
     email: "",
@@ -49,7 +50,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
   const { data: doctors, isLoading } = useFetchData<Doctor[]>(getDoctorsBasic);
   const [errors, setErrors] = useState<Errors>({});
 
-  // Dùng cho input/textarea
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -58,22 +58,17 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
       ...prev,
       [name]: name === "doctorId" ? Number(value) : value,
     }));
-
-    // validate ngay khi nhập
     const err = validateField(name as keyof BookingData, value);
     setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
-  // Dùng riêng cho Select (MUI SelectChangeEvent)
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-
     const err = validateField(name as keyof BookingData, value);
     setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
-  // Dùng riêng cho chọn bác sĩ
   const handleSelectDoctor = (id: number) => {
     setForm((prev) => ({ ...prev, doctorId: id }));
     const err = validateField("doctorId", id);
@@ -82,22 +77,16 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const validationErrors = validateFormBooking(form);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       notifyWarning("Vui lòng kiểm tra lại thông tin.");
       return;
     }
-
     try {
-      console.log("Payload gửi đi:", form);
-
       await registerAppointment(form);
       notifySuccess("Đặt lịch thành công! Chúng tôi sẽ liên hệ bạn sớm.");
       onSubmit?.(form);
-
-
       setForm({
         fullName: "",
         email: "",
@@ -120,19 +109,29 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Paper elevation={4} sx={{ p: 4, borderRadius: 3 }}>
+<Paper
+  elevation={6}
+  sx={{
+    p: 4,
+    borderRadius: 3,
+    background: "#dffbec", 
+    maxWidth: "95%",        
+    mx: "auto",
+  }}
+>
+
       <form onSubmit={handleSubmit}>
         <Stack spacing={4}>
           <Typography
             variant="h5"
             fontWeight="bold"
             textAlign="center"
-            color="primary"
+            color="#158437" // màu xanh chủ đạo
           >
             Đặt lịch khám
           </Typography>
 
-          <Divider />
+          <Divider sx={{ borderColor: "#a0d9b8" }} />
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
             {/* Thông tin cá nhân */}
@@ -140,7 +139,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
               <Typography
                 variant="subtitle1"
                 fontWeight={600}
-                color="text.secondary"
+                color="#046920"
               >
                 Thông tin cá nhân
               </Typography>
@@ -152,6 +151,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 error={!!errors.fullName}
                 helperText={errors.fullName}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Email"
@@ -161,6 +161,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 type="email"
                 error={!!errors.email}
                 helperText={errors.email}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Số điện thoại"
@@ -169,6 +170,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="CMND/Hộ chiếu"
@@ -177,6 +179,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 error={!!errors.passportNumber}
                 helperText={errors.passportNumber}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Nghề nghiệp"
@@ -185,6 +188,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 error={!!errors.occupation}
                 helperText={errors.occupation}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Địa chỉ"
@@ -193,6 +197,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 error={!!errors.address}
                 helperText={errors.address}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
 
               <GenderSelect
@@ -211,6 +216,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 type="date"
                 error={!!errors.dateOfBirth}
                 helperText={errors.dateOfBirth}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
             </Stack>
 
@@ -219,7 +225,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
               <Typography
                 variant="subtitle1"
                 fontWeight={600}
-                color="text.secondary"
+                color="#046920"
               >
                 Thông tin đặt lịch
               </Typography>
@@ -231,6 +237,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 type="date"
                 error={!!errors.appointmentDate}
                 helperText={errors.appointmentDate}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Giờ khám"
@@ -240,6 +247,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 type="time"
                 error={!!errors.appointmentTime}
                 helperText={errors.appointmentTime}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
               <InputField
                 label="Ghi chú"
@@ -248,6 +256,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 onChange={handleChange}
                 multiline
                 rows={4}
+                sx={{ backgroundColor: "#eaf9ee" }}
               />
 
               {/* Chọn bác sĩ */}
@@ -268,24 +277,25 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                           sx={{
                             width: 200,
                             height: 200,
+                            borderRadius: 3,
                             border:
                               form.doctorId === doc.doctorId
-                                ? "2px solid #1976d2"
-                                : "1px solid #ddd",
-                            borderRadius: 2,
+                                ? "2px solid #158437"
+                                : "1px solid #cce9dd",
                             p: 2,
                             cursor: "pointer",
                             textAlign: "center",
                             transition: "all 0.25s",
                             "&:hover": {
                               transform: "scale(1.05)",
-                              borderColor: "#1976d2",
-                              boxShadow: 3,
+                              borderColor: "#158437",
+                              boxShadow:
+                                "0 6px 16px rgba(21,132,55,0.15)",
                             },
                             bgcolor:
                               form.doctorId === doc.doctorId
-                                ? "action.hover"
-                                : "background.paper",
+                                ? "#d4f8e0"
+                                : "#fdfdfd",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
@@ -337,6 +347,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
               fontWeight: 600,
               fontSize: "1rem",
               textTransform: "none",
+              background: "linear-gradient(90deg, #158437, #52b788)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #046920, #0a5a3b)",
+              },
             }}
           >
             Đặt lịch ngay

@@ -1,14 +1,10 @@
-// src/components/ContactBooking.tsx
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
 import { createContact } from "@/services/bookingService";
 import ContactForm from "@/components/forms/ContactForm";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
-
 export default function ContactBooking() {
-  const theme = useTheme();
-
   const handleSubmit = async (data: { fullname: string; phone: string; reason: string }) => {
     try {
       await createContact(data);
@@ -21,22 +17,34 @@ export default function ContactBooking() {
 
   return (
     <Box sx={{ py: { xs: 10, md: 16 } }} id="booking">
-      <Typography
-        variant="h4"
-        textAlign="center"
-        gutterBottom
-        sx={{ fontWeight: "bold", color: theme.palette.primary.main }}
+      {/* Tiêu đề chính đồng bộ */}
+      <Box
+        component="h2"
+        sx={{
+          textTransform: "uppercase",
+          letterSpacing: 2,
+          fontWeight: "bold",
+          fontSize: { xs: "2rem", md: "2.5rem" },
+          textAlign: "center",
+          background: "linear-gradient(90deg, #158437, #52b788)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          mb: 2,
+        }}
       >
         Liên Hệ & Đặt Lịch
-      </Typography>
+      </Box>
+
+      {/* Nội dung phụ */}
       <Typography
-        variant="body1"
+        variant="subtitle1"
         textAlign="center"
-        sx={{ mb: { xs: 4, md: 6 }, color: "text.secondary" }}
+        sx={{ mb: { xs: 4, md: 6 }, color: "text.secondary", fontSize: "1.1rem" }}
       >
         Vui lòng điền thông tin dưới đây, chúng tôi sẽ liên hệ bạn sớm nhất.
       </Typography>
 
+      {/* Gọi ContactForm */}
       <ContactForm onSubmit={handleSubmit} />
     </Box>
   );

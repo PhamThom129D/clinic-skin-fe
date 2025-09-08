@@ -3,105 +3,75 @@ import { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
-  Button,
   Box,
   IconButton,
   Drawer,
   List,
   ListItem,
-  ListItemButton,
   useTheme,
   alpha,
 } from "@mui/material";
 import { Menu as MenuIcon, Close, AutoAwesome } from "@mui/icons-material";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import ThemeToggle from "@/components/ThemeToggle";
 import BookingModal from "../sections/BookingModal";
 import menuItems from "@/components/common/menuItems";
-import { logoutClient } from "@/services/authService";
+import MenuButton from "@/components/common/MenuButton";
+import AuthButton, { BookingButton } from "../sections/AuthButton";
+
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const theme = useTheme();
-  const router = useRouter();
+  const isDark = theme.palette.mode === "dark";
 
-  // Theo dõi scroll
+  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => {};
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Check auth
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+      const token =
+        localStorage.getItem("authToken") ||
+        sessionStorage.getItem("authToken");
       setIsLoggedIn(!!token);
     };
-
-
-    checkAuth(); 
-
+    checkAuth();
     window.addEventListener("authChange", checkAuth);
     return () => window.removeEventListener("authChange", checkAuth);
   }, []);
-
 
   const handleScroll = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileOpen(false);
   };
 
-  const goToAuth = () => {
-    router.push("/auth");
-    setMobileOpen(false);
-  };
-
-  const handleLogout = () => {
-    logoutClient(); // Gọi hàm từ authService
-    setIsLoggedIn(false);
-    setMobileOpen(false);
-  };
-
-  const isDark = theme.palette.mode === "dark";
-
   return (
     <>
       <AppBar
         position="fixed"
         sx={{
-          background: scrolled
-            ? isDark
-              ? `linear-gradient(135deg, 
-                  ${alpha("#1a1a1a", 0.95)} 0%, 
-                  ${alpha("#2d2d2d", 0.95)} 100%)`
-              : `linear-gradient(135deg, 
-                  ${alpha("#ffffff", 0.95)} 0%, 
-                  ${alpha("#f8f9fa", 0.95)} 100%)`
-            : isDark
-              ? `linear-gradient(135deg, 
-                ${alpha("#64ce82", 0.1)} 0%, 
-                ${alpha("#52c0d3", 0.1)} 50%, 
-                ${alpha("#ee9f37", 0.1)} 100%)`
-              : `linear-gradient(135deg, 
-                ${alpha("#64ce82", 0.08)} 0%, 
-                ${alpha("#52c0d3", 0.08)} 50%, 
-                ${alpha("#ee9f37", 0.08)} 100%)`,
+          background: isDark
+            ? `linear-gradient(135deg, ${alpha("#a02626ff", 0.05)} 0%, ${alpha(
+                "#395335ff",
+                0.95
+              )} 95%, ${alpha("#ee9f37", 0.1)} 100%)`
+            : `linear-gradient(135deg, ${alpha("#64ce82", 0.08)} 0%, ${alpha(
+                "#52c0d3",
+                0.08
+              )} 50%, ${alpha("#ee9f37", 0.1)} 100%)`,
           backdropFilter: "blur(20px)",
-          borderBottom: scrolled
-            ? `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-            : "none",
-          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          boxShadow: scrolled
-            ? `0 8px 32px ${alpha(theme.palette.primary.main, 0.1)}`
-            : "none",
+          borderBottom: "none",
+          transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+          boxShadow: "none",
         }}
         elevation={0}
       >
@@ -125,9 +95,7 @@ export default function Header() {
               flexShrink: 0,
               cursor: "pointer",
               transition: "transform 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.02)",
-              },
+              "&:hover": { transform: "scale(1.02)" },
             }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
@@ -170,30 +138,30 @@ export default function Header() {
           </Box>
 
           {/* Desktop Menu */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, alignItems: "center" }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              gap: 1,
+              alignItems: "center",
+            }}
+          >
             {menuItems.map((item) => (
-              <Button key={item.id} onClick={() => handleScroll(item.id)}>
-                {item.label}
-              </Button>
+              <MenuButton
+                key={item.id}
+                label={item.label}
+                onClick={() => handleScroll(item.id)}
+                fullWidth={false}
+                sx={{ fontSize: { sm: "1rem", md: "1.2rem" }, fontWeight: 500 }}
+              />
             ))}
 
-            <Box sx={{ mx: 1 }}>
-              <ThemeToggle />
-            </Box>
+            <ThemeToggle />
 
-            <Button variant="contained" onClick={() => setBookingOpen(true)}>
-              Đặt lịch ngay
-            </Button>
+            {/* Booking Button Desktop */}
+            <BookingButton onClick={() => setBookingOpen(true)} />
 
-            {isLoggedIn ? (
-              <Button variant="outlined" color="error" onClick={handleLogout}>
-                Đăng xuất
-              </Button>
-            ) : (
-              <Button variant="outlined" onClick={goToAuth}>
-                Đăng nhập
-              </Button>
-            )}
+            {/* AuthButton Desktop */}
+            <AuthButton isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           </Box>
 
           {/* Mobile Menu */}
@@ -207,7 +175,11 @@ export default function Header() {
       </AppBar>
 
       {/* Mobile Drawer */}
-      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+      >
         <Box sx={{ width: "100vw", maxWidth: 320, p: 3 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
             <Box sx={{ fontWeight: "700" }}>Menu</Box>
@@ -219,28 +191,29 @@ export default function Header() {
           <List>
             {menuItems.map((item) => (
               <ListItem key={item.id} disablePadding sx={{ mb: 1 }}>
-                <ListItemButton onClick={() => handleScroll(item.id)}>
-                  {item.label}
-                </ListItemButton>
+                <MenuButton
+                  label={item.label}
+                  onClick={() => handleScroll(item.id)}
+                  fullWidth
+                />
               </ListItem>
             ))}
 
+            {/* Booking Button Mobile */}
             <ListItem disablePadding sx={{ mt: 2 }}>
-              <Button fullWidth variant="contained" onClick={() => setBookingOpen(true)}>
-                Đặt lịch ngay
-              </Button>
+              <BookingButton
+                onClick={() => setBookingOpen(true)}
+                fullWidth
+              />
             </ListItem>
 
+            {/* AuthButton Mobile */}
             <ListItem disablePadding sx={{ mt: 1 }}>
-              {isLoggedIn ? (
-                <Button fullWidth variant="outlined" color="error" onClick={handleLogout}>
-                  Đăng xuất
-                </Button>
-              ) : (
-                <Button fullWidth variant="outlined" onClick={goToAuth}>
-                  Đăng nhập
-                </Button>
-              )}
+              <AuthButton
+                isLoggedIn={isLoggedIn}
+                setIsLoggedIn={setIsLoggedIn}
+                fullWidth
+              />
             </ListItem>
           </List>
         </Box>

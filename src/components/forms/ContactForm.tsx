@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
 import InputField from "../common/InputField";
 import ButtonPrimary from "../common/ButtonPrimary";
@@ -32,45 +32,111 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Box sx={{ py: { xs: 6, md: 10 } }}>
+    <Box>
       <Container maxWidth="sm">
-        <Stack spacing={3}>
-          <InputField
-            label="Họ và tên"
-            name="fullname"
-            value={form.fullname}
-            onChange={handleChange}
-            type="text"
-            error={!!errors.fullname}
-            helperText={errors.fullname}
-          />
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 4,
+            p: { xs: 3, md: 5 },
+            background: "#ffffff",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            textAlign="center"
+            fontWeight="bold"
+            sx={{
+              mb: 4,
+              background: "linear-gradient(90deg, #158437, #52b788)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Điền thông tin liên hệ
+          </Typography>
 
-          <InputField
-            label="Số điện thoại"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            type="tel"
-            error={!!errors.phone}
-            helperText={errors.phone}
-          />
+          <Stack spacing={3}>
+            <InputField
+              label="Họ và tên"
+              name="fullname"
+              value={form.fullname}
+              onChange={handleChange}
+              type="text"
+              error={!!errors.fullname}
+              helperText={errors.fullname}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#158437",
+                    boxShadow: "0 0 0 2px rgba(21,132,55,0.2)",
+                  },
+                },
+              }}
+            />
 
-          <InputField
-            label="Nội dung"
-            name="reason"
-            value={form.reason}
-            onChange={handleChange}
-            type="text"
-            multiline
-            rows={4}
-            error={!!errors.reason}
-            helperText={errors.reason}
-          />
+            <InputField
+              label="Số điện thoại"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              type="tel"
+              error={!!errors.phone}
+              helperText={errors.phone}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#158437",
+                    boxShadow: "0 0 0 2px rgba(21,132,55,0.2)",
+                  },
+                },
+              }}
+            />
 
-          <ButtonPrimary onClick={handleSubmit} fullWidth>
-            Gửi yêu cầu
-          </ButtonPrimary>
-        </Stack>
+            <InputField
+              label="Nội dung"
+              name="reason"
+              value={form.reason}
+              onChange={handleChange}
+              type="text"
+              multiline
+              rows={4}
+              error={!!errors.reason}
+              helperText={errors.reason}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#158437",
+                    boxShadow: "0 0 0 2px rgba(21,132,55,0.2)",
+                  },
+                },
+              }}
+            />
+
+            <ButtonPrimary
+              onClick={handleSubmit}
+              fullWidth
+              sx={{
+                mt: 2,
+                py: 1.5,
+                fontSize: "1rem",
+                fontWeight: "bold",
+                borderRadius: "12px",
+                background: "linear-gradient(90deg, #158437, #52b788)",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #136c2f, #3fa16a)",
+                  boxShadow: "0 6px 16px rgba(21,132,55,0.3)",
+                },
+              }}
+            >
+              Gửi yêu cầu
+            </ButtonPrimary>
+          </Stack>
+        </Paper>
       </Container>
     </Box>
   );
