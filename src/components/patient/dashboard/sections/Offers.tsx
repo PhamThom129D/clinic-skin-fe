@@ -13,7 +13,7 @@ const Offers: React.FC = () => {
   }
 
   if (!offers || offers.length === 0) {
-    return <Typography>Không có ưu đãi nào</Typography>;
+    return <Typography></Typography>;
   }
 
   return (
