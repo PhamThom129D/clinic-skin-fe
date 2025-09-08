@@ -1,6 +1,6 @@
 const menuItems = [
   { id: "banner", label: "Trang Chủ" },
-  { id: "offers", label: "Ưu Đãi" },
+  { id: "offers", label: "Dịch vụ" },
   { id: "doctor-team", label: "Bác Sĩ" },
   { id: "contact-booking", label: "Liên Hệ" },
 ];

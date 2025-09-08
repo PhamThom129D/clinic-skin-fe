@@ -6,7 +6,7 @@ export interface Doctor {
 }
 export interface Offer {
   title: string;
-  desc: string;
+  description: string;
   img: string;
 }
 export interface Testimonial {

@@ -4,7 +4,7 @@ import React from "react";
 const Facilities: React.FC = () => (
   <Box 
     sx={{ 
-      pt: 12,
+      pt: 3,
       display: "flex", 
       justifyContent: "center", 
       alignItems: "center" 
