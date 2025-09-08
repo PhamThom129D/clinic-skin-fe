@@ -14,7 +14,7 @@ const Content: React.FC = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url("https://res.cloudinary.com/dgmrwe4eo/image/upload/v1756106511/test_Bg_naaz2k.jpg")`,
+        backgroundImage: `url("")`,
         backgroundSize: "cover",
         backgroundPosition: "top center",
         backgroundRepeat: "no-repeat",

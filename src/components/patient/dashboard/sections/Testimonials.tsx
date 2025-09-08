@@ -14,7 +14,7 @@ const Testimonials: React.FC = () => {
   }
 
   if (!testimonials || testimonials.length === 0) {
-    return <Typography>Chưa có phản hồi từ khách hàng</Typography>;
+    return <Typography></Typography>;
   }
 
   return (
