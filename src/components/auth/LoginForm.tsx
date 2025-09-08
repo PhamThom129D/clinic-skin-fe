@@ -94,80 +94,88 @@ export default function LoginForm() {
 
   return (
     <>
-      <Box sx={{ width: "100%", maxWidth: 350, mx: "auto", py: 2 }}>
-        <h1>Đăng nhập </h1>
-        <form onSubmit={handleSubmit(handleFinalSubmit)}>
-          {/* Email/Phone */}
-          <FormInput
-            name="emailOrPhone"
-            control={control}
-            label="Email hoặc số điện thoại"
-            rules={{ required: "Vui lòng nhập email hoặc số điện thoại" }}
-            sx={inputStyles}
+      <Box sx={{ width: "100%",maxWidth: 500, mx: "auto", py: 4 }}>
+  <Typography
+    variant="h2"
+    fontWeight="bold"
+    textAlign="center"
+    sx={{ mb: 9, color: theme.palette.primary.main }}
+  >
+    Đăng nhập
+  </Typography>
+  <form onSubmit={handleSubmit(handleFinalSubmit)}>
+    {/* Email/Phone */}
+    <FormInput
+      name="emailOrPhone"
+      control={control}
+      label="Email hoặc số điện thoại"
+      rules={{ required: "Vui lòng nhập email hoặc số điện thoại" }}
+      sx={inputStyles}
+    />
+
+    {/* Password */}
+    <FormInput
+      name="password"
+      control={control}
+      label="Mật khẩu"
+      type={showPassword ? "text" : "password"}
+      rules={passwordRule}
+      sx={inputStyles}
+      endAdornment={
+        <InputAdornment position="end">
+          <IconButton
+            onClick={() => setShowPassword((v) => !v)}
+            edge="end"
+            size="small"
+            sx={{ color: theme.palette.primary.main }}
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      }
+    />
+
+    {/* Remember Me + Forgot Password */}
+    <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ my: 2 }}>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={watch("rememberMe")}
+            onChange={(e) => setValue("rememberMe", e.target.checked)}
+            color="primary"
           />
+        }
+        label={<Typography variant="body2">Nhớ tài khoản</Typography>}
+      />
+      <Link
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          setForgotOpen(true);
+        }}
+        sx={{ fontWeight: 600 }}
+      >
+        Quên mật khẩu?
+      </Link>
+    </Box>
 
-          {/* Password */}
-          <FormInput
-            name="password"
-            control={control}
-            label="Mật khẩu"
-            type={showPassword ? "text" : "password"}
-            rules={passwordRule}
-            sx={inputStyles}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword((v) => !v)}
-                  edge="end"
-                  size="small"
-                  sx={{ color: theme.palette.primary.main }}
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
+    {/* Submit */}
+    <ButtonPrimary type="submit" fullWidth sx={{ mb: 3, py: 1.5 }}>
+      Đăng nhập
+    </ButtonPrimary>
 
-          {/* Remember Me + Forgot Password */}
-          <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ my: 2 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={watch("rememberMe")}
-                  onChange={(e) => setValue("rememberMe", e.target.checked)}
-                  color="primary"
-                />
-              }
-              label={<Typography variant="body2">Nhớ tài khoản</Typography>}
-            />
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setForgotOpen(true);
-              }}
-              sx={{ fontWeight: 600 }}
-            >
-              Quên mật khẩu?
-            </Link>
-          </Box>
+    {/* Divider */}
+    <Divider sx={{ my: 2 }}>
+      <Typography variant="body2" sx={{ color: "text.secondary" }}>
+        Hoặc
+      </Typography>
+    </Divider>
 
-          {/* Submit */}
-          <ButtonPrimary type="submit" fullWidth sx={{ mb: 3, py: 1.5 }}>
-            Đăng nhập
-          </ButtonPrimary>
+    {/* Google Login */}
+    <GoogleLoginButton />
+  </form>
+</Box>
 
-          {/* Divider */}
-          <Divider sx={{ my: 2 }}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Hoặc
-            </Typography>
-          </Divider>
-
-          {/* Google Login */}
-          <GoogleLoginButton />
-        </form>
-      </Box>
 
       <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </>
@@ -187,7 +195,7 @@ interface FormInputProps {
 
 function FormInput({ name, control, label, type = "text", rules, sx, endAdornment }: FormInputProps) {
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ my: 4 }}>
       <Controller
         name={name}
         control={control}

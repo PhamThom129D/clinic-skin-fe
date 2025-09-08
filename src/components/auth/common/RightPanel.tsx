@@ -23,14 +23,14 @@ export default function RightPanel({ isLogin }: RightPanelProps) {
 
   return (
     <Box sx={{ flex: 1, p: { xs: 3, md: 4 }, display: "flex", flexDirection: "column", position: "relative", overflowY: "auto", maxHeight: "100%" }}>
-      <Box sx={{ width: "100%", maxWidth: 350, margin: "auto", my: "auto" }}>
+      <Box sx={{ width: "100%", maxWidth: 700, margin: "auto" }}>
         <AnimatePresence mode="wait">
           <motion.div key={isLogin ? "login" : "register"} initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
             {isLogin ? (
               <LoginForm />
             ) : (
-              <Box sx={{ maxHeight: "50vh", overflow: "auto", pr: 1, "&::-webkit-scrollbar": { width: "6px" }, "&::-webkit-scrollbar-track": { background: "rgba(0,0,0,0.1)", borderRadius: "10px" }, "&::-webkit-scrollbar-thumb": { background: theme.palette.primary.main, borderRadius: "10px", "&:hover": { background: theme.palette.primary.dark } } }}>
-                <RegisterForm onSubmit={async (data) => console.log("Register:", data)} />
+              <Box sx={{ maxHeight: "70vh", overflow: "auto", pr: 1, "&::-webkit-scrollbar": { width: "6px" }, "&::-webkit-scrollbar-track": { background: "rgba(0,0,0,0.1)", borderRadius: "10px" }, "&::-webkit-scrollbar-thumb": { background: theme.palette.primary.main, borderRadius: "10px", "&:hover": { background: theme.palette.primary.dark } } }}>
+                <RegisterForm />
               </Box>
             )}
           </motion.div>
