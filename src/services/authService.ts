@@ -52,22 +52,27 @@ export const register = async (data: RegisterFormData) => {
   });
 };
 
+export const logoutClient = async () => {
+  try {
+    await api.post("/auth/logout").catch(() => {
+    });
+  } catch (err) {
+    console.warn("Logout API error:", err);
+  }
 
-
-
-
-
-export const logoutClient = () => {
-
+  // Xóa sạch storage trước khi redirect
   localStorage.removeItem("authToken");
   localStorage.removeItem("userRole");
-
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("userRole");
 
-
   if (typeof window !== "undefined") {
-    window.location.href = "/auth"; 
+    // Thông báo cho Header cập nhật UI
+    window.dispatchEvent(new Event("authChange")); 
+    // Chuyển về trang login
+    window.location.href = "/auth";
   }
 };
+
+
 
