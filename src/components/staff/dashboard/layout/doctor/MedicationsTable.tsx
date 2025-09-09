@@ -16,7 +16,7 @@ export default function MedicationsTable({ medications, setMedications }: any) {
             cells.forEach((cell) => {
                 if (cell.scrollHeight > maxHeight) maxHeight = cell.scrollHeight;
             });
-            cells.forEach((cell) => (cell.style.height = maxHeight + "px"));
+            cells.forEach((cell) => ((cell as HTMLElement).style.height = maxHeight + "px"));
         });
     }, [medications]);
 
