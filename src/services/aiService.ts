@@ -36,14 +36,14 @@ export const getLabTestsAndDiseases = async (
 };
 
 // Lấy phác đồ + thuốc dựa trên chẩn đoán
-export const getTreatmentForDisease = async (diagnosis: string): Promise<any> => {
+export const getTreatmentForDisease = async (diagnoseName: string): Promise<any> => {
   try {
     const res = await fetch(
-      "http://localhost:1209/api/ai-suggest/suggest-lab-test-and-treatment",
+      "http://localhost:1209/api/treatment-templates/by-diagnose",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ diagnosis }),
+        body: JSON.stringify({ diagnoseName }),
       }
     );
 

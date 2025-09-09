@@ -2,14 +2,14 @@
 import React from "react";
 import "@/css/doctor/TreatmentStepsTable.css";
 
-
 export default function TreatmentStepsTable({ steps, setSteps }: any) {
   const addStep = () => {
     const newStep = {
       stepNumber: steps.length + 1,
-      description: "",
-      type: "care_instructions",
+      stepDesc: "",
+      stepTypeName: "care_instructions",
       notes: "",
+      itemDetails: null,
     };
     setSteps([...steps, newStep]);
   };
@@ -44,45 +44,18 @@ export default function TreatmentStepsTable({ steps, setSteps }: any) {
               <tr key={idx}>
                 <td className="ts-center">{step.stepNumber}</td>
                 <td>
-                  <textarea
-                    value={step.description}
-                    onChange={(e) => {
-                      const newSteps = [...steps];
-                      newSteps[idx].description = e.target.value;
-                      setSteps(newSteps);
-                    }}
-                    className="ts-input"
-                    rows={2}
-                  />
+                  {step.stepTypeName === "Medication" && step.itemDetails?.details
+                    ? step.itemDetails.details.map((m: any) => (
+                        <div key={m.id}>
+                          {m.medicationName} - {m.dosage} ({m.quantity} {m.unit})
+                        </div>
+                      ))
+                    : step.stepDesc || step.notes || "-"}
                 </td>
-                <td>
-                  <input
-                    value={step.type}
-                    onChange={(e) => {
-                      const newSteps = [...steps];
-                      newSteps[idx].type = e.target.value;
-                      setSteps(newSteps);
-                    }}
-                    className="ts-input"
-                  />
-                </td>
-                <td>
-                  <textarea
-                    value={step.notes || ""}
-                    onChange={(e) => {
-                      const newSteps = [...steps];
-                      newSteps[idx].notes = e.target.value;
-                      setSteps(newSteps);
-                    }}
-                    className="ts-input"
-                    rows={2}
-                  />
-                </td>
-                <td style={{textAlign:'center'}} className="ts-center">
-                  <button
-                    onClick={() => removeStep(idx)} 
-                    className="ts-btn-del"
-                  >
+                <td>{step.stepTypeName}</td>
+                <td>{step.notes || "-"}</td>
+                <td className="ts-center">
+                  <button onClick={() => removeStep(idx)} className="ts-btn-del">
                     ❌ Xóa
                   </button>
                 </td>

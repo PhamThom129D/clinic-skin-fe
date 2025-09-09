@@ -37,7 +37,7 @@ const AiTyping: React.FC<{ text: string; speed?: number }> = ({ text, speed = 30
   return <span>{displayedText}</span>;
 };
 
-// --- Component con: danh sách button xét nghiệm
+// --- Button Xét nghiệm
 const LabTestButtons: React.FC<{
   labTests: string[];
   selectedLabTest: string;
@@ -58,7 +58,7 @@ const LabTestButtons: React.FC<{
   );
 });
 
-// --- Component con: danh sách button bệnh
+// --- Button Bệnh
 const DiseaseButtons: React.FC<{
   diseases: string[];
   selectedDisease: string;
@@ -85,9 +85,7 @@ export default function PatientDashboard() {
 
   const [doctorConclusion, setDoctorConclusion] = useState("");
   const [labResult, setLabResult] = useState("");
-  const [labTests, setLabTests] = useState<string[]>([]);
   const [displayedLabTests, setDisplayedLabTests] = useState<string[]>([]);
-  const [diseases, setDiseases] = useState<string[]>([]);
   const [displayedDiseases, setDisplayedDiseases] = useState<string[]>([]);
   const [selectedLabTest, setSelectedLabTest] = useState("");
   const [selectedDisease, setSelectedDisease] = useState("");
@@ -116,21 +114,15 @@ export default function PatientDashboard() {
     return () => { isMounted = false; };
   }, []);
 
-  // --- Effect gợi ý labTest + bệnh khi nhập triệu chứng
+  // --- Gợi ý labTest + bệnh
   const fetchSuggestionsBySymptoms = useCallback(
     debounce(async (symptoms: string) => {
       if (!symptoms.trim()) return;
       setLoading(true);
       try {
         const response = await getLabTestsAndDiseases(symptoms);
-
-        if (!selectedLabTest) {
-          setLabTests(response.possibleLabTests || []);
-          setDisplayedLabTests(response.possibleLabTests || []);
-        }
-
+        if (!selectedLabTest) setDisplayedLabTests(response.possibleLabTests || []);
         if (!labResult.trim()) {
-          setDiseases(response.possibleDiseases || []);
           setDisplayedDiseases(response.possibleDiseases || []);
           setSelectedDisease(response.possibleDiseases?.[0] || "");
         }
@@ -143,60 +135,63 @@ export default function PatientDashboard() {
     [selectedLabTest, labResult]
   );
 
-  useEffect(() => {
-    fetchSuggestionsBySymptoms(doctorConclusion);
-  }, [doctorConclusion, fetchSuggestionsBySymptoms]);
+  useEffect(() => { fetchSuggestionsBySymptoms(doctorConclusion); }, [doctorConclusion, fetchSuggestionsBySymptoms]);
 
-  // --- Effect gợi ý bệnh khi nhập kết quả xét nghiệm
+  // --- Gợi ý bệnh khi nhập kết quả xét nghiệm
   const fetchSuggestionsByLabResult = useCallback(
     debounce(async (labTest: string, result: string) => {
       if (!labTest || !result.trim()) return;
-
       setLoading(true);
-      setDiseases([]);
+      setDisplayedDiseases([]);
       setSelectedDisease("");
 
       try {
         const response = await getLabTestsAndDiseases(doctorConclusion, labTest, result);
-
         if (response.possibleDiseases?.length > 0) {
-          setDiseases(response.possibleDiseases);
           setDisplayedDiseases(response.possibleDiseases);
           setSelectedDisease(response.possibleDiseases[0]);
         }
       } catch (err) {
         console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      } finally { setLoading(false); }
     }, 500),
     [doctorConclusion]
   );
 
-  useEffect(() => {
-    fetchSuggestionsByLabResult(selectedLabTest, labResult);
-  }, [selectedLabTest, labResult, fetchSuggestionsByLabResult]);
+  useEffect(() => { fetchSuggestionsByLabResult(selectedLabTest, labResult); }, [selectedLabTest, labResult, fetchSuggestionsByLabResult]);
 
-  // --- Reset phác đồ khi labResult thay đổi
+  // --- Reset phác đồ khi labResult hoặc bệnh thay đổi
   useEffect(() => {
     setTreatmentSteps([]);
     setMedications([]);
-  }, [labResult]);
+  }, [labResult, selectedDisease]);
 
-  // --- Khi chọn bệnh
+  // --- Chọn bệnh, load phác đồ + thuốc
   const handleSelectDisease = useCallback(async (d: string) => {
     setSelectedDisease(d);
     setLoading(true);
     try {
       const data = await getTreatmentForDisease(d);
-      setTreatmentSteps(data.possibleTreatments?.steps || []);
-      const medsFromSteps = data.possibleTreatments?.steps?.flatMap((s: any) => s.medications || []);
-      setMedications(medsFromSteps?.map((m: any) => ({ ...m, quantity: 1 })) || []);
+
+      const steps = data.steps || [];
+      setTreatmentSteps(steps);
+
+      const meds = steps
+        .filter((s: any) => s.stepTypeName === "Medication")
+        .flatMap((s: any) => s.itemDetails?.details || [])
+        .map((m: any) => ({
+          id: m.id,
+          name: m.medicationName,
+          dosage: m.dosage,
+          usageInstructions: m.instructions || "-",
+          price: parseFloat(m.price),
+          quantity: Number(m.quantity)
+        }));
+
+      setMedications(meds);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, []);
 
   const handleSave = () => {
@@ -223,8 +218,6 @@ export default function PatientDashboard() {
             onSelect={(p) => {
               setSelectedPatient(p);
               setDoctorConclusion("");
-              setLabTests([]);
-              setDiseases([]);
               setDisplayedLabTests([]);
               setDisplayedDiseases([]);
               setSelectedLabTest("");
@@ -274,7 +267,6 @@ export default function PatientDashboard() {
                     onChange={(e) => setLabResult(e.target.value)}
                   />
                 </div>
-
               )}
             </>
           )}
@@ -289,16 +281,16 @@ export default function PatientDashboard() {
               />
             </>
           )}
-        </div>
-      )}
 
-      {treatmentSteps.length > 0 && (
-        <div className="medications-wrapper">
-          <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} />
-          <MedicationsTable medications={medications} setMedications={setMedications} />
-          <div className="save-btn-wrapper">
-            <button className="dashboard-btn dashboard-btn-save" onClick={handleSave}>💾 Lưu hồ sơ</button>
-          </div>
+          {treatmentSteps.length > 0 && (
+            <div className="medications-wrapper">
+              <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} />
+              <MedicationsTable medications={medications} setMedications={setMedications} />
+              <div className="save-btn-wrapper">
+                <button className="dashboard-btn dashboard-btn-save" onClick={handleSave}>💾 Lưu hồ sơ</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
