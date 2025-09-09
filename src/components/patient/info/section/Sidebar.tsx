@@ -78,7 +78,6 @@ const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => 
     <Box
       sx={{
         width: "100%",
-        minHeight: "calc(100vh - 64px)",
         borderRadius: 2,
         boxShadow: 3,
         backgroundColor: isDark ? theme.palette.background.paper : theme.palette.common.white,

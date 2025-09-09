@@ -1,16 +1,18 @@
+// components/Content.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { Box, useTheme, Grid } from "@mui/material";
 import Sidebar from "./Sidebar";
 import UserInfo from "./UserInfo";
+import { AuthResponse } from "@/types/auth";
 
 const Content: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [account, setAccount] = useState<any>(null);
+  const [account, setAccount] = useState<AuthResponse | null>(null);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -77,9 +79,12 @@ const Content: React.FC = () => {
               setIsLoggedIn={setIsLoggedIn}
             />
           </Grid>
-
           <Grid sx={{ flexGrow: 1, minWidth: 0 }}>
-            <UserInfo />
+            {account && (
+              <UserInfo
+                account={account}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>
