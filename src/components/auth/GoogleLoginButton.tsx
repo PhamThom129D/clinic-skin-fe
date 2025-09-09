@@ -23,6 +23,7 @@ export default function GoogleLoginButton() {
       const role = roles[0] || "ROLE_PATIENT";        
 
       localStorage.setItem("authToken", token);
+      localStorage.setItem("account", JSON.stringify(response.data));
       localStorage.setItem("userRole", role);
 
       notifySuccess("Đăng nhập thành công với Google!");

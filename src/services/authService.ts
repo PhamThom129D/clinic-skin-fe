@@ -62,8 +62,10 @@ export const logoutClient = async () => {
 
   // Xóa sạch storage trước khi redirect
   localStorage.removeItem("authToken");
+  localStorage.removeItem("account");
   localStorage.removeItem("userRole");
   sessionStorage.removeItem("authToken");
+  sessionStorage.removeItem("account");
   sessionStorage.removeItem("userRole");
 
   if (typeof window !== "undefined") {
