@@ -1,12 +1,12 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
   Popover,
   Stack,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import EventNoteIcon from "@mui/icons-material/EventNote";
@@ -14,43 +14,13 @@ import ScienceIcon from "@mui/icons-material/Science";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 // Dữ liệu mẫu thông báo
-const notifications = [
-  {
-    id: 1,
-    title: "Ưu đãi đặc biệt: Giảm 20% dịch vụ chăm sóc da chuyên sâu!",
-    type: "promotion",
-    time: "10 giờ trước",
-  },
-  {
-    id: 2,
-    title: "Xác nhận lịch hẹn khám da liễu vào 10:00, 15/07.",
-    type: "appointment",
-    time: "2 ngày trước",
-  },
-  {
-    id: 3,
-    title: "Kết quả phân tích da của bạn đã có.",
-    type: "result",
-    time: "1 tuần trước",
-  },
-  {
-    id: 4,
-    title: "Bác sĩ đã trả lời câu hỏi của bạn.",
-    type: "chat",
-    time: "2 tuần trước",
-  },
-  {
-    id: 5,
-    title: "Tin tức: Mở rộng dịch vụ Laser Tái Tạo Da mới nhất.",
-    type: "promotion",
-    time: "3 tuần trước",
-  },
-  {
-    id: 6,
-    title: "Nhắc nhở: Lịch hẹn của bạn vào 14:00 hôm nay.",
-    type: "appointment",
-    time: "1 tháng trước",
-  },
+const initialNotifications = [
+  { id: 1, title: "Ưu đãi đặc biệt: Giảm 20% dịch vụ chăm sóc da chuyên sâu!", type: "promotion", time: "10 giờ trước", isRead: false },
+  { id: 2, title: "Xác nhận lịch hẹn khám da liễu vào 10:00, 15/07.", type: "appointment", time: "2 ngày trước", isRead: false },
+  { id: 3, title: "Kết quả phân tích da của bạn đã có.", type: "result", time: "1 tuần trước", isRead: false },
+  { id: 4, title: "Bác sĩ đã trả lời câu hỏi của bạn.", type: "chat", time: "2 tuần trước", isRead: true },
+  { id: 5, title: "Tin tức: Mở rộng dịch vụ Laser Tái Tạo Da mới nhất.", type: "promotion", time: "3 tuần trước", isRead: true },
+  { id: 6, title: "Nhắc nhở: Lịch hẹn của bạn vào 14:00 hôm nay.", type: "appointment", time: "1 tháng trước", isRead: true },
 ];
 
 const getIconForNotificationType = (type: string) => {
@@ -68,7 +38,8 @@ const getIconForNotificationType = (type: string) => {
   }
 };
 
-const NotificationItem = ({ title, type, time }: { title: string, type: string, time: string }) => {
+const NotificationItem = ({ title, type, time, isRead }: { title: string, type: string, time: string, isRead: boolean }) => {
+  const theme = useTheme();
   return (
     <Button
       fullWidth
@@ -78,10 +49,10 @@ const NotificationItem = ({ title, type, time }: { title: string, type: string, 
         textTransform: "none",
         p: 1.5,
         borderRadius: 2,
-        backgroundColor: "background.paper",
+        backgroundColor: isRead ? "background.paper" : theme.palette.action.selected,
         boxShadow: 1,
         "&:hover": {
-          backgroundColor: "action.hover",
+          backgroundColor: theme.palette.action.hover,
         },
       }}
     >
@@ -114,10 +85,25 @@ interface NotificationsDropdownProps {
   anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
+  onUnreadCountChange: (count: number) => void;
 }
 
-export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ anchorEl, open, onClose }) => {
+export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ anchorEl, open, onClose, onUnreadCountChange }) => {
   const theme = useTheme();
+  const [notifications, setNotifications] = useState(initialNotifications);
+
+  useEffect(() => {
+    const count = notifications.filter(notif => !notif.isRead).length;
+    onUnreadCountChange(count);
+  }, [notifications, onUnreadCountChange]);
+
+  useEffect(() => {
+    if (open) {
+      setNotifications(prevNotifications =>
+        prevNotifications.map(notif => ({ ...notif, isRead: true }))
+      );
+    }
+  }, [open]);
 
   return (
     <Popover
@@ -149,8 +135,9 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ an
           },
         }}
       >
+        <Typography variant="h6" sx={{ px: 1, pt: 1, fontWeight: "bold" }}>Thông báo</Typography>
         {notifications.map((notif) => (
-          <NotificationItem key={notif.id} title={notif.title} type={notif.type} time={notif.time} />
+          <NotificationItem key={notif.id} {...notif} />
         ))}
         <Button
           fullWidth

@@ -6,6 +6,7 @@ import {
   useTheme,
   alpha,
   Avatar,
+  Badge,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
@@ -14,7 +15,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { NotificationsDropdown } from "./NotificationsDropdown"; 
 import { AccountDropdown } from "./AccountDropdown"; 
-import { AuthResponse } from "@/types/auth";
+import { AuthResponse } from "@/types/auth"; 
 
 export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "email"> {}
 
@@ -29,7 +30,7 @@ export function BookingButton({ onClick, fullWidth = false }: { onClick: () => v
   const theme = useTheme();
   return (
     <Button
-      variant={fullWidth ? "contained" : "contained"}
+      variant={fullWidth ? "outlined" : "contained"}
       color="error"
       startIcon={<EventAvailableIcon />}
       onClick={onClick}
@@ -81,19 +82,34 @@ export default function AuthButton({ isLoggedIn, setIsLoggedIn, fullWidth = fals
     setNotifDropdown(null);
   };
 
+  // set tạm có 3 thông báo chưa đọc
+  const [unreadCount, setUnreadCount] = useState(3);
+
   return isLoggedIn ? (
     <Box display="flex" alignItems="center" gap={2}>
       {/* Notifications Icon */}
-      <IconButton
-        color="primary"
-        onClick={handleNotifOpen}
-        sx={{ "&:hover": { backgroundColor: alpha(theme.palette.primary.main, 0.1) } }}
+      <Badge
+        badgeContent={unreadCount}
+        color="error"
+        invisible={unreadCount === 0}
+        sx={{ "& .MuiBadge-badge": { top: 6, right: 6 } }}
       >
-        <NotificationsIcon fontSize="medium" />
-      </IconButton>
+        <IconButton
+          color="primary"
+          onClick={handleNotifOpen}
+          sx={{ "&:hover": { backgroundColor: alpha(theme.palette.primary.main, 0.1) } }}
+        >
+          <NotificationsIcon fontSize="medium" />
+        </IconButton>
+      </Badge>
       
       {/* Notifications Dropdown */}
-      <NotificationsDropdown anchorEl={notifDropdown} open={openNotif} onClose={handleNotifClose} />
+      <NotificationsDropdown 
+        anchorEl={notifDropdown} 
+        open={openNotif} 
+        onClose={handleNotifClose} 
+        onUnreadCountChange={setUnreadCount} 
+      />
 
       {/* Avatar Icon */}
       <IconButton onClick={handleAvtOpen} sx={{ p: 0 }}>
