@@ -77,9 +77,11 @@ export default function LoginForm() {
 
       if (data.rememberMe) {
         localStorage.setItem("authToken", user.token);
+        localStorage.setItem("account", JSON.stringify(user));
         localStorage.setItem("userRole", role);
       } else {
         sessionStorage.setItem("authToken", user.token);
+        sessionStorage.setItem("account", JSON.stringify(user));
         sessionStorage.setItem("userRole", role);
       }
       window.dispatchEvent(new Event("authChange"));

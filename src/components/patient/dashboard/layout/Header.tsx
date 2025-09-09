@@ -25,6 +25,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [account, setAccount] = useState<any>(null);
 
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -47,6 +48,21 @@ export default function Header() {
     checkAuth();
     window.addEventListener("authChange", checkAuth);
     return () => window.removeEventListener("authChange", checkAuth);
+  }, []);
+
+  // Get account info
+  useEffect(() => {
+    const accInfo = localStorage.getItem("account") || sessionStorage.getItem("account");
+    if (accInfo) {
+      try {
+        const acc = JSON.parse(accInfo);
+        setAccount(acc);
+        setIsLoggedIn(true);
+      } catch {
+        setAccount(null);
+        setIsLoggedIn(false);
+      }
+    }
   }, []);
 
   const handleScroll = (id: string) => {
@@ -161,7 +177,7 @@ export default function Header() {
             <BookingButton onClick={() => setBookingOpen(true)} />
 
             {/* AuthButton Desktop */}
-            <AuthButton isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            <AuthButton isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} account={account}/>
           </Box>
 
           {/* Mobile Menu */}
@@ -212,6 +228,7 @@ export default function Header() {
               <AuthButton
                 isLoggedIn={isLoggedIn}
                 setIsLoggedIn={setIsLoggedIn}
+                account={account}
                 fullWidth
               />
             </ListItem>
