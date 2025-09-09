@@ -2,7 +2,6 @@
 import React from "react";
 import "@/css/doctor/PatientList.css";
 
-
 export default function PatientList({ patients, onSelect }: any) {
     return (
         <div className="patient-list-container">
@@ -16,8 +15,7 @@ export default function PatientList({ patients, onSelect }: any) {
                         <tr>
                             <th className="patient-col-stt">STT</th>
                             <th className="patient-col-name">Họ tên</th>
-                            <th className="patient-col-age">Tuổi</th>
-                            <th className="patient-col-gender">Giới tính</th>
+                            <th className="patient-col-date">Ngày khám</th>
                             <th className="patient-col-symptoms">Triệu chứng</th>
                             <th className="patient-col-action">Hành động</th>
                         </tr>
@@ -28,8 +26,7 @@ export default function PatientList({ patients, onSelect }: any) {
                             <tr key={p.id}>
                                 <td>{index + 1}</td>
                                 <td className="patient-col-name">{p.name}</td>
-                                <td>{p.age}</td>
-                                <td>{p.gender}</td>
+                                <td>{p.visitDate || "N/A"}</td> {/* 👈 Ngày khám */}
                                 <td className="patient-col-symptoms">
                                     {p.symptoms.join(", ")}
                                 </td>

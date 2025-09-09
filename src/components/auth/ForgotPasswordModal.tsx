@@ -69,6 +69,7 @@ const handleVerifyOTP = async (otpCode: string) => {
     notifySuccess("Xác thực thành công!");
     const role = user.data.roles[0] || "ROLE_PATIENT";
     localStorage.setItem("authToken", user.data.token);
+    localStorage.setItem("account", JSON.stringify(user.data));
     localStorage.setItem("userRole", role);
 
     if (role === "ROLE_ADMIN") router.push("/dashboard");
