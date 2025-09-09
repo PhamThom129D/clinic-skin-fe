@@ -5,6 +5,20 @@
 // export default function MedicationsTable({ medications, setMedications }: any) {
 //     const medTableRef = useRef<HTMLTableElement>(null);
 
+    // Đồng bộ chiều cao các ô trong bảng
+//     useEffect(() => {
+//         const table = medTableRef.current;
+//         if (!table) return;
+//         const rows = Array.from(table.querySelectorAll("tr"));
+//         rows.forEach((row) => {
+//             const cells = Array.from(row.querySelectorAll("td, th"));
+//             let maxHeight = 0;
+//             cells.forEach((cell) => {
+//                 if (cell.scrollHeight > maxHeight) maxHeight = cell.scrollHeight;
+//             });
+//             cells.forEach((cell) => ((cell as HTMLElement).style.height = maxHeight + "px"));
+//         });
+//     }, [medications]);
 //     // Đồng bộ chiều cao các ô trong bảng
 //     useEffect(() => {   
 //         const table = medTableRef.current;
