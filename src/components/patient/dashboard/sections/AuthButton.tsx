@@ -1,19 +1,22 @@
 "use client";
-import { Box, IconButton, Button, useTheme, alpha, Popover, Stack} from "@mui/material";
-import NotificationsIcon  from "@mui/icons-material/Notifications";
-import Avatar from "@mui/material/Avatar";
-import LogoutIcon from "@mui/icons-material/Logout";
-import LoginIcon from "@mui/icons-material/Login";
+import {
+  Box,
+  IconButton,
+  Button,
+  useTheme,
+  alpha,
+  Avatar,
+} from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import LoginIcon from "@mui/icons-material/Login";
 import { useRouter } from "next/navigation";
-import { logoutClient } from "@/services/authService";
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
+import { NotificationsDropdown } from "./NotificationsDropdown"; 
+import { AccountDropdown } from "./AccountDropdown"; 
+import { AuthResponse } from "@/types/auth";
 
-interface AccountInfo {
-  fullName?: string;
-  avatarUrl?: string;
-  email?: string;
-}
+export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "email"> {}
 
 interface AuthButtonProps {
   isLoggedIn: boolean;
@@ -21,7 +24,6 @@ interface AuthButtonProps {
   fullWidth?: boolean;
   account?: AccountInfo | null;
 }
-
 
 export function BookingButton({ onClick, fullWidth = false }: { onClick: () => void; fullWidth?: boolean }) {
   const theme = useTheme();
@@ -59,86 +61,47 @@ export default function AuthButton({ isLoggedIn, setIsLoggedIn, fullWidth = fals
   const theme = useTheme();
   const router = useRouter();
 
-  console.log("AuthButton account:", account);
-
   const goToAuth = () => router.push("/auth");
 
-  const handleLogout = () => {
-    logoutClient();
-    setIsLoggedIn(false);
-  };
-
-  const [avtDropdown, setAvtDropdown] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(avtDropdown);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const [avtDropdown, setAvtDropdown] = useState<null | HTMLElement>(null);
+  const openAvt = Boolean(avtDropdown);
+  const handleAvtOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAvtDropdown(event.currentTarget);
   };
-
-  const handleMenuClose = () => {
+  const handleAvtClose = () => {
     setAvtDropdown(null);
+  };
+
+  const [notifDropdown, setNotifDropdown] = useState<null | HTMLElement>(null);
+  const openNotif = Boolean(notifDropdown);
+  const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setNotifDropdown(event.currentTarget);
+  };
+  const handleNotifClose = () => {
+    setNotifDropdown(null);
   };
 
   return isLoggedIn ? (
     <Box display="flex" alignItems="center" gap={2}>
-      {/* Notifications */}
+      {/* Notifications Icon */}
       <IconButton
         color="primary"
-        onClick={() => router.push("/notifications")}
+        onClick={handleNotifOpen}
         sx={{ "&:hover": { backgroundColor: alpha(theme.palette.primary.main, 0.1) } }}
       >
-        <NotificationsIcon  fontSize="medium" />
+        <NotificationsIcon fontSize="medium" />
+      </IconButton>
+      
+      {/* Notifications Dropdown */}
+      <NotificationsDropdown anchorEl={notifDropdown} open={openNotif} onClose={handleNotifClose} />
+
+      {/* Avatar Icon */}
+      <IconButton onClick={handleAvtOpen} sx={{ p: 0 }}>
+        <Avatar alt={account?.fullName} src={account?.avatarUrl || "/images/avatar.png"} />
       </IconButton>
 
-      {/* Avatar */}
-      <IconButton
-        onClick={handleMenuOpen}
-        sx={{ p: 0 }}
-      >
-      <Avatar alt={account?.fullName} src={account?.avatarUrl || "/images/avatar.png"} />
-      </IconButton>
-
-      <Popover
-        anchorEl={avtDropdown}
-        open={open}
-        onClose={handleMenuClose}
-        disableScrollLock
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{
-          paper: {
-            sx: {
-              mt: 2.5
-            },
-          },
-        }}
-      >
-
-        <Stack spacing={1} sx={{ p: 1, minWidth: 200 }}>
-          <Button
-            onClick={() => router.push("/profile")}
-            sx={{ justifyContent: "flex-start", "&:hover": {backgroundColor: "#d7d9da"} }}
-          >
-            Hồ sơ
-          </Button>
-
-          <Button
-            onClick={() => router.push("/settings")}
-            sx={{ justifyContent: "flex-start", "&:hover": {backgroundColor: "#d7d9da"} }}
-          >
-            Cài đặt
-          </Button>
-
-          <Button
-            color="error"
-            onClick={handleLogout}
-            sx={{ justifyContent: "flex-start", "&:hover": {backgroundColor: "#d7d9da"} }}
-          >
-            Đăng xuất
-          </Button>
-        </Stack>
-      </Popover>
-
+      {/* Account Dropdown */}
+      <AccountDropdown anchorEl={avtDropdown} open={openAvt} onClose={handleAvtClose} setIsLoggedIn={setIsLoggedIn} />
     </Box>
   ) : (
     <Button
