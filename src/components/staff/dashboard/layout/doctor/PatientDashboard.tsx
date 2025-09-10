@@ -183,12 +183,14 @@ export default function PatientDashboard() {
           id: m.id,
           name: m.medicationName,
           dosage: m.dosage,
+          unit: m.unit, // <-- thêm đơn vị
           usageInstructions: m.instructions || "-",
           price: parseFloat(m.price),
           quantity: Number(m.quantity)
         }));
 
       setMedications(meds);
+
     } catch (err) {
       console.error(err);
     } finally { setLoading(false); }
@@ -250,7 +252,7 @@ export default function PatientDashboard() {
 
           {displayedLabTests.length > 0 && (
             <>
-              <h3>🧪 Xét nghiệm gợi ý:</h3>
+              <h3>🧪Xét nghiệm:</h3>
               <LabTestButtons
                 labTests={displayedLabTests}
                 selectedLabTest={selectedLabTest}
@@ -273,7 +275,7 @@ export default function PatientDashboard() {
 
           {displayedDiseases.length > 0 && (
             <>
-              <h3>🦠 Bệnh gợi ý:</h3>
+              <h3>🦠 Bệnh chuẩn đoán:</h3>
               <DiseaseButtons
                 diseases={displayedDiseases}
                 selectedDisease={selectedDisease}
@@ -284,7 +286,7 @@ export default function PatientDashboard() {
 
           {treatmentSteps.length > 0 && (
             <div className="medications-wrapper">
-              <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} />
+              {/* <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} /> */}
               <MedicationsTable medications={medications} setMedications={setMedications} />
               <div className="save-btn-wrapper">
                 <button className="dashboard-btn dashboard-btn-save" onClick={handleSave}>💾 Lưu hồ sơ</button>
