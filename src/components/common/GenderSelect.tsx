@@ -28,7 +28,7 @@ const GenderSelect: React.FC<GenderSelectProps> = ({
         onChange={onChange}
         displayEmpty
       >
-        <MenuItem value="">
+        <MenuItem value="" disabled style={{ display: 'none' }}>
           <em>-- Chọn giới tính --</em>
         </MenuItem>
         <MenuItem value="MALE">Nam</MenuItem>
