@@ -279,3 +279,45 @@
   color: #aaa;
   font-style: italic;
 }
+/* Lịch sử khám */
+.visit-history-box {
+  background: #f9f9ff;
+  border: 1px solid #dcdcff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.visit-history-title {
+  font-size: 1em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4a4a9e;
+  display: flex;
+  align-items: center;
+}
+
+.visit-history-title::before {
+  content: "📜";
+  margin-right: 6px;
+}
+
+.visit-history-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.visit-history-list li {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.visit-history-list li::marker {
+  color: #4a4a9e;
+  font-size: 16px;
+}
