@@ -1,12 +1,23 @@
+// components/UserInfo.tsx
 "use client";
 import React from "react";
-import { Box, Typography, Paper, Grid, Button, Avatar } from "@mui/material";
+import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/material";
 import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
+import { EmergencyContact } from "@/types/userinfo"; 
 import UserInfoRow from "./UserInfoRow";
+
+  // Dữ liệu mẫu cho Liên hệ khẩn cấp
+  const dummyEmergencyContact: EmergencyContact = {
+    emergency_id: 1,
+    contact_name: "Nguyễn Văn A",
+    contact_phone: "0912345678",
+    patient_id: 101,
+  };
 
 interface UserInfoProps {
   account: AuthResponse;
+  emergencyContact?: EmergencyContact;
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -16,7 +27,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   minHeight: "100%",
 }));
 
-const UserInfo: React.FC<UserInfoProps> = ({ account }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
   const getGenderText = (gender: string) => {
     switch (gender) {
       case "FEMALE":
@@ -31,13 +42,22 @@ const UserInfo: React.FC<UserInfoProps> = ({ account }) => {
   };
 
   const infoFields = [
-    { label: "Họ và tên", value: account.fullName },
-    { label: "Số điện thoại", value: account.phoneNumber },
-    { label: "Giới tính", value: getGenderText(account.gender) },
-    { label: "Ngày sinh", value: account.dateOfBirth },
-    { label: "Email", value: account.email },
-    { label: "Địa chỉ", value: account.address },
+    { label: "Họ và tên", value: account?.fullName },
+    { label: "Số điện thoại", value: account?.phoneNumber },
+    { label: "Giới tính", value: getGenderText(account?.gender) },
+    { label: "Ngày sinh", value: account?.dateOfBirth },
+    { label: "Email", value: account?.email },
+    { label: "Địa chỉ", value: account?.address },
   ];
+
+  const emergencyFields = [
+    { label: "Họ tên", value: dummyEmergencyContact.contact_name },
+    { label: "Số điện thoại", value: dummyEmergencyContact.contact_phone },
+  ];
+
+  if (!account) {
+    return null;
+  }
 
   return (
     <Box
@@ -53,8 +73,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ account }) => {
             Thông tin cá nhân
           </Typography>
         </Box>
-
-        {/* Layout avatar + info */}
+        
         <Grid
           sx={{
             display: "flex",
@@ -63,7 +82,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account }) => {
             gap: 4,
           }}
         >
-          {/* Avatar */}
           <Box
             sx={{
               width: { xs: "100%", md: "33%" },
@@ -77,18 +95,32 @@ const UserInfo: React.FC<UserInfoProps> = ({ account }) => {
               sx={{ width: 120, height: 120, border: "2px solid #ccc" }}
             />
           </Box>
-
-          {/* Info section */}
+          
           <Box sx={{ flexGrow: 1, width: { xs: "100%", md: "67%" } }}>
             {infoFields.map((field, index) => (
               <UserInfoRow
-                key={index}
+                key={`info-${index}`}
                 label={field.label}
                 value={field.value}
-                isLast={index === infoFields.length - 1}
+                isLast={false}
               />
             ))}
             
+            <>
+              <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2, textAlign: { xs: 'center', md: 'left' } }}>
+                Liên hệ khẩn cấp
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              {emergencyFields.map((field, index) => (
+                <UserInfoRow
+                  key={`emergency-${index}`}
+                  label={field.label}
+                  value={field.value}
+                  isLast={index === emergencyFields.length - 1}
+                />
+              ))}
+            </>
+
             <Box sx={{ mt: 3, textAlign: "center" }}>
               <Button variant="contained" color="primary">
                 Chỉnh sửa thông tin
