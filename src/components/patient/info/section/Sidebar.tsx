@@ -27,6 +27,7 @@ const sidebarSections = [
     title: "Thông tin cá nhân",
     mainIcon: <PersonIcon />,
     items: [
+      { text: "Thông tin cá nhân", icon: <AccountCircleIcon />, href: "/patient/info/update-account" },
       { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/patient/info/update-account" },
       { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/patient/info/change-password" },
       { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/patient/info/forgot-password" },

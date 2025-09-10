@@ -1,4 +1,3 @@
-// Trong file Content.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -15,7 +14,6 @@ const Content: React.FC = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState<AuthResponse | null>(null);
-  // Thêm state cho emergencyContact
   const [emergencyContact, setEmergencyContact] = useState<EmergencyContact | null>(null);
 
   const [editing, setEditing] = useState(false);
@@ -42,7 +40,7 @@ const Content: React.FC = () => {
         setAccount(acc);
         setIsLoggedIn(true);
 
-        // Khởi tạo dữ liệu mẫu cho Liên hệ khẩn cấp
+        // Dữ liệu mẫu cho Liên hệ khẩn cấp
         const dummyEmergencyContact: EmergencyContact = {
           emergency_id: 1,
           contact_name: "Nguyễn Văn A",
@@ -58,7 +56,7 @@ const Content: React.FC = () => {
     }
   }, []);
 
-  // Hàm để cập nhật cả hai đối tượng khi thành công
+  // Hàm để cập nhật thông tin cá nhân khi thành công
   const handleUpdateSuccess = (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => {
     setAccount(updatedAccount);
     setEmergencyContact(updatedEmergencyContact);
@@ -108,15 +106,15 @@ const Content: React.FC = () => {
             {editing ? (
               <UserInfoUpdate
                 account={account}
-                emergencyContact={emergencyContact} // Truyền dữ liệu khẩn cấp xuống
+                emergencyContact={emergencyContact}
                 onBackClick={handleBackClick}
-                onUpdateSuccess={handleUpdateSuccess} // Truyền hàm xử lý mới
+                onUpdateSuccess={handleUpdateSuccess}
               />
             ) : (
               account && (
                 <UserInfo
                   account={account}
-                  emergencyContact={emergencyContact} // Truyền dữ liệu khẩn cấp xuống
+                  emergencyContact={emergencyContact}
                   onEditClick={handleEditClick}
                 />
               )
