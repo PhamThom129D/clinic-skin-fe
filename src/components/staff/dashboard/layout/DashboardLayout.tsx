@@ -1,31 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import { Box, Toolbar } from "@mui/material";
+import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
 import Content from "./Content";
-import { Role } from "../menuItem";
-import { Box } from "@mui/material";
-import PatientDashboard from "./doctor/PatientDashboard";
 
-interface DashboardLayoutProps {
-  username: string;
-  role: Role;
+interface LayoutProps {
+  children?: React.ReactNode;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ username, role }) => {
-  const [selectedMenu, setSelectedMenu] = useState("");
+export default function LayoutDashboard({ children }: LayoutProps) {
+  const [open, setOpen] = useState(true);
+
+  const handleToggleSidebar = () => {
+    setOpen(!open);
+  };
 
   return (
-    <Box display="flex">
-      <Sidebar role={role} selectedMenu={selectedMenu} onSelectMenu={setSelectedMenu} />
-      <Box display="flex" flexDirection="column" flex={1}>
-        <Topbar username={username} role={role} />
-        <PatientDashboard/>
-        {/* <Content selectedMenu={selectedMenu} /> */}
+    <Box sx={{ display: "flex", bgcolor: "#f9fafb", minHeight: "100vh" }}>
+      {/* Sidebar */}
+      <Sidebar open={open} />
+
+      {/* Nội dung chính */}
+      <Box sx={{ flexGrow: 1 }}>
+        <Header onToggleSidebar={handleToggleSidebar} />
+
+        {/* Toolbar để tránh header đè nội dung */}
+        <Toolbar />
+        <Content selectedMenu="Dashboard" />
+        {children}
       </Box>
     </Box>
   );
-};
-
-export default DashboardLayout;
+}

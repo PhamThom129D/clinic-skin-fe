@@ -10,45 +10,30 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ScienceIcon from "@mui/icons-material/Science";
 import ChatIcon from "@mui/icons-material/Chat";
 import SettingsIcon from "@mui/icons-material/Settings";
-import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 // 🔹 Định nghĩa Role
 export type Role =
-  | "Visitor"
-  | "Patient"
-  | "Receptionist"
-  | "Doctor"
-  | "LabStaff"
-  | "Consultant"
-  | "Cashier"
-  | "Admin";
+  | "ROLE_RECEPTIONIST"
+  | "ROLE_DOCTOR"
+  | "ROLE_LAB_STAFF"
+  | "ROLE_CONSULTANT"
+  | "ROLE_CASHIER"
+  | "ROLE_ADMIN";
 
 // 🔹 Menu theo từng Role
 export const roleMenu: Record<Role, string[]> = {
-  Visitor: ["Thông tin phòng khám", "Dịch vụ & chi phí", "Đặt lịch", "Tư vấn"],
-  Patient: ["Hồ sơ cá nhân", "Lịch sử khám", "Tải tài liệu", "Thanh toán", "Thông báo"],
-  Receptionist: ["Lịch hẹn", "Check-in", "Quản lý hồ sơ", "In phiếu khám", "Nhắc trễ hẹn"],
-  Doctor: ["Hồ sơ bệnh nhân", "Khám & điều trị", "Phác đồ", "Kê đơn", "Xét nghiệm", "AI hỗ trợ"],
-  LabStaff: ["Lịch hẹn", "Thông tin bệnh nhân", "Cập nhật mẫu/xét nghiệm", "Báo cáo"],
-  Consultant: ["Tư vấn trực tuyến", "Hồ sơ điều trị", "Hướng dẫn bệnh nhân", "Nhắc trễ hẹn"],
-  Cashier: ["Thanh toán", "Cập nhật trạng thái", "In hóa đơn", "Hoàn tiền"],
-  Admin: ["Hồ sơ bệnh nhân", "Quản lý nhân sự", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"]
+  ROLE_RECEPTIONIST: ["Lịch hẹn", "Check-in", "Quản lý hồ sơ", "In phiếu khám", "Nhắc trễ hẹn"],
+  ROLE_DOCTOR: ["Hồ sơ bệnh nhân", "Khám & điều trị", "Phác đồ", "Kê đơn", "Xét nghiệm", "AI hỗ trợ"],
+  ROLE_LAB_STAFF: ["Lịch hẹn", "Thông tin bệnh nhân", "Cập nhật mẫu/xét nghiệm", "Báo cáo"],
+  ROLE_CONSULTANT: ["Tư vấn trực tuyến", "Hồ sơ điều trị", "Hướng dẫn bệnh nhân", "Nhắc trễ hẹn"],
+  ROLE_CASHIER: ["Thanh toán", "Cập nhật trạng thái", "In hóa đơn", "Hoàn tiền"],
+  ROLE_ADMIN: ["Hồ sơ bệnh nhân", "Quản lý nhân sự", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"],
 };
 
-// 🔹 Icon cho từng menu
-export const menuIcons: { [key: string]: React.ReactNode } = {
-  "Thông tin phòng khám": <DashboardIcon />,
-  "Dịch vụ & chi phí": <AssignmentIcon />,
-  "Đặt lịch": <EventNoteIcon />,
-  "Tư vấn": <ChatIcon />,
-
-  "Hồ sơ cá nhân": <DescriptionIcon />,
-  "Lịch sử khám": <LocalHospitalIcon />,
-  "Tải tài liệu": <DescriptionIcon />,
-  "Thanh toán": <PaymentIcon />,
-  "Thông báo": <NotificationsIcon />,
-
+// 🔹 Icon cho từng menu còn dùng
+export const menuIcons: Record<string, React.ReactNode> = {
   "Lịch hẹn": <EventNoteIcon />,
   "Check-in": <PeopleIcon />,
   "Quản lý hồ sơ": <DescriptionIcon />,
@@ -70,6 +55,7 @@ export const menuIcons: { [key: string]: React.ReactNode } = {
   "Hồ sơ điều trị": <DescriptionIcon />,
   "Hướng dẫn bệnh nhân": <AssignmentIcon />,
 
+  "Thanh toán": <PaymentIcon />,
   "Cập nhật trạng thái": <AssignmentIcon />,
   "In hóa đơn": <ReceiptIcon />,
   "Hoàn tiền": <PaymentIcon />,
@@ -77,5 +63,5 @@ export const menuIcons: { [key: string]: React.ReactNode } = {
   "Quản lý nhân sự": <PeopleIcon />,
   "Dịch vụ & thuốc": <LocalHospitalIcon />,
   "Vật tư & tồn kho": <InventoryIcon />,
-  "Cấu hình": <SettingsIcon />
+  "Cấu hình": <SettingsIcon />,
 };
