@@ -43,8 +43,8 @@ const Content: React.FC = () => {
         // Dữ liệu mẫu cho Liên hệ khẩn cấp
         const dummyEmergencyContact: EmergencyContact = {
           emergency_id: 1,
-          contact_name: "Nguyễn Văn A",
-          contact_phone: "0912345678",
+          contact_name: "Phạm T",
+          contact_phone: "0397464805",
           patient_id: 101,
         };
         setEmergencyContact(dummyEmergencyContact);

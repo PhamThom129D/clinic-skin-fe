@@ -1,4 +1,5 @@
-
+// app/user/info/page.tsx
+"use client";
 
 import Footer from "@/components/patient/dashboard/layout/Footer";
 import { Box } from "@mui/material";
