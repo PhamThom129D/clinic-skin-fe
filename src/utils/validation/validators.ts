@@ -105,6 +105,16 @@ export const doctorIdRule = {
   validate: (v: number) => (!!v && Number(v) > 0) || "Vui lòng chọn bác sĩ",
 };
 
+export const formatDateForInput = (dateString: string | null | undefined): string => {
+  if (!dateString) return "";
+  const parts = dateString.split('-');
+  if (parts.length === 3) {
+    // Chuyển từ DD-MM-YYYY sang YYYY-MM-DD
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return "";
+};
+
 // ==== Rule nâng cao có phụ thuộc ngày/giờ ====
 export const dateOfBirthRule = {
   required: "Vui lòng nhập ngày sinh",

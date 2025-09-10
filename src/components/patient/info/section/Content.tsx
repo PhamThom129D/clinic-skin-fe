@@ -1,4 +1,4 @@
-// components/Content.tsx
+// Trong file Content.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,6 +6,8 @@ import { Box, useTheme, Grid } from "@mui/material";
 import Sidebar from "./Sidebar";
 import UserInfo from "./UserInfo";
 import { AuthResponse } from "@/types/auth";
+import UserInfoUpdate from "./UserInfoUpdate";
+import { EmergencyContact } from "@/types/userinfo";
 
 const Content: React.FC = () => {
   const theme = useTheme();
@@ -13,6 +15,12 @@ const Content: React.FC = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState<AuthResponse | null>(null);
+  // Thêm state cho emergencyContact
+  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact | null>(null);
+
+  const [editing, setEditing] = useState(false);
+  const handleEditClick = () => setEditing(true);
+  const handleBackClick = () => setEditing(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -33,12 +41,29 @@ const Content: React.FC = () => {
         const acc = JSON.parse(accInfo);
         setAccount(acc);
         setIsLoggedIn(true);
+
+        // Khởi tạo dữ liệu mẫu cho Liên hệ khẩn cấp
+        const dummyEmergencyContact: EmergencyContact = {
+          emergency_id: 1,
+          contact_name: "Nguyễn Văn A",
+          contact_phone: "0912345678",
+          patient_id: 101,
+        };
+        setEmergencyContact(dummyEmergencyContact);
+
       } catch {
         setAccount(null);
         setIsLoggedIn(false);
       }
     }
   }, []);
+
+  // Hàm để cập nhật cả hai đối tượng khi thành công
+  const handleUpdateSuccess = (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => {
+    setAccount(updatedAccount);
+    setEmergencyContact(updatedEmergencyContact);
+    setEditing(false);
+  }
 
   return (
     <Box
@@ -80,10 +105,21 @@ const Content: React.FC = () => {
             />
           </Grid>
           <Grid sx={{ flexGrow: 1, minWidth: 0 }}>
-            {account && (
-              <UserInfo
+            {editing ? (
+              <UserInfoUpdate
                 account={account}
+                emergencyContact={emergencyContact} // Truyền dữ liệu khẩn cấp xuống
+                onBackClick={handleBackClick}
+                onUpdateSuccess={handleUpdateSuccess} // Truyền hàm xử lý mới
               />
+            ) : (
+              account && (
+                <UserInfo
+                  account={account}
+                  emergencyContact={emergencyContact} // Truyền dữ liệu khẩn cấp xuống
+                  onEditClick={handleEditClick}
+                />
+              )
             )}
           </Grid>
         </Grid>

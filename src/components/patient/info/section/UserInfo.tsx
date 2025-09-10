@@ -1,4 +1,3 @@
-// components/UserInfo.tsx
 "use client";
 import React from "react";
 import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/material";
@@ -7,17 +6,10 @@ import { AuthResponse } from "@/types/auth";
 import { EmergencyContact } from "@/types/userinfo"; 
 import UserInfoRow from "./UserInfoRow";
 
-  // Dữ liệu mẫu cho Liên hệ khẩn cấp
-  const dummyEmergencyContact: EmergencyContact = {
-    emergency_id: 1,
-    contact_name: "Nguyễn Văn A",
-    contact_phone: "0912345678",
-    patient_id: 101,
-  };
-
 interface UserInfoProps {
   account: AuthResponse;
-  emergencyContact?: EmergencyContact;
+  emergencyContact?: EmergencyContact | null;
+  onEditClick: () => void;
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -27,7 +19,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   minHeight: "100%",
 }));
 
-const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditClick }) => {
   const getGenderText = (gender: string) => {
     switch (gender) {
       case "FEMALE":
@@ -51,8 +43,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
   ];
 
   const emergencyFields = [
-    { label: "Họ tên", value: dummyEmergencyContact.contact_name },
-    { label: "Số điện thoại", value: dummyEmergencyContact.contact_phone },
+    { label: "Họ tên", value: emergencyContact?.contact_name },
+    { label: "Số điện thoại", value: emergencyContact?.contact_phone },
   ];
 
   if (!account) {
@@ -64,7 +56,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
       sx={{
         p: 1.5,
         bgcolor: "#f0f2f5",
-        minHeight: "100vh",
       }}
     >
       <StyledPaper elevation={3}>
@@ -89,11 +80,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
               justifyContent: "center",
             }}
           >
-            <Avatar
-              src={account.avatarUrl}
-              alt={account.fullName}
+          <Avatar 
+              src={account?.avatarUrl || '/avatars/default-avatar.png'}
+              alt={account?.fullName || 'Người dùng'} 
               sx={{ width: 120, height: 120, border: "2px solid #ccc" }}
-            />
+          />
           </Box>
           
           <Box sx={{ flexGrow: 1, width: { xs: "100%", md: "67%" } }}>
@@ -115,14 +106,14 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact }) => {
                 <UserInfoRow
                   key={`emergency-${index}`}
                   label={field.label}
-                  value={field.value}
+                  value={field.value ?? ''}
                   isLast={index === emergencyFields.length - 1}
                 />
               ))}
             </>
 
             <Box sx={{ mt: 3, textAlign: "center" }}>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" onClick={onEditClick}>
                 Chỉnh sửa thông tin
               </Button>
             </Box>
