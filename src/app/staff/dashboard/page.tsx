@@ -1,6 +1,7 @@
+"use client";
+
 import DashboardLayout from "@/components/staff/dashboard/layout/DashboardLayout";
 
-
-export default function Home() {
-  return <DashboardLayout username="Nguyễn Văn A" role="Doctor" />;
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

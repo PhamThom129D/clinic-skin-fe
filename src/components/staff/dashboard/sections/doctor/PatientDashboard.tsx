@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import debounce from "lodash.debounce";
 import PatientList from "./PatientList";
-import TreatmentStepsTable from "./TreatmentStepsTable";
 import MedicationsTable from "./MedicationsTable";
 import { getLabTestsAndDiseases, getTreatmentForDisease } from "@/services/aiService";
 import { getPatientsByDate, Patient, getVisitHistory } from "@/services/patientList";
