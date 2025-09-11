@@ -98,8 +98,5 @@ export const getVisitHistory = async (recordId: number): Promise<VisitSummary | 
     console.error("❌ Lỗi gọi API getVisitHistory:", err);
     return null;
   }
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> origin/develop
+
