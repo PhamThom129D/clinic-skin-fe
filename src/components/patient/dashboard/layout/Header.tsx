@@ -19,6 +19,7 @@ import BookingModal from "../sections/BookingModal";
 import menuItems from "@/components/common/menuItems";
 import MenuButton from "@/components/common/MenuButton";
 import AuthButton, { BookingButton } from "../sections/AuthButton";
+import { useRouter } from "next/navigation";
 
 
 export default function Header() {
@@ -29,6 +30,7 @@ export default function Header() {
 
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const router = useRouter();
 
   // Scroll effect
   useEffect(() => {
@@ -113,7 +115,7 @@ export default function Header() {
               transition: "transform 0.3s ease",
               "&:hover": { transform: "scale(1.02)" },
             }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => router.push('/user/dashboard')}
           >
             <Image
               src="/images/logo.png"
