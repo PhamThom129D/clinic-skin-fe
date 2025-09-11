@@ -30,8 +30,8 @@ export const getPatientsByDate = async (date: string): Promise<Patient[]> => {
             id: s.sessionId,
             name: s.patientName,
             doctorName: s.doctorName,
-            visitDate: s.createdAt
-                ? new Date(s.createdAt).toLocaleDateString("vi-VN")
+            visitDate: s.sessionDate
+                ? new Date(s.sessionDate).toLocaleDateString("vi-VN")
                 : "N/A",
             symptoms: s.symptoms ? s.symptoms.split(",") : [],
             treatmentPlan: s.treatmentPlan,
@@ -67,4 +67,35 @@ export const getPatientDetail = async (sessionId: number): Promise<Patient | nul
         console.error("❌ Lỗi gọi API getPatientDetail:", err);
         return null;
     }
+};
+
+
+// services/patientService.ts
+
+export interface VisitSummary {
+  superShort: string;
+}
+
+export const getVisitHistory = async (recordId: number): Promise<VisitSummary | null> => {
+  try {
+    const res = await fetch(
+      `${API_BASE}/ai-suggest/suggest-visit-summary?recordId=${recordId}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("API error: " + res.status);
+    }
+
+    const data = await res.json();
+    return {
+      superShort: data.superShort || "Không có dữ liệu",
+    };
+  } catch (err) {
+    console.error("❌ Lỗi gọi API getVisitHistory:", err);
+    return null;
+  }
 };

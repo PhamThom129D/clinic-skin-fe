@@ -24,16 +24,32 @@ export type Role =
 
 // 🔹 Menu theo từng Role
 export const roleMenu: Record<Role, string[]> = {
-  ROLE_RECEPTIONIST: ["Lịch hẹn", "Check-in", "Quản lý hồ sơ", "In phiếu khám", "Nhắc trễ hẹn"],
-  ROLE_DOCTOR: ["Hồ sơ bệnh nhân", "Khám & điều trị", "Phác đồ", "Kê đơn", "Xét nghiệm", "AI hỗ trợ"],
+  ROLE_RECEPTIONIST: [
+    "Lịch hẹn",
+    "Check-in",
+    "Quản lý hồ sơ",
+    "In phiếu khám",
+    "Nhắc trễ hẹn",
+  ],
+  ROLE_DOCTOR: [
+    "Trang chủ",
+    "Hồ sơ bệnh nhân",
+    "Khám & điều trị",
+    "Phác đồ",
+    "Kê đơn",
+    "Xét nghiệm",
+    "AI hỗ trợ",
+  ],
   ROLE_LAB_STAFF: ["Lịch hẹn", "Thông tin bệnh nhân", "Cập nhật mẫu/xét nghiệm", "Báo cáo"],
   ROLE_CONSULTANT: ["Tư vấn trực tuyến", "Hồ sơ điều trị", "Hướng dẫn bệnh nhân", "Nhắc trễ hẹn"],
   ROLE_CASHIER: ["Thanh toán", "Cập nhật trạng thái", "In hóa đơn", "Hoàn tiền"],
-  ROLE_ADMIN: ["Hồ sơ bệnh nhân", "Quản lý nhân sự", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"],
+  ROLE_ADMIN: ["Trang chủ","Hồ sơ bệnh nhân", "Quản lý nhân sự", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"],
 };
 
-// 🔹 Icon cho từng menu còn dùng
+// 🔹 Icon cho từng menu
 export const menuIcons: Record<string, React.ReactNode> = {
+  "Trang chủ": <DashboardIcon />,
+
   "Lịch hẹn": <EventNoteIcon />,
   "Check-in": <PeopleIcon />,
   "Quản lý hồ sơ": <DescriptionIcon />,
