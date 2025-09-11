@@ -67,10 +67,10 @@ const handleLogout = () => {
             const isActive = pathname.includes(item.label.toLowerCase().replace(/\s+/g, "-")); // optional mapping path
             return (
               <ListItem key={idx} disablePadding>
-                <Link
-                  href={`/${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                  style={{ width: "100%", textDecoration: "none" }}
-                >
+              <Link
+  href={getPathFromLabel(item.label)} 
+  style={{ width: "100%", textDecoration: "none" }}
+>
                   <ListItemButton
                     sx={{
                       borderRadius: 2,

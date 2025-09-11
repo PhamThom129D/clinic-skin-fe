@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import debounce from "lodash.debounce";
 import PatientList from "./PatientList";
 import TreatmentStepsTable from "./TreatmentStepsTable";
-import MedicationsTable from "./MedicationsTable";
 import { getLabTestsAndDiseases, getTreatmentForDisease } from "@/services/aiService";
 import { getPatientsByDate, Patient } from "@/services/patientList";
 import "@/css/doctor/PatientDashboard.css";
@@ -57,6 +56,7 @@ const LabTestButtons: React.FC<{
     </div>
   );
 });
+LabTestButtons.displayName = "LabTestButtons";
 
 // --- Component con: danh sách button bệnh
 const DiseaseButtons: React.FC<{
@@ -78,6 +78,7 @@ const DiseaseButtons: React.FC<{
     </div>
   );
 });
+DiseaseButtons.displayName = "DiseaseButtons";
 
 export default function PatientDashboard() {
   const [patients, setPatients] = useState<Patient[]>([]);

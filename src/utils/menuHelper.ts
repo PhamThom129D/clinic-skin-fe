@@ -20,7 +20,7 @@ export const getCurrentUserRole = (): Role => {
     return storedRole as Role;
   }
 
-  return "VISITOR"; // default nếu không có role
+  return "ROLE_PATIENT"; // default nếu không có role
 };
 
 /**
@@ -37,3 +37,13 @@ export const getMenuByRole = (role?: Role): MenuItemWithIcon[] => {
     icon: menuIcons[label] || null, // nếu không có icon thì null
   }));
 };
+// utils/menuHelper.ts
+export const pathMap: Record<string, string> = {
+  "Khám và điều trị": "/doctor/patients", 
+  // thêm các mapping đặc biệt khác nếu cần
+};
+
+export const getPathFromLabel = (label: string): string => {
+  return pathMap[label] || `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+};
+
