@@ -30,4 +30,3 @@ export const getMenuByRole = (role?: Role): MenuItemWithIcon[] => {
     icon: menuIcons[label] || null,
   }));
 };
-git 
