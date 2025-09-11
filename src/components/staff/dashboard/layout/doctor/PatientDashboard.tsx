@@ -5,7 +5,7 @@ import PatientList from "./PatientList";
 import TreatmentStepsTable from "./TreatmentStepsTable";
 import MedicationsTable from "./MedicationsTable";
 import { getLabTestsAndDiseases, getTreatmentForDisease } from "@/services/aiService";
-import { getPatientsByDate, Patient } from "@/services/patientList";
+import { getPatientsByDate, Patient, getVisitHistory } from "@/services/patientList";
 import "@/css/doctor/PatientDashboard.css";
 
 // --- Component gõ chữ an toàn
@@ -37,7 +37,7 @@ const AiTyping: React.FC<{ text: string; speed?: number }> = ({ text, speed = 30
   return <span>{displayedText}</span>;
 };
 
-// --- Component con: danh sách button xét nghiệm
+// --- Button Xét nghiệm
 const LabTestButtons: React.FC<{
   labTests: string[];
   selectedLabTest: string;
@@ -58,7 +58,7 @@ const LabTestButtons: React.FC<{
   );
 });
 
-// --- Component con: danh sách button bệnh
+// --- Button Bệnh
 const DiseaseButtons: React.FC<{
   diseases: string[];
   selectedDisease: string;
@@ -85,9 +85,7 @@ export default function PatientDashboard() {
 
   const [doctorConclusion, setDoctorConclusion] = useState("");
   const [labResult, setLabResult] = useState("");
-  const [labTests, setLabTests] = useState<string[]>([]);
   const [displayedLabTests, setDisplayedLabTests] = useState<string[]>([]);
-  const [diseases, setDiseases] = useState<string[]>([]);
   const [displayedDiseases, setDisplayedDiseases] = useState<string[]>([]);
   const [selectedLabTest, setSelectedLabTest] = useState("");
   const [selectedDisease, setSelectedDisease] = useState("");
@@ -98,39 +96,65 @@ export default function PatientDashboard() {
   const [loading, setLoading] = useState(false);
   const [loadingPatients, setLoadingPatients] = useState(false);
 
-  // --- Lấy danh sách bệnh nhân
+  // Hàm format ngày theo local timezone
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [visitHistory, setVisitHistory] = useState<string>("");
+
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (selectedPatient?.id) {
+        const history = await getVisitHistory(selectedPatient.id);
+        setVisitHistory(history?.superShort || "");
+      }
+    };
+    fetchHistory();
+  }, [selectedPatient]);
+
+  // --- Lấy danh sách bệnh nhân theo ngày hiện tại
   useEffect(() => {
     let isMounted = true;
+
     const fetchPatients = async () => {
       setLoadingPatients(true);
       try {
-        const data = await getPatientsByDate("2025-09-01");
-        if (isMounted) setPatients(data);
+        const today = formatDate(new Date()); // ngày local VN
+        const data = await getPatientsByDate(today);
+        if (isMounted) {
+          setPatients(data);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Lỗi khi lấy danh sách bệnh nhân:", err);
       } finally {
-        if (isMounted) setLoadingPatients(false);
+        if (isMounted) {
+          setLoadingPatients(false);
+        }
       }
     };
+
     fetchPatients();
-    return () => { isMounted = false; };
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // --- Effect gợi ý labTest + bệnh khi nhập triệu chứng
+
+  // --- Gợi ý labTest + bệnh từ triệu chứng
   const fetchSuggestionsBySymptoms = useCallback(
     debounce(async (symptoms: string) => {
       if (!symptoms.trim()) return;
       setLoading(true);
       try {
         const response = await getLabTestsAndDiseases(symptoms);
-
-        if (!selectedLabTest) {
-          setLabTests(response.possibleLabTests || []);
-          setDisplayedLabTests(response.possibleLabTests || []);
-        }
-
+        if (!selectedLabTest) setDisplayedLabTests(response.possibleLabTests || []);
         if (!labResult.trim()) {
-          setDiseases(response.possibleDiseases || []);
           setDisplayedDiseases(response.possibleDiseases || []);
           setSelectedDisease(response.possibleDiseases?.[0] || "");
         }
@@ -147,20 +171,17 @@ export default function PatientDashboard() {
     fetchSuggestionsBySymptoms(doctorConclusion);
   }, [doctorConclusion, fetchSuggestionsBySymptoms]);
 
-  // --- Effect gợi ý bệnh khi nhập kết quả xét nghiệm
+  // --- Gợi ý bệnh từ kết quả xét nghiệm
   const fetchSuggestionsByLabResult = useCallback(
     debounce(async (labTest: string, result: string) => {
       if (!labTest || !result.trim()) return;
-
       setLoading(true);
-      setDiseases([]);
+      setDisplayedDiseases([]);
       setSelectedDisease("");
 
       try {
         const response = await getLabTestsAndDiseases(doctorConclusion, labTest, result);
-
         if (response.possibleDiseases?.length > 0) {
-          setDiseases(response.possibleDiseases);
           setDisplayedDiseases(response.possibleDiseases);
           setSelectedDisease(response.possibleDiseases[0]);
         }
@@ -177,21 +198,36 @@ export default function PatientDashboard() {
     fetchSuggestionsByLabResult(selectedLabTest, labResult);
   }, [selectedLabTest, labResult, fetchSuggestionsByLabResult]);
 
-  // --- Reset phác đồ khi labResult thay đổi
+  // --- Reset phác đồ khi labResult hoặc bệnh thay đổi
   useEffect(() => {
     setTreatmentSteps([]);
     setMedications([]);
-  }, [labResult]);
+  }, [labResult, selectedDisease]);
 
-  // --- Khi chọn bệnh
+  // --- Chọn bệnh, load phác đồ + thuốc
   const handleSelectDisease = useCallback(async (d: string) => {
     setSelectedDisease(d);
     setLoading(true);
     try {
       const data = await getTreatmentForDisease(d);
-      setTreatmentSteps(data.possibleTreatments?.steps || []);
-      const medsFromSteps = data.possibleTreatments?.steps?.flatMap((s: any) => s.medications || []);
-      setMedications(medsFromSteps?.map((m: any) => ({ ...m, quantity: 1 })) || []);
+
+      const steps = data.steps || [];
+      setTreatmentSteps(steps);
+
+      const meds = steps
+        .filter((s: any) => s.stepTypeName === "Medication")
+        .flatMap((s: any) => s.itemDetails?.details || [])
+        .map((m: any) => ({
+          id: m.id,
+          name: m.medicationName,
+          dosage: m.dosage,
+          unit: m.unit,
+          usageInstructions: m.instructions || "-",
+          price: parseFloat(m.price),
+          quantity: Number(m.quantity),
+        }));
+
+      setMedications(meds);
     } catch (err) {
       console.error(err);
     } finally {
@@ -217,14 +253,14 @@ export default function PatientDashboard() {
   return (
     <div className="dashboard-container">
       {!selectedPatient ? (
-        loadingPatients ? <p>⏳ Đang tải danh sách bệnh nhân...</p> :
+        loadingPatients ? (
+          <p>⏳ Đang tải danh sách bệnh nhân...</p>
+        ) : (
           <PatientList
             patients={patients}
             onSelect={(p) => {
               setSelectedPatient(p);
               setDoctorConclusion("");
-              setLabTests([]);
-              setDiseases([]);
               setDisplayedLabTests([]);
               setDisplayedDiseases([]);
               setSelectedLabTest("");
@@ -234,15 +270,39 @@ export default function PatientDashboard() {
               setMedications([]);
             }}
           />
+        )
       ) : (
         <div className="dashboard-card">
-          <button className="dashboard-btn dashboard-btn-back" onClick={() => setSelectedPatient(null)}>⬅ Quay lại danh sách</button>
+          <button
+            className="dashboard-btn dashboard-btn-back"
+            onClick={() => setSelectedPatient(null)}
+          >
+            ⬅ Quay lại danh sách
+          </button>
 
           <div className="dashboard-info-box">
             <h2 className="dashboard-title">📋 Thông tin bệnh nhân</h2>
-            <p><b>👤 Họ tên:</b> {selectedPatient.name}</p>
-            <p><b>👨‍⚕️ Bác sĩ:</b> {selectedPatient.doctorName}</p>
+            <p>
+              <b>👤 Họ tên:</b> {selectedPatient.name}
+            </p>
+            <p>
+              <b>👨‍⚕️ Bác sĩ:</b> {selectedPatient.doctorName}
+            </p>
+            <p>
+              {visitHistory && (
+                <div className="visit-history-box">
+                  <div className="visit-history-title">Ghi chú các lần khám trước</div>
+                  <ul className="visit-history-list">
+                    {visitHistory.split(";").map((item, idx) => (
+                      <li key={idx}>{item.trim()}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+            </p>
           </div>
+
 
           <div className="dashboard-card">
             <h3>📝 Triệu chứng</h3>
@@ -257,7 +317,7 @@ export default function PatientDashboard() {
 
           {displayedLabTests.length > 0 && (
             <>
-              <h3>🧪 Xét nghiệm gợi ý:</h3>
+              <h3>🧪 Xét nghiệm:</h3>
               <LabTestButtons
                 labTests={displayedLabTests}
                 selectedLabTest={selectedLabTest}
@@ -274,14 +334,13 @@ export default function PatientDashboard() {
                     onChange={(e) => setLabResult(e.target.value)}
                   />
                 </div>
-
               )}
             </>
           )}
 
           {displayedDiseases.length > 0 && (
             <>
-              <h3>🦠 Bệnh gợi ý:</h3>
+              <h3>🦠 Bệnh chuẩn đoán:</h3>
               <DiseaseButtons
                 diseases={displayedDiseases}
                 selectedDisease={selectedDisease}
@@ -289,16 +348,21 @@ export default function PatientDashboard() {
               />
             </>
           )}
-        </div>
-      )}
 
-      {treatmentSteps.length > 0 && (
-        <div className="medications-wrapper">
-          <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} />
-          <MedicationsTable medications={medications} setMedications={setMedications} />
-          <div className="save-btn-wrapper">
-            <button className="dashboard-btn dashboard-btn-save" onClick={handleSave}>💾 Lưu hồ sơ</button>
-          </div>
+          {treatmentSteps.length > 0 && (
+            <div className="medications-wrapper">
+              {/* <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} /> */}
+              <MedicationsTable medications={medications} setMedications={setMedications} />
+              <div className="save-btn-wrapper">
+                <button
+                  className="dashboard-btn dashboard-btn-save"
+                  onClick={handleSave}
+                >
+                  💾 Lưu hồ sơ
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
