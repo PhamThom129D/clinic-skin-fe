@@ -24,10 +24,6 @@ import {
 import { redirectByRole } from "@/utils/authUtils";
 import { notifySuccess } from "@/utils/toast";
 
-interface FieldErrorResponse {
-  field: keyof RegisterFormData;
-  message: string;
-}
 
 export default function RegisterForm() {
   const router = useRouter();

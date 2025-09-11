@@ -17,6 +17,7 @@ export default function MedicationsTable({ medications, setMedications }: any) {
     });
   }, [medications]);
 
+
   const addMedication = () => {
     setMedications([
       ...medications,
