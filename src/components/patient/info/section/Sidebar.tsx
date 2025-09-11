@@ -34,13 +34,6 @@ const sidebarSections = [
     ],
   },
   {
-    title: "Lịch sử dịch vụ",
-    mainIcon: <HistoryIcon />,
-    items: [
-      { text: "Dịch vụ đã mua", icon: <HistoryIcon />, href: "/patient/info/purchased-services" },
-    ],
-  },
-  {
     title: "Hồ sơ khám",
     mainIcon: <MedicalInformationIcon />,
     items: [

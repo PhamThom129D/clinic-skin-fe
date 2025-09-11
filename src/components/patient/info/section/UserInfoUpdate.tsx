@@ -1,8 +1,9 @@
+// src/components/patient/info/section/UserInfoUpdate.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { styled } from '@mui/system';
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { AuthResponse } from "@/types/auth";
 import { notifySuccess, notifyWarning } from "@/utils/toast";
 import AvatarUpload from "@/components/common/AvatarUpload";
@@ -18,6 +19,8 @@ import {
   formatDateForInput,
 } from "@/utils/validation/validators";
 import { EmergencyContact } from "@/types/userinfo";
+
+// (Các interfaces của bạn giữ nguyên)
 
 interface UserInfoUpdateFormData {
   fullName: string;
@@ -45,32 +48,33 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyContact, onBackClick, onUpdateSuccess }) => {
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<UserInfoUpdateFormData>({
-    defaultValues: {
-      fullName: account?.fullName || "",
-      phoneNumber: account?.phoneNumber || "",
-      email: account?.email || "",
-      dateOfBirth: formatDateForInput(account?.dateOfBirth),
-      address: account?.address || "",
-      emergencyContactName: emergencyContact?.contact_name || "",
-      emergencyContactPhone: emergencyContact?.contact_phone || "",
-    }
-  });
+  control,
+  handleSubmit,
+  formState: { errors },
+  reset,
+  watch, // Thêm watch
+  setValue, // Thêm setValue
+} = useForm<UserInfoUpdateFormData>();
 
   useEffect(() => {
     if (account) {
-      setGender((account.gender as UserInfoUpdateFormData["gender"]) ?? "");
+      reset({
+        fullName: account.fullName ?? "",
+        phoneNumber: account.phoneNumber ?? "",
+        email: account.email ?? "",
+        dateOfBirth: formatDateForInput(account.dateOfBirth),
+        address: account.address ?? "",
+        emergencyContactName: emergencyContact?.contact_name ?? "",
+        emergencyContactPhone: emergencyContact?.contact_phone ?? "",
+        gender: (account.gender as UserInfoUpdateFormData["gender"]) ?? "",
+      });
       setAvatarPreview(account.avatarUrl ?? null);
     }
-  }, [account]);
-  
-  const [gender, setGender] = useState<UserInfoUpdateFormData["gender"]>("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  }, [account, emergencyContact, reset]);
 
   const handleAvatarChange = (file: File | null) => {
     setAvatarFile(file);
@@ -85,8 +89,12 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
     try {
       const updatedAccount: AuthResponse = {
         ...account,
-        ...data,
-        gender: gender,
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        dateOfBirth: data.dateOfBirth,
+        address: data.address,
+        gender: data.gender, // Lấy giá trị trực tiếp từ data
         avatarUrl: avatarPreview || account?.avatarUrl,
       };
 
@@ -133,16 +141,22 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
             <FormInput name="email" control={control} label="Email" rules={emailRule} />
             <FormInput name="phoneNumber" control={control} label="Số điện thoại" rules={phoneNumberRule} />
             <FormInput name="dateOfBirth" control={control} label="Ngày sinh" type="date" rules={dateOfBirthRule} />
-            <GenderSelect
+            
+            <Controller
               name="gender"
-              value={gender}
-              onChange={(e) => setGender(e.target.value as UserInfoUpdateFormData["gender"])}
-              error={!!errors.gender}
-              helperText={errors.gender?.message}
+              control={control}
+              defaultValue="" // Thêm defaultValue ở đây
+              render={({ field, fieldState: { error } }) => (
+                <GenderSelect
+                  name={field.name}
+                  value={field.value as string}
+                  onChange={field.onChange}
+                  error={!!error}
+                  helperText={error?.message}
+                />
+              )}
             />
           </Box>
-          
-          {/* Liên hệ khẩn cấp */}
           <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2 }}>
             Liên hệ khẩn cấp
           </Typography>
@@ -150,7 +164,6 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
             <FormInput name="emergencyContactName" control={control} label="Họ tên" rules={fullNameRule} />
             <FormInput name="emergencyContactPhone" control={control} label="Số điện thoại" rules={phoneNumberRule} />
           </Box>
-          
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between', gap: 2 }}>
             <Button variant="outlined" color="primary" sx={{ flex: 1 }} onClick={onBackClick}>
               Quay lại
