@@ -4,7 +4,7 @@ import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/mate
 import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
 import { EmergencyContact } from "@/types/userinfo"; 
-import UserInfoRow from "./UserInfoRow";
+import UserInfoRow from "../section/UserInfoRow";
 
 interface UserInfoProps {
   account: AuthResponse;
@@ -63,12 +63,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
 
 
   return (
-    <Box
-      sx={{
-        p: 1.5,
-        bgcolor: "#f0f2f5",
-      }}
-    >
+    <Box>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" fontWeight="bold">

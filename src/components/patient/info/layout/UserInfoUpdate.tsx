@@ -123,7 +123,6 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
   return (
     <Box
       sx={{
-        p: 1.5,
         bgcolor: "#f0f2f5",
       }}
     >

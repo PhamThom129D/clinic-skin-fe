@@ -7,19 +7,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import HistoryIcon from '@mui/icons-material/History';
-import LogoutIcon from '@mui/icons-material/Logout';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import SidebarSection from './SidebarSection';
-import { logoutClient } from "@/services/authService";
-import { AuthResponse } from "@/types/auth"; 
-
-export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "phoneNumber"> {}
-
-interface AccountDropdownProps {
-  setIsLoggedIn: (val: boolean) => void;
-  account?: AccountInfo | null;
-}
+import LogoutIcon from '@mui/icons-material/Logout';
+import SidebarSection from '../section/SidebarSection';
+import { useUser } from "@/hooks/useUser";
+import Link from 'next/link';
 
 // Dữ liệu mẫu cho sidebar
 const sidebarSections = [
@@ -42,24 +34,17 @@ const sidebarSections = [
   },
 ];
 
-const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => {
+const Sidebar: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-
-  const handleLogout = () => {
-    logoutClient();
-    setIsLoggedIn(false);
-  };
+  const { account, logout } = useUser();
 
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>(
     sidebarSections.reduce((acc, section) => ({ ...acc, [section.title]: true }), {})
   );
 
   const handleToggle = (title: string) => {
-    setOpenSections(prevState => ({
-      ...prevState,
-      [title]: !prevState[title]
-    }));
+    setOpenSections(prevState => ({ ...prevState, [title]: !prevState[title] }));
   };
 
   const user = account || {
@@ -118,7 +103,7 @@ const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => 
             <ListItemIcon sx={{ color: theme.palette.error.main }}>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText onClick={handleLogout} primary={<Typography fontWeight="medium" color="error">Đăng xuất</Typography>} />
+            <ListItemText onClick={logout} primary={<Typography fontWeight="medium" color="error">Đăng xuất</Typography>} />
           </ListItemButton>
         </ListItem>
       </List>
