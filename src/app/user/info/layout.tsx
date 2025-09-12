@@ -5,6 +5,7 @@ import Footer from "@/components/patient/dashboard/layout/Footer";
 import ChatBox from "@/components/patient/dashboard/boxchat/ChatBox";
 import Sidebar from "@/components/patient/info/layout/Sidebar";
 import { useTheme } from "@mui/material/styles";
+import { AccountProvider } from "@/context/AccountContext";
 
 export default function PatientInfoLayout({ children }: { children: React.ReactNode }) {
     const theme = useTheme();
@@ -22,16 +23,8 @@ export default function PatientInfoLayout({ children }: { children: React.ReactN
       }}
     >
       {isDark && (
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(40, 99, 57, 0.5)",
-            pointerEvents: "none",
-          }}
-        />
+        <Box sx={{ position: "absolute", inset: 0, backgroundColor: "rgba(40, 99, 57, 0.5)", pointerEvents: "none", }} />
       )}
-      <main>
         <Header />
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, maxWidth: '1200px', mx: 'auto'}}>
           <Box sx={{ flexShrink: 0, width: { xs: '100%', md: '300px' } }}>
@@ -43,7 +36,6 @@ export default function PatientInfoLayout({ children }: { children: React.ReactN
         </Box>
         <Footer />
         <ChatBox />
-      </main>
     </Box>
   );
 }

@@ -1,4 +1,3 @@
-// src/app/user/info/update-account/page.tsx
 "use client";
 
 import { Box, Typography } from "@mui/material";
@@ -27,8 +26,8 @@ export default function Page() {
   }, [account]);
 
   const handleUpdateSuccess = (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => {
-    setAccount(updatedAccount); // Cập nhật state toàn cục
-    router.push("/user/info"); // Điều hướng quay lại trang thông tin
+    setAccount(updatedAccount); 
+    router.push("/user/info");
   };
   
   const handleBackClick = () => {
@@ -52,3 +51,4 @@ export default function Page() {
     />
   );
 }
+
