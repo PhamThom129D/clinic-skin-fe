@@ -19,17 +19,17 @@ const sidebarSections = [
     title: "Thông tin cá nhân",
     mainIcon: <PersonIcon />,
     items: [
-      { text: "Thông tin cá nhân", icon: <AccountCircleIcon />, href: "/patient/info/update-account" },
-      { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/patient/info/update-account" },
-      { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/patient/info/change-password" },
-      { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/patient/info/forgot-password" },
+      { text: "Thông tin cá nhân", icon: <AccountCircleIcon />, href: "/user/info" },
+      { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/user/info/update-account" },
+      { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/user/info/change-password" },
+      { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/user/info/forgot-password" },
     ],
   },
   {
     title: "Hồ sơ khám",
     mainIcon: <MedicalInformationIcon />,
     items: [
-      { text: "Hồ sơ khám", icon: <MedicalInformationIcon />, href: "/patient/info/medical-records" },
+      { text: "Hồ sơ khám", icon: <MedicalInformationIcon />, href: "/user/info/medical-records" },
     ],
   },
 ];
