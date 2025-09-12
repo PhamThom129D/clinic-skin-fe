@@ -2,15 +2,13 @@
 
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box } from "@mui/material";
+import { Box, Typography, IconButton, Avatar, alpha } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 import { RegisterFormData } from "@/types/auth";
 import { register as registerAPI } from "@/services/authService";
-import { redirectByRole } from "@/utils/authUtils";
-import { notifySuccess, notifyWarning } from "@/utils/toast";
 
-import AvatarUpload from "@/components/common/AvatarUpload";
 import GenderSelect from "@/components/common/GenderSelect";
 import { FormInput } from "../common/FormInput";
 import ButtonPrimary from "../common/ButtonPrimary";
@@ -22,19 +20,12 @@ import {
   fullNameRule,
   phoneNumberRule,
   addressRule,
-  dateOfBirthRule,
 } from "@/utils/validation/validators";
+import { redirectByRole } from "@/utils/authUtils";
+import { notifySuccess } from "@/utils/toast";
 
-type RegisterFormProps = {
-  onSubmit?: (data: RegisterFormData) => Promise<void>;
-};
 
-interface FieldErrorResponse {
-  field: keyof RegisterFormData;
-  message: string;
-}
-
-export default function RegisterForm({ onSubmit }: RegisterFormProps) {
+export default function RegisterForm() {
   const router = useRouter();
   const { control, handleSubmit, watch, setError, formState: { errors } } = useForm<RegisterFormData>();
   const password = watch("password");
@@ -48,50 +39,100 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
     setAvatarPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const handleFinalSubmit: SubmitHandler<RegisterFormData> = async (data) => {
-    if (!data.email && !data.phoneNumber) {
-      setError("email", { type: "manual", message: "Vui lòng nhập email hoặc số điện thoại." });
-      setError("phoneNumber", { type: "manual", message: "Vui lòng nhập email hoặc số điện thoại." });
-      return;
-    }
+const handleFinalSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+  
+  if (!data.email && !data.phoneNumber) {
+    setError("email", { type: "manual", message: "Vui lòng nhập email hoặc số điện thoại." });
+    setError("phoneNumber", { type: "manual", message: "Vui lòng nhập email hoặc số điện thoại." });
+    return;
+  }
 
-    const formattedData: RegisterFormData = {
-      ...data,
-      gender: gender || "OTHER",
-      avatarFile: avatarFile ?? undefined,
-      role: "ROLE_PATIENT",
-      status: data.status ?? "Active",
-      email: data.email || "",
-      phoneNumber: data.phoneNumber || "",
-    };
-
-    try {
-      await registerAPI(formattedData);
-      notifySuccess("Đăng ký thành công!");
-      if (onSubmit) await onSubmit(data);
-      redirectByRole("ROLE_PATIENT", router);
-    } catch (err: unknown) {
-      const maybeError = err as { response?: { data?: FieldErrorResponse } };
-      const fieldError = maybeError?.response?.data;
-      if (fieldError?.field && fieldError?.message) {
-        setError(fieldError.field, { type: "manual", message: fieldError.message });
-      } else {
-        notifyWarning(err instanceof Error ? err.message : "Đăng ký thất bại");
-      }
-    }
+  const formattedData: RegisterFormData = {
+    ...data,
+    gender: gender || "OTHER",
+    avatarFile: avatarFile ?? undefined,
+    role: "ROLE_PATIENT",
+    status: data.status ?? "Active",
+    email: data.email || "",
+    phoneNumber: data.phoneNumber || "",
   };
 
+  try {
+    const response = await registerAPI(formattedData);
+
+    // Lấy token và role từ response
+    const token = response.token;
+    const role = response.roles?.[0] || "ROLE_PATIENT";
+
+    // Lưu vào sessionStorage
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("role", role);
+
+    notifySuccess("Đăng ký thành công!");
+  redirectByRole(role, router);
+  } catch (err: unknown) {
+    let message = "Đăng ký thất bại. Vui lòng thử lại.";
+    let field: keyof RegisterFormData = "email";
+
+    if (typeof err === "object" && err !== null && "response" in err) {
+      const resp = (err as any).response;
+      if (resp?.data) {
+        message = typeof resp.data === "string" ? resp.data : message;
+        if (message.toLowerCase().includes("email")) {
+          field = "email";
+        } else if (message.toLowerCase().includes("số điện thoại") || message.toLowerCase().includes("phone")) {
+          field = "phoneNumber";
+        }
+      }
+    }
+
+    setError(field, { type: "manual", message });
+  }
+};
+
+
   return (
-    <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", py: 2 }}>
-      <h1>Đăng ký</h1>
+    <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", py: 2, minHeight: 800 }}>
+      <Typography variant="h2" fontWeight="bold" textAlign="center" sx={{ mb: 4, color: "primary.main" }}>
+        Đăng ký
+      </Typography>
+
       <form onSubmit={handleSubmit(handleFinalSubmit)}>
-        {/* Avatar */}
-        <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
-          <AvatarUpload preview={avatarPreview} onChange={handleAvatarChange} />
+        {/* Avatar với icon bút */}
+        <Box display="flex" justifyContent="center" sx={{ mb: 4, position: "relative" }}>
+          <Avatar
+            src={avatarPreview || "/default-avatar.png"}
+            alt="Avatar Preview"
+            sx={{ width: 140, height: 140, border: "2px solid #1976d2" }}
+          />
+          <IconButton
+            component="label"
+            sx={{
+              position: "absolute",
+              top: 105,
+              left: "58%",
+              transform: "translateX(-50%)",
+              bgcolor: "primary.main",
+              color: "white",
+              border: "1px solid white",
+              width: 35,
+              height: 35,
+              "&:hover": { bgcolor: alpha("#1976d2", 0.9) },
+              boxShadow: 1,
+            }}
+          >
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={(e) => handleAvatarChange(e.target.files?.[0] || null)}
+            />
+            <Edit fontSize="small" />
+          </IconButton>
         </Box>
 
-        {/* Form Inputs 2 cột */}
-        <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }} gap={2}>
+        {/* Form Inputs */}
+        <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }} gap={4}>
           <FormInput name="fullName" control={control} label="Họ và tên" rules={fullNameRule} />
           <FormInput name="address" control={control} label="Địa chỉ" rules={addressRule} />
 
@@ -122,22 +163,7 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
 
         {/* Submit */}
         <Box sx={{ mt: 3 }}>
-          <ButtonPrimary
-            type="submit"
-            fullWidth
-            sx={{
-              py: 1.5,
-              fontSize: "0.95rem",
-              borderRadius: 3,
-              background: "linear-gradient(135deg, #64ce82, #4caf50)",
-              "&:hover": {
-                background: "linear-gradient(135deg, #4caf50, #388e3c)",
-                transform: "translateY(-2px)",
-                boxShadow: "0 8px 25px rgba(100, 206, 130, 0.3)",
-              },
-              transition: "all 0.3s ease",
-            }}
-          >
+          <ButtonPrimary type="submit" fullWidth sx={{ py: 1.5 }}>
             Đăng ký tài khoản
           </ButtonPrimary>
         </Box>

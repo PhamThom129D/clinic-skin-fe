@@ -104,16 +104,4 @@
   justify-content: flex-end; /* căn phải tổng tiền */
   margin-top: 5px;
 }
-.med-table th:nth-child(6),
-.med-table td:nth-child(6) {
-  width: 100px; /* hoặc tùy chỉnh theo nhu cầu */
-  max-width: 100px;
-  min-width: 50px;
-}
 
-.med-table th:nth-child(5),
-.med-table td:nth-child(5) { width: 100px; } /* Giá */
-.med-table th:nth-child(6),
-.med-table td:nth-child(6) { width: 80px; }  /* Số lượng */
-.med-table th:nth-child(7),
-.med-table td:nth-child(7) { width: 120px; } /* Thành tiền */

@@ -27,7 +27,8 @@ export default function GoogleLoginButton() {
       localStorage.setItem("userRole", role);
 
       notifySuccess("Đăng nhập thành công với Google!");
-      redirectByRole(role, router);
+console.log("Redirecting role:", role);
+redirectByRole(role!, router);
     } catch (err) {
       console.error(err);
       notifyWarning("Đăng nhập Google thất bại");

@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="colored" // dùng màu success/error đẹp hơn
+                theme="colored" 
               />
             </MuiThemeRegistry>
           </NextThemeProvider>

@@ -3,7 +3,7 @@ import React from "react";
 import { Fab, useTheme, alpha } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 
-export default function BackButton({ href = "/dashboard" }: { href?: string }) {
+export default function BackButton({ href = "/" }: { href?: string }) {
   const theme = useTheme();
   return (
     <Fab

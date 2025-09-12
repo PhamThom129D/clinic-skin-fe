@@ -29,7 +29,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ preview, onChange }) => {
         accept="image/*"
         ref={fileInputRef}
         onChange={handleFileChange}
-        style={{ display: "none" }} // ẩn hoàn toàn input
+        style={{ display: "none" }}
       />
       <Button variant="contained" color="primary" size="medium" onClick={handleClick}>
         Chọn ảnh đại diện

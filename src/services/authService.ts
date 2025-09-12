@@ -29,17 +29,18 @@ export const resendOtp = (emailOrPhone: string) => {
 };
 
 
-// ---- REGISTER ----
-export const register = async (data: RegisterFormData) => {
-  const formData = new FormData();
+import { AxiosResponse } from "axios";
 
+
+
+export const register = async (data: RegisterFormData): Promise<AuthResponse> => {
+  const formData = new FormData();
   formData.append("fullName", data.fullName);
   formData.append("email", data.email);
   formData.append("password", data.password);
   formData.append("address", data.address);
   formData.append("dateOfBirth", data.dateOfBirth);
   formData.append("gender", data.gender);
-
   formData.append("status", data.status ?? "ACTIVE");
   formData.append("role", data.role);
 
@@ -47,10 +48,13 @@ export const register = async (data: RegisterFormData) => {
     formData.append("avatarFile", data.avatarFile);
   }
 
-  return api.post("/auth/register", formData, {
+  const response: AxiosResponse<AuthResponse> = await api.post("/auth/register", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+
+  return response.data; // trả về data trực tiếp
 };
+
 
 export const logoutClient = async () => {
   try {

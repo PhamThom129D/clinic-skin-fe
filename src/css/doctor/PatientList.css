@@ -49,14 +49,13 @@
   transition: 0.2s;
   cursor: pointer;
 }
-
 /* Cột cụ thể */
 .patient-col-stt {
-  width: 60px;
+  width: 60px; /* Giữ nguyên */
 }
 
 .patient-col-name {
-  width: 200px;
+  width: 220px; /* Tăng nhẹ cho tên */
   text-align: left;
   font-weight: 500;
   white-space: nowrap;
@@ -64,21 +63,20 @@
   text-overflow: ellipsis;
 }
 
-.patient-col-age {
-  width: 80px;
-}
-
-.patient-col-gender {
-  width: 100px;
+.patient-col-date {
+  width: 140px; /* Ngày khám cần rộng hơn để đủ hiển thị dd/MM/yyyy */
 }
 
 .patient-col-symptoms {
-  width: 300px;
+  width: 250px; /* Giảm bớt để nhường cho ngày */
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .patient-col-action {
-  width: 150px;
+  width: 120px; /* Nút Khám */
 }
 
 .patient-btn-exam {
