@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Collapse, useTheme } from "@mui/material";
 import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { useRouter } from "next/navigation";
 
 interface SidebarSectionProps {
   title: string;
@@ -14,11 +16,13 @@ interface SidebarSectionProps {
   }[];
   isOpen: boolean;
   onClick: () => void;
+  href?: string;
 }
 
-const SidebarSection: React.FC<SidebarSectionProps> = ({ title, mainIcon, items, isOpen, onClick }) => {
+const SidebarSection: React.FC<SidebarSectionProps> = ({ title, mainIcon, items, isOpen, onClick, href }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const router = useRouter();
 
   return (
     <>
