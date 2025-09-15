@@ -16,7 +16,7 @@ export default function Page() {
   if (!account) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <Typography>Bạn chưa đăng nhập. Vui lòng đăng nhập để truy cập trang này.</Typography>
+        <Typography>Đang tải thông tin...</Typography>
       </Box>
     );
   }
