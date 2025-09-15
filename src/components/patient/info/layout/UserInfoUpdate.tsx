@@ -161,7 +161,7 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
           </Box>
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between', gap: 2 }}>
             <Button variant="outlined" color="primary" sx={{ flex: 1 }} onClick={onBackClick}>
-              Quay lại
+              Hủy
             </Button>
             <ButtonPrimary
               type="submit"

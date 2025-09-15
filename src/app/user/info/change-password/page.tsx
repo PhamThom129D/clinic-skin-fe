@@ -21,7 +21,5 @@ export default function Page() {
     );
   }
 
-  return (
-    <ChangePassword onBackClick={handleBackClick} />
-  );
+  return <ChangePassword/>;
 }
