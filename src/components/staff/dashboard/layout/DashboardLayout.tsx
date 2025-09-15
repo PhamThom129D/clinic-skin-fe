@@ -13,7 +13,7 @@ export default function LayoutDashboard() {
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const [role, setRole] = useState<Role | null>(null);
 
-  // 🔹 Lấy role khi load component
+
   useEffect(() => {
     const userRole = getCurrentUserRole();
     setRole(userRole);
