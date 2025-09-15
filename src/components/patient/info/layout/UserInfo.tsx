@@ -16,7 +16,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.paper,
-  minHeight: "100%",
 }));
 
 const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditClick }) => {

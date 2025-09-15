@@ -25,11 +25,6 @@ interface ChangePasswordFormData {
   confirmNewPassword: string;
 }
 
-// ==== Props ====
-interface ChangePasswordProps {
-  onBackClick: () => void;
-}
-
 // ==== Styled Paper ====
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -37,12 +32,12 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-const ChangePassword: React.FC<ChangePasswordProps> = ({ onBackClick }) => {
+const ChangePassword: React.FC = () => {
   const theme = useTheme();
   const {
     control,
     handleSubmit,
-    getValues,   // 👈 thêm getValues ở đây
+    getValues,
     reset,
   } = useForm<ChangePasswordFormData>();
 
