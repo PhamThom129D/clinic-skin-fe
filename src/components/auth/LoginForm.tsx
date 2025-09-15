@@ -27,6 +27,8 @@ import { passwordRule } from "@/utils/validation/validators";
 import { notifyWarning, notifySuccess } from "@/utils/toast";
 import { login as loginApi } from "@/services/authService";
 import { redirectByRole } from "@/utils/authUtils";
+import { FormInput } from "@/components/common/FormInput";
+
 
 export default function LoginForm() {
   const router = useRouter();
@@ -181,41 +183,5 @@ export default function LoginForm() {
 
       <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </>
-  );
-}
-
-// Reusable Form Input component
-interface FormInputProps {
-  name: keyof LoginRequest;
-  control: any;
-  label: string;
-  type?: string;
-  rules?: any;
-  sx?: object;
-  endAdornment?: React.ReactNode;
-}
-
-function FormInput({ name, control, label, type = "text", rules, sx, endAdornment }: FormInputProps) {
-  return (
-    <Box sx={{ my: 4 }}>
-      <Controller
-        name={name}
-        control={control}
-        rules={rules}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            type={type}
-            label={label}
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-            fullWidth
-            variant="outlined"
-            sx={sx}
-            InputProps={{ endAdornment }}
-          />
-        )}
-      />
-    </Box>
   );
 }
