@@ -95,7 +95,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBackClick }) => {
                     py: 1.5,
                     marginBottom: '20px',
                     fontSize: "0.95rem",
-                    borderRadius: 3,
+                    borderRadius: 1,
                     background: "linear-gradient(135deg, #64ce82, #4caf50)",
                     "&:hover": {
                         background: "linear-gradient(135deg, #4caf50, #388e3c)",

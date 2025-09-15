@@ -170,7 +170,7 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
                 flex: 1,
                 py: 1.5,
                 fontSize: "0.95rem",
-                borderRadius: 3,
+                borderRadius: 1,
                 background: "linear-gradient(135deg, #64ce82, #4caf50)",
                 "&:hover": {
                   background: "linear-gradient(135deg, #4caf50, #388e3c)",
