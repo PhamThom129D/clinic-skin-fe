@@ -28,7 +28,7 @@ export default function PatientInfoLayout({ children }: { children: React.ReactN
         <Box sx={{ position: "absolute", inset: 0, backgroundColor: "rgba(40, 99, 57, 0.5)", pointerEvents: "none", }} />
       )}
         <Header />
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, maxWidth: '1200px', mx: 'auto'}}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, maxWidth: '1200px', mx: 'auto', gap: 3}}>
             <Box sx={{ flexShrink: 0, width: { xs: '100%', md: '300px' } }}>
                 <Sidebar />
             </Box>
