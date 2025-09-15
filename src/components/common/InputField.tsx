@@ -22,7 +22,7 @@ const InputField: React.FC<InputFieldProps> = ({
     <TextField
       label={label}
       name={name}
-      value={value}
+      value={value || ""}
       onChange={onChange}
       type={type}
       fullWidth

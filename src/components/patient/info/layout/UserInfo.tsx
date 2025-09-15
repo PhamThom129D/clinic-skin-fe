@@ -4,7 +4,7 @@ import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/mate
 import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
 import { EmergencyContact } from "@/types/userinfo"; 
-import UserInfoRow from "./UserInfoRow";
+import UserInfoRow from "../section/UserInfoRow";
 
 interface UserInfoProps {
   account: AuthResponse;
@@ -51,20 +51,20 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
     return null;
   }
 
+  const renderFields = (fields: { label: string; value?: string }[], prefix: string) =>
+  fields.map((field, index) => (
+    <UserInfoRow
+      key={`${prefix}-${index}`}
+      label={field.label}
+      value={field.value ?? ""}
+      isLast={index === fields.length - 1}
+    />
+  ));
+
+
   return (
-    <Box
-      sx={{
-        p: 1.5,
-        bgcolor: "#f0f2f5",
-      }}
-    >
+    <Box>
       <StyledPaper elevation={3}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" fontWeight="bold">
-            Thông tin cá nhân
-          </Typography>
-        </Box>
-        
         <Grid
           sx={{
             display: "flex",
@@ -88,29 +88,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
           </Box>
           
           <Box sx={{ flexGrow: 1, width: { xs: "100%", md: "67%" } }}>
-            {infoFields.map((field, index) => (
-              <UserInfoRow
-                key={`info-${index}`}
-                label={field.label}
-                value={field.value}
-                isLast={false}
-              />
-            ))}
+            {renderFields(infoFields, 'info')}
             
-            <>
-              <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2, textAlign: { xs: 'center', md: 'left' } }}>
-                Liên hệ khẩn cấp
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-              {emergencyFields.map((field, index) => (
-                <UserInfoRow
-                  key={`emergency-${index}`}
-                  label={field.label}
-                  value={field.value ?? ''}
-                  isLast={index === emergencyFields.length - 1}
-                />
-              ))}
-            </>
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2, textAlign: { xs: 'center', md: 'left' } }}>
+              Liên hệ khẩn cấp
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            {renderFields(emergencyFields, 'emergency')}
 
             <Box sx={{ mt: 3, textAlign: "center" }}>
               <Button variant="contained" color="primary" onClick={onEditClick}>

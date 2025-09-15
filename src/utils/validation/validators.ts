@@ -165,3 +165,22 @@ export const createBookingRules = (getValues?: GetValues) => {
 
   return { appointmentDateRule, appointmentTimeRule };
 };
+
+// ==== Password rules nâng cao ====
+
+// Rule mật khẩu cũ (chỉ cần validate cơ bản)
+export const oldPasswordRule = passwordRule;
+
+// Rule mật khẩu mới (không được trùng với mật khẩu cũ)
+export const newPasswordRule = (getValues: () => { oldPassword?: string }) => ({
+  ...passwordRule,
+  validate: (value: string) =>
+    value !== getValues().oldPassword || "Mật khẩu mới không được trùng với mật khẩu cũ",
+});
+
+// Rule xác nhận mật khẩu mới (phải trùng mật khẩu mới)
+export const confirmNewPasswordRule = (getValues: () => { newPassword?: string }) => ({
+  ...confirmPasswordRule,
+  validate: (value: string) =>
+    value === getValues().newPassword || "Mật khẩu xác nhận không khớp",
+});

@@ -2,70 +2,61 @@
 "use client";
 
 import React from "react";
-import { Box, Avatar, Typography, Divider, useTheme, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Avatar, Typography, Divider, useTheme, List, ListItem, ListItemButton, ListItemIcon, ListItemText, hexToRgb } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import HistoryIcon from '@mui/icons-material/History';
-import LogoutIcon from '@mui/icons-material/Logout';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import SidebarSection from './SidebarSection';
-import { logoutClient } from "@/services/authService";
-import { AuthResponse } from "@/types/auth"; 
-
-export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "phoneNumber"> {}
-
-interface AccountDropdownProps {
-  setIsLoggedIn: (val: boolean) => void;
-  account?: AccountInfo | null;
-}
+import LogoutIcon from '@mui/icons-material/Logout';
+import SidebarSection from '../section/SidebarSection';
+import { useUser } from "@/hooks/useUser";
+import Link from 'next/link';
+import { useRouter } from "next/navigation";
 
 // Dữ liệu mẫu cho sidebar
 const sidebarSections = [
   {
     title: "Thông tin cá nhân",
     mainIcon: <PersonIcon />,
+    href: "/user/info",
     items: [
-      { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/patient/info/update-account" },
-      { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/patient/info/change-password" },
-      { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/patient/info/forgot-password" },
-    ],
-  },
-  {
-    title: "Lịch sử dịch vụ",
-    mainIcon: <HistoryIcon />,
-    items: [
-      { text: "Dịch vụ đã mua", icon: <HistoryIcon />, href: "/patient/info/purchased-services" },
+      { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/user/info/update-account" },
+      { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/user/info/change-password" },
+      { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/user/info/forgot-password" },
     ],
   },
   {
     title: "Hồ sơ khám",
     mainIcon: <MedicalInformationIcon />,
+    href: "/user/info/medical-records",
     items: [
-      { text: "Hồ sơ khám", icon: <MedicalInformationIcon />, href: "/patient/info/medical-records" },
+      { text: "Hồ sơ khám", icon: <MedicalInformationIcon />, href: "/user/info/medical-records" },
     ],
   },
 ];
 
-const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => {
+const Sidebar: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-
-  const handleLogout = () => {
-    logoutClient();
-    setIsLoggedIn(false);
-  };
+  const { account, logout } = useUser();
+  const router = useRouter();
 
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>(
     sidebarSections.reduce((acc, section) => ({ ...acc, [section.title]: true }), {})
   );
 
-  const handleToggle = (title: string) => {
-    setOpenSections(prevState => ({
-      ...prevState,
-      [title]: !prevState[title]
-    }));
+  const handleToggle = (title: string, href?: string) => {
+    setOpenSections(prev => {
+    const newState = { ...prev, [title]: !prev[title] };
+    if (href) {
+      setTimeout(() => {
+        router.push(href);
+      }, 100); 
+    }
+
+    return newState;
+  });
   };
 
   const user = account || {
@@ -96,7 +87,9 @@ const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => 
           color: theme.palette.common.white,
           borderRadius: 2,
           boxShadow: 1,
+          cursor: "pointer",
         }}
+        onClick={() => router.push('/user/info')}
       >
         <Avatar src={user.avatarUrl} alt={user.fullName} sx={{ width: 80, height: 80, mb: 1.5, border: `2px solid ${theme.palette.common.white}` }} />
         <Typography variant="h6" fontWeight="bold">{user.fullName}</Typography>
@@ -113,7 +106,7 @@ const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => 
               mainIcon={section.mainIcon}
               items={section.items}
               isOpen={openSections[section.title]}
-              onClick={() => handleToggle(section.title)}
+              onClick={() => handleToggle(section.title, section.href)}
             />
             <Divider sx={{ my: 2 }} />
           </React.Fragment>
@@ -124,7 +117,7 @@ const Sidebar: React.FC<AccountDropdownProps> = ({ setIsLoggedIn, account }) => 
             <ListItemIcon sx={{ color: theme.palette.error.main }}>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText onClick={handleLogout} primary={<Typography fontWeight="medium" color="error">Đăng xuất</Typography>} />
+            <ListItemText onClick={logout} primary={<Typography fontWeight="medium" color="error">Đăng xuất</Typography>} />
           </ListItemButton>
         </ListItem>
       </List>
