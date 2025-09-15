@@ -44,7 +44,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.paper,
-  minHeight: "100%",
 }));
 
 const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyContact, onBackClick, onUpdateSuccess }) => {
@@ -94,7 +93,7 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
         email: data.email,
         dateOfBirth: data.dateOfBirth,
         address: data.address,
-        gender: data.gender, // Lấy giá trị trực tiếp từ data
+        gender: data.gender,
         avatarUrl: avatarPreview || account?.avatarUrl,
       };
 
