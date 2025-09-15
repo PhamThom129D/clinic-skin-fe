@@ -127,9 +127,6 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
       }}
     >
       <StyledPaper elevation={3}>
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-          Cập nhật thông tin cá nhân
-        </Typography>
         <form onSubmit={handleSubmit(handleUpdateSubmit)}>
           <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
             <AvatarUpload preview={avatarPreview} onChange={handleAvatarChange} />

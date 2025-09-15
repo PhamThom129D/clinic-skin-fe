@@ -65,12 +65,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
   return (
     <Box>
       <StyledPaper elevation={3}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" fontWeight="bold">
-            Thông tin cá nhân
-          </Typography>
-        </Box>
-        
         <Grid
           sx={{
             display: "flex",
