@@ -11,7 +11,7 @@ export default function Page() {
     // 👇 gọi API backend (Spring Boot) để lấy danh sách bệnh nhân
     const fetchPatients = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/patients"); 
+        const res = await fetch("http://localhost:1209/api/patients"); 
         const data = await res.json();
         setPatients(data);
       } catch (error) {
