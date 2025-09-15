@@ -99,3 +99,4 @@ export const getVisitHistory = async (recordId: number): Promise<VisitSummary | 
     return null;
   }
 };
+
