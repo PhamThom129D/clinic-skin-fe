@@ -23,7 +23,7 @@ export function FormInput<T extends FieldValues>({
   endAdornment,
 }: FormInputProps<T>) {
   return (
-    <Box sx={{ my: 4 }}>
+    <Box sx={{ mb: 2 }}>
       <Controller
         name={name}
         control={control}
