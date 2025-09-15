@@ -4,7 +4,8 @@ import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography,
 import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import path from "path";
 
 interface SidebarSectionProps {
   title: string;
@@ -22,7 +23,9 @@ interface SidebarSectionProps {
 const SidebarSection: React.FC<SidebarSectionProps> = ({ title, mainIcon, items, isOpen, onClick, href }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const router = useRouter();
+  const pathName = usePathname();
+
+  const isActive = href === pathName || items.some(item => item.href === pathName);
 
   return (
     <>
@@ -37,25 +40,35 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({ title, mainIcon, items,
       </ListItem>
       <Collapse in={isOpen} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {items.map((item) => (
-            <ListItem key={item.text} disablePadding sx={{ pl: 4 }}>
-              <ListItemButton
-                component={Link}
-                href={item.href}
-                sx={{
-                  borderRadius: 1,
-                  "&:hover": {
-                    backgroundColor: theme.palette.action.hover,
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: isDark ? theme.palette.text.primary : theme.palette.text.secondary }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={<Typography fontWeight="medium">{item.text}</Typography>} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {items.map((item) => {
+            const activeItem = pathName === item.href;
+            return (
+              <ListItem key={item.text} disablePadding sx={{ pl: 4 }}>
+                <ListItemButton
+                  component={Link}
+                  href={item.href}
+                  selected={activeItem}
+                  sx={{
+                    borderRadius: 1,
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                    "&.Mui-selected": {
+                      backgroundColor: theme.palette.action.selected,
+                      "&:hover": {
+                      backgroundColor: isDark ? "#333333" : "#d5d5d5",
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ color: activeItem ? theme.palette.primary.main : (isDark ? theme.palette.text.primary : theme.palette.text.secondary) }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={<Typography fontWeight="medium" color={activeItem ? "primary" : "inherit"}>{item.text}</Typography>} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
         </List>
       </Collapse>
     </>
