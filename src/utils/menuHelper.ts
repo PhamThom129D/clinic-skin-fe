@@ -19,11 +19,9 @@ export const getCurrentUserRole = (): Role | null => {
   return null;
 };
 
-/**
- * Lấy danh sách menu kèm icon theo role
- */
+
 export const getMenuByRole = (role?: Role): MenuItemWithIcon[] => {
-  const currentRole = role || getCurrentUserRole() || "ROLE_DOCTOR"; // default ROLE_DOCTOR
+  const currentRole = role || getCurrentUserRole() || "ROLE_DOCTOR"; 
   const menus = roleMenu[currentRole] || [];
   return menus.map((label) => ({
     label,
