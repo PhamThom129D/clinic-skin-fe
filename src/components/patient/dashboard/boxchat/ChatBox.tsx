@@ -10,8 +10,9 @@ import { ChatWindow } from "./ChatWindow";
 
 type Message = { text: string; sender: "staff" | "user"; sentAt?: string };
 
+// Tạo guestId ngẫu nhiên nếu chưa có
 function generateGuestId(): string {
-  return Math.random().toString(36).substring(2, 10); // chỉ random id
+  return Math.random().toString(36).substring(2, 10);
 }
 
 export default function ChatBox() {
@@ -24,14 +25,16 @@ export default function ChatBox() {
   // 🔹 Lấy userId hoặc guestId
   useEffect(() => {
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-    if(token){
+    if (token) {
       try {
         const decoded: any = JSON.parse(atob(token.split(".")[1]));
         setUserId(decoded.id);
-      } catch { console.error("Token invalid"); }
+      } catch {
+        console.error("Token invalid");
+      }
     } else {
       let gid = localStorage.getItem("guestId");
-      if(!gid){
+      if (!gid) {
         gid = generateGuestId();
         localStorage.setItem("guestId", gid);
       }
@@ -39,25 +42,28 @@ export default function ChatBox() {
     }
   }, []);
 
+  // 🔹 Key để nhận WS / fetch lịch sử
+  const key = userId ? `user-${userId}` : guestId ? `guest-${guestId}` : null;
+
   // 🔹 Lấy lịch sử chat khi mở
   useEffect(() => {
-    const key = userId ? `user-${userId}` : guestId ? `guest-${guestId}` : null;
-    if(!open || !key) return;
+    if (!open || !key) return;
 
     fetch(`http://localhost:1209/api/chat/history/${key}`)
       .then(res => res.json())
-      .then(data => setMessages(data.map((m:any)=>({
-        text: m.content,
-        sender: m.senderId===staffId?"staff":"user",
-        sentAt: new Date(m.sentAt).toISOString()
-      }))))
+      .then(data => {
+        setMessages(data.map((m: any) => ({
+          text: m.content,
+          sender: m.senderId === staffId ? "staff" : "user",
+          sentAt: new Date(m.sentAt).toISOString()
+        })));
+      })
       .catch(err => console.error(err));
-  }, [open, userId, guestId]);
+  }, [open, key]);
 
-  // 🔹 WS realtime
+  // 🔹 WS realtime chỉ subscribe 1 lần khi key thay đổi
   useEffect(() => {
-    const key = userId ? `user-${userId}` : guestId ? `guest-${guestId}` : null;
-    if(!key) return;
+    if (!key) return;
 
     const sock = new SockJS("http://localhost:1209/ws-chat");
     const client = new Client({
@@ -67,7 +73,7 @@ export default function ChatBox() {
           const body = JSON.parse(msg.body);
           setMessages(prev => [...prev, {
             text: body.content,
-            sender: body.senderId===staffId?"staff":"user",
+            sender: body.senderId === staffId ? "staff" : "user",
             sentAt: new Date(body.sentAt).toISOString()
           }]);
         });
@@ -76,29 +82,38 @@ export default function ChatBox() {
 
     client.activate();
     return () => client.deactivate();
-  }, [userId, guestId]);
+  }, [key]);
 
+  // 🔹 Gửi tin nhắn
   const handleSend = async (msg: string) => {
-    if(!msg.trim()) return;
+    if (!msg.trim()) return;
     const body = { senderId: userId, guestId, receiverId: staffId, content: msg };
     await fetch("http://localhost:1209/api/chat/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-    setMessages(prev => [...prev, { text: msg, sender: "user", sentAt: new Date().toISOString() }]);
+    // setMessages(prev => [...prev, { text: msg, sender: "user", sentAt: new Date().toISOString() }]);
   };
 
   return (
     <>
       <IconButton
-        onClick={()=>setOpen(prev=>!prev)}
-        sx={{ position:"fixed", bottom:20, right:20, bgcolor:"#027d44", color:"#fff", "&:hover":{bgcolor:"#026836"}, zIndex:1000 }}
+        onClick={() => setOpen(prev => !prev)}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          bgcolor: "#027d44",
+          color: "#fff",
+          "&:hover": { bgcolor: "#026836" },
+          zIndex: 1000
+        }}
       >
-        {open ? <CloseIcon/> : <ChatIcon/>}
+        {open ? <CloseIcon /> : <ChatIcon />}
       </IconButton>
 
-      {open && <ChatWindow messages={messages} onSend={handleSend} onClose={()=>setOpen(false)}/>}
+      {open && <ChatWindow messages={messages} onSend={handleSend} onClose={() => setOpen(false)} />}
     </>
   );
 }
