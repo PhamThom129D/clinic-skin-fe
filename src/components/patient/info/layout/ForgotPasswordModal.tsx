@@ -1,11 +1,9 @@
-// src/components/auth/ForgotPasswordModal.tsx
 "use client";
 import React from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Button,
 } from "@mui/material";
 import { notifyWarning, notifySuccess } from "@/utils/toast";
 import OTPVerification from "../../../auth/OTPVerification";
@@ -17,25 +15,21 @@ interface ForgotPasswordModalProps {
   open: boolean;
   onClose: () => void;
   emailValue: string;
+  onOtpVerified: () => void; // Prop mới
 }
 
-export default function ForgotPasswordModal({ open, onClose, emailValue }: ForgotPasswordModalProps) {
+export default function ForgotPasswordModal({ open, onClose, emailValue, onOtpVerified }: ForgotPasswordModalProps) {
   const router = useRouter();
 
   const handleVerifyOTP = async (otpCode: string) => {
     try {
       const user = await verifyOtp({ emailOrPhone: emailValue, otpCode });
-
       notifySuccess("Xác thực thành công!");
-      const role = user.data.roles[0] || "ROLE_PATIENT";
-      localStorage.setItem("authToken", user.data.token);
-      localStorage.setItem("account", JSON.stringify(user.data));
-      localStorage.setItem("userRole", role);
-
-      if (role === "ROLE_ADMIN") router.push("/dashboard");
-      else router.push("/home");
-
-      onClose(); // Đóng pop-up sau khi xác thực thành công
+      
+      // Không chuyển hướng hay lưu token
+      // Thay vào đó, gọi hàm callback để thông báo cho component cha
+      onOtpVerified();
+      
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         if (err.response?.status === 400 && err.response.data?.error === "Invalid OTP . Please try again.") {
@@ -59,7 +53,6 @@ export default function ForgotPasswordModal({ open, onClose, emailValue }: Forgo
   };
 
   const handleEditEmail = () => {
-    // Đóng modal OTP để quay lại trang nhập email
     onClose();
   };
 
