@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useState, useRef, useEffect } from "react";
 
 interface ChatWindowProps {
-  messages: { text: string; sender: "staff" | "user"; sentAt?: string }[];
+  messages: { text: string; sender: "staff" | "user" | "guest"; sentAt?: string }[];
   onSend: (msg: string) => void;
   onClose: () => void;
 }
