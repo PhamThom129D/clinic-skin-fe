@@ -128,6 +128,7 @@ const ForgotPassword: React.FC = () => {
                   name="newPassword"
                   control={passwordControl}
                   label="Mật khẩu mới"
+                  rules={undefined}
                 />
                 <PasswordInput
                   name="confirmNewPassword"
