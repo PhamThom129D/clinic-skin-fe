@@ -11,23 +11,20 @@ import { resendOtp, verifyOtp } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 
-interface ForgotPasswordModalProps {
+interface ResetPasswordModalProps {
   open: boolean;
   onClose: () => void;
   emailValue: string;
   onOtpVerified: () => void;
 }
 
-export default function ForgotPasswordModal({ open, onClose, emailValue, onOtpVerified }: ForgotPasswordModalProps) {
+export default function ResetPasswordModal({ open, onClose, emailValue, onOtpVerified }: ResetPasswordModalProps) {
   const router = useRouter();
 
   const handleVerifyOTP = async (otpCode: string) => {
     try {
       const user = await verifyOtp({ emailOrPhone: emailValue, otpCode });
       notifySuccess("Xác thực thành công!");
-      
-      // Không chuyển hướng hay lưu token
-      // Thay vào đó, gọi hàm callback để thông báo cho component cha
       onOtpVerified();
       
     } catch (err: unknown) {

@@ -1,4 +1,4 @@
-// src/components/auth/ForgotPassword.tsx
+// src/components/patients/info/layout/ResetPassword.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ import { PasswordResetData, ResetPasswordFormData } from "@/types/userinfo"; // 
 
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { AxiosError } from "axios";
-import ForgotPasswordModal from "../section/ForgotPasswordModal";
+import ResetPasswordModal from "../section/ResetPasswordModal";
 import { useRouter } from "next/navigation";
 import StyledPaper from "@/components/common/StyledPaper";
 import { AuthResponse } from "@/types/auth";
@@ -192,7 +192,7 @@ const ResetPassword: React.FC<ChangePasswordProps> = ({ account}) => {
         </Box>
       </StyledPaper>
 
-      <ForgotPasswordModal
+      <ResetPasswordModal
         open={otpModalOpen}
         onClose={() => setOtpModalOpen(false)}
         emailValue={userEmail}
