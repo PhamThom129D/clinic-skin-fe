@@ -23,7 +23,7 @@ const sidebarSections = [
     items: [
       { text: "Cập nhật thông tin tài khoản", icon: <AccountCircleIcon />, href: "/user/info/update-account" },
       { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/user/info/change-password" },
-      { text: "Quên mật khẩu", icon: <VpnKeyIcon />, href: "/user/info/forgot-password" },
+      { text: "Đặt lại mật khẩu", icon: <VpnKeyIcon />, href: "/user/info/forgot-password" },
     ],
   },
   {

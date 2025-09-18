@@ -15,7 +15,7 @@ interface ForgotPasswordModalProps {
   open: boolean;
   onClose: () => void;
   emailValue: string;
-  onOtpVerified: () => void; // Prop mới
+  onOtpVerified: () => void;
 }
 
 export default function ForgotPasswordModal({ open, onClose, emailValue, onOtpVerified }: ForgotPasswordModalProps) {

@@ -5,8 +5,7 @@ import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import ChangePassword from "@/components/patient/info/layout/ChangePassword";
-import ForgotPassword from "@/components/patient/info/layout/ForgotPassword";
+import ResetPassword from "@/components/patient/info/layout/ResetPassword";
 
 export default function Page() {
   const router = useRouter();
@@ -21,6 +20,6 @@ export default function Page() {
   }
 
   return (
-    <ForgotPassword />
+    <ResetPassword account={account} />
   );
 }

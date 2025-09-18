@@ -21,5 +21,5 @@ export default function Page() {
     );
   }
 
-  return <ChangePassword/>;
+  return <ChangePassword account={account}/>;
 }

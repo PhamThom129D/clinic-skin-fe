@@ -5,18 +5,13 @@ import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
 import { EmergencyContact } from "@/types/userinfo"; 
 import UserInfoRow from "../section/UserInfoRow";
+import StyledPaper from "@/components/common/StyledPaper";
 
 interface UserInfoProps {
   account: AuthResponse;
   emergencyContact?: EmergencyContact | null;
   onEditClick: () => void;
 }
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.paper,
-}));
 
 const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditClick }) => {
   const getGenderText = (gender: string) => {

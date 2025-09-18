@@ -19,6 +19,7 @@ import {
   formatDateForInput,
 } from "@/utils/validation/validators";
 import { EmergencyContact } from "@/types/userinfo";
+import StyledPaper from "@/components/common/StyledPaper";
 
 // (Các interfaces của bạn giữ nguyên)
 
@@ -39,12 +40,6 @@ interface UserInfoUpdateProps {
   onBackClick: () => void;
   onUpdateSuccess: (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => void;
 }
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.paper,
-}));
 
 const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyContact, onBackClick, onUpdateSuccess }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);

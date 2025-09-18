@@ -1,7 +1,7 @@
 "use client";
 
 import { Controller, FieldValues, Path, Control, RegisterOptions } from "react-hook-form";
-import { TextField, Box } from "@mui/material";
+import { TextField, Box, InputProps } from "@mui/material";
 
 interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
@@ -11,6 +11,7 @@ interface FormInputProps<T extends FieldValues> {
   rules?: RegisterOptions<T, Path<T>>;
   sx?: object;
   endAdornment?: React.ReactNode;
+  inputSlotProps?: Partial<InputProps>;
 }
 
 export function FormInput<T extends FieldValues>({
@@ -21,6 +22,7 @@ export function FormInput<T extends FieldValues>({
   rules,
   sx,
   endAdornment,
+  inputSlotProps,
 }: FormInputProps<T>) {
   return (
     <Box sx={{ mb: 2 }}>
@@ -38,7 +40,12 @@ export function FormInput<T extends FieldValues>({
             fullWidth
             variant="outlined"
             sx={sx}
-            InputProps={{ endAdornment }}
+            slotProps={{
+              input: {
+                ...inputSlotProps,
+                endAdornment,
+              },
+            }}
           />
         )}
       />
