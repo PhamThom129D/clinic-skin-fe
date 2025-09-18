@@ -8,14 +8,15 @@ interface ChatWindowProps {
   messages: { text: string; sender: "staff" | "user" | "guest"; sentAt?: string }[];
   onSend: (msg: string) => void;
   onClose: () => void;
+  userAvatar?: string;
 }
 
-export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClose }) => {
+export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClose, userAvatar }) => {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleSend = () => {
-    if(input.trim()) {
+    if (input.trim()) {
       onSend(input);
       setInput("");
     }
@@ -25,38 +26,112 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+
   return (
     <Paper sx={{
       position: "fixed", bottom: 70, right: 20,
-      width: { xs:"90vw", sm:400, md:450 }, height: 500,
-      display: "flex", flexDirection: "column", borderRadius:2, overflow:"hidden", zIndex:1000
+      width: { xs: "90vw", sm: 400, md: 450 }, height: 500,
+      display: "flex", flexDirection: "column", borderRadius: 2, overflow: "hidden", zIndex: 1000
     }} elevation={6}>
-      <Box sx={{ p:1, bgcolor:"#027d44", color:"#fff", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+      <Box sx={{ p: 1, bgcolor: "#027d44", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Typography variant="subtitle1" fontWeight="bold">Chat với chúng tôi</Typography>
-        <IconButton onClick={onClose} sx={{ color:"#fff" }}><CloseIcon /></IconButton>
+        <IconButton onClick={onClose} sx={{ color: "#fff" }}><CloseIcon /></IconButton>
       </Box>
-      <Box ref={scrollRef} sx={{ flex:1, p:2, overflowY:"auto", display:"flex", flexDirection:"column", bgcolor:"#f9f9f9" }}>
-        {messages.map((m,i)=>(
-          <Box key={i} sx={{
-            alignSelf: m.sender==="staff"?"flex-start":"flex-end",
-            mb:1, p:1, borderRadius:2,
-            bgcolor: m.sender==="staff"?"#eee":"#027d44",
-            color: m.sender==="staff"?"#000":"#fff",
-            maxWidth:"80%"
-          }}>
-            {m.text}
+
+      <Box ref={scrollRef} sx={{ flex: 1, p: 2, overflowY: "auto", display: "flex", flexDirection: "column", bgcolor: "#f9f9f9" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          <img
+            src="/images/logo.png"
+            alt="Shop logo"
+            style={{ width: 36, height: 36, borderRadius: "50%" }}
+          />
+          <Box
+            sx={{
+              bgcolor: "#eee",
+              color: "#000",
+              p: 1.2,
+              borderRadius: 2,
+              maxWidth: "80%",
+            }}
+          >
+            Bạn cần tư vấn gì?
           </Box>
-        ))}
+        </Box>
+
+        {messages.map((m, i) =>
+          m.sender === "staff" ? (
+            // Tin nhắn staff: logo bên trái, bubble bên phải
+            <Box
+              key={i}
+              sx={{
+                display: "flex",
+                alignItems: "flex-end",
+                
+                gap: 1,
+                mb: 1,
+              }}
+            >
+              <img
+                src="/images/logo.png"
+                alt="Shop logo"
+                style={{ width: 36, height: 36, borderRadius: "50%" }}
+              />
+              <Box
+                sx={{
+                  bgcolor: "#eee",
+                  color: "#000",
+                  p: 1.2,
+                  borderRadius: 2,
+                  maxWidth: "70%",
+                }}
+              >
+                {m.text}
+              </Box>
+            </Box>
+          ) : (
+            // Tin nhắn user/guest: bubble căn phải
+            <Box
+              key={i}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
+                gap: 1,
+                mb: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  bgcolor: "#027d44",
+                  color: "#fff",
+                  p: 1.2,
+                  borderRadius: 2,
+                  maxWidth: "70%",
+                }}
+              >
+                {m.text}
+              </Box>
+              
+            </Box>
+          )
+        )}
       </Box>
-      <Box sx={{ display:"flex", p:1, borderTop:"1px solid #ccc" }}>
+      <Box sx={{ display: "flex", p: 1, borderTop: "1px solid #ccc" }}>
         <TextField
           fullWidth size="small"
           placeholder="Nhập tin nhắn..."
           value={input}
-          onChange={e=>setInput(e.target.value)}
-          onKeyDown={e=>{ if(e.key==="Enter") handleSend(); }}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
         />
-        <Button onClick={handleSend} sx={{ ml:1, bgcolor:"#027d44","&:hover":{bgcolor:"#026836"}, color:"#fff" }}>Gửi</Button>
+        <Button onClick={handleSend} sx={{ ml: 1, bgcolor: "#027d44", "&:hover": { bgcolor: "#026836" }, color: "#fff" }}>Gửi</Button>
       </Box>
     </Paper>
   );
