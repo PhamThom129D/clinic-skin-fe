@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import Content from "./Content";
 import PatientDashboard from "../sections/doctor/PatientDashboard";
 import { getCurrentUserRole, Role } from "@/utils/menuHelper";
+import StaffChatInbox from "../components/consultant/ListUser";
 
 export default function LayoutDashboard() {
   const [open, setOpen] = useState(true);
@@ -59,7 +60,8 @@ export default function LayoutDashboard() {
         return <div>Báo cáo</div>;
 
       case "Tư vấn trực tuyến":
-        return <div>Tư vấn trực tuyến</div>;
+        // return <div>Tư vấn trực tuyến gdhgs</div>;
+        return <StaffChatInbox/>
       case "Hồ sơ điều trị":
         return <div>Hồ sơ điều trị</div>;
       case "Hướng dẫn bệnh nhân":
