@@ -42,9 +42,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
         <Box
           sx={{
             display: "flex",
-            alignItems: "flex-start",
+            alignItems: "flex-end",
+            
             gap: 1,
-            mb: 1,
+            mb: 1.5,
           }}
         >
           <img
@@ -73,9 +74,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
               sx={{
                 display: "flex",
                 alignItems: "flex-end",
-                
+
                 gap: 1,
-                mb: 1,
+                mb: 1.5,
               }}
             >
               <img
@@ -90,6 +91,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
                   p: 1.2,
                   borderRadius: 2,
                   maxWidth: "70%",
+                  wordBreak: "break-word",  
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {m.text}
@@ -104,7 +107,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
                 justifyContent: "flex-end",
                 alignItems: "flex-end",
                 gap: 1,
-                mb: 1,
+                mb: 1.5,
               }}
             >
               <Box
@@ -114,11 +117,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
                   p: 1.2,
                   borderRadius: 2,
                   maxWidth: "70%",
+                    wordBreak: "break-word",  
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {m.text}
               </Box>
-              
+
             </Box>
           )
         )}
