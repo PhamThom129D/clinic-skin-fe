@@ -118,7 +118,7 @@ export const formatDateForInput = (dateString: string | null | undefined): strin
 // ==== Rule nâng cao có phụ thuộc ngày/giờ ====
 export const dateOfBirthRule = {
   required: "Ngày sinh là bắt buộc",
-  validate: (v: string | number) => {
+  validate: (v: string | string[]) => {
     if (!v || typeof v !== "string")
       return "Ngày sinh không hợp lệ (YYYY-MM-DD)";
     const date = new Date(v);

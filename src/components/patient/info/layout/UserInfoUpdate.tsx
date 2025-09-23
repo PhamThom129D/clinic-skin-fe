@@ -10,44 +10,53 @@ import { FormInput } from "../../../common/FormInput";
 import ButtonPrimary from "../../../common/ButtonPrimary";
 import { emailRule, fullNameRule, phoneNumberRule, addressRule, dateOfBirthRule, formatDateForInput
 } from "@/utils/validation/validators";
-import { AccountResponse } from "@/types/userinfo";
 import StyledPaper from "@/components/common/StyledPaper";
+import { AuthResponse } from "@/types/auth";
+import { AccountRequest } from "@/types/userinfo";
 
 export interface UserInfoUpdateProps {
-  formData: AccountResponse;
+  account: AuthResponse;
   onBackClick: () => void;
-  onUpdateSuccess: (data: AccountResponse) => void;
+  onUpdateSuccess: (data: AccountRequest) => void;
 }
 
-const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ formData, onBackClick, onUpdateSuccess }) => {
+const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, onBackClick, onUpdateSuccess }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(formData.avatarUrl);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(account.avatarUrl);
+    const [gender, setGender] = useState<AccountRequest["gender"] | "">("");
+  
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<AccountResponse>();
+  } = useForm<AuthResponse>();
 
 useEffect(() => {
-  if (formData) {
+  if (account) {
     reset({
-      ...formData,
-      dateOfBirth: formData.dateOfBirth ? formatDateForInput(formData.dateOfBirth) : ""
+      ...account,
+      dateOfBirth: account.dateOfBirth ? formatDateForInput(account.dateOfBirth) : ""
     });
   }
-}, [formData, reset]);
+}, [account, reset]);
 
   const handleAvatarChange = (file: File | null) => {
     setAvatarFile(file);
     setAvatarPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const handleUpdateSubmit: SubmitHandler<AccountResponse> = async (data) => {
+  const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (data) => {
     try {
-      const updatedData: AccountResponse = {
-        ...data,
+      const updatedData: AccountRequest = {
+       fullName: data.fullName,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
+      address: data.address,
+      dateOfBirth: data.dateOfBirth,
+      gender: data.gender as AccountRequest["gender"],
+      avatarFile: avatarFile,
       };
       console.log(updatedData);
       onUpdateSuccess(updatedData);

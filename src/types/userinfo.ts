@@ -1,3 +1,5 @@
+import { LargeNumberLike } from "crypto";
+
 export interface PasswordResetData {
     email: String;
     newPassword: String;
@@ -20,22 +22,12 @@ export interface ChangePasswordFormData {
     confirmNewPassword: string;
 }
 
-export interface AccountResponse {
+export interface AccountRequest {
   fullName: string;
   phoneNumber: string;
   email: string;
   address: string;
   dateOfBirth: string; 
   gender: "MALE" | "FEMALE" | "OTHER"; 
-  avatarUrl: string; 
-}
-
-export interface AccountRequest {
-    fullName: string;
-    phoneNumber: string;
-    email: string;
-    address: string;
-    dateOfBirth: string;
-    gender: "MALE" | "FEMALE" | "OTHER";
-    avatarFile: File;
+  avatarFile: File | null; 
 }

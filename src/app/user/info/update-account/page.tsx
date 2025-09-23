@@ -4,25 +4,17 @@ import { Box, Typography } from "@mui/material";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { AuthResponse } from "@/types/auth";
-import { AccountResponse } from "@/types/userinfo";
 import UserInfoUpdate from "@/components/patient/info/layout/UserInfoUpdate";
 import { useRouter } from "next/navigation";
+import { AccountRequest } from "@/types/userinfo";
+import { updateInfo } from "@/services/accountService";
 
 export default function Page() {
   const { account, setAccount } = useUser();
   const router = useRouter();
 
-  const handleUpdateSuccess = (updatedFormData: AccountResponse) => {
-    // setAccount({
-    //   ...(account as AuthResponse),
-    //   avatarUrl: updatedFormData.avatarUrl,
-    //   fullName: updatedFormData.fullName,
-    //   phoneNumber: updatedFormData.phoneNumber,
-    //   email: updatedFormData.email,
-    //   address: updatedFormData.address,
-    //   dateOfBirth: updatedFormData.dateOfBirth,
-    //   gender: updatedFormData.gender,
-    // });
+  const handleUpdateSuccess = async (data: AccountRequest) => {
+    await updateInfo(data);
     router.push("/user/info");
   };
 
@@ -38,11 +30,9 @@ export default function Page() {
     );
   }
 
-  const formData: AccountResponse = mapToFormData(account);
-
   return (
     <UserInfoUpdate
-      formData={formData}
+      account={ account}
       onBackClick={handleBackClick}
       onUpdateSuccess={handleUpdateSuccess}
     />

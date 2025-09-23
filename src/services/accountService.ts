@@ -1,6 +1,6 @@
 // src/services/accountService.ts
 
-import { PasswordChangeData, PasswordResetData } from "@/types/userinfo";
+import { AccountRequest, PasswordChangeData, PasswordResetData } from "@/types/userinfo";
 import api from "../api/api";
 
 
@@ -12,4 +12,6 @@ export const changePassword = (data: PasswordChangeData) => {
     return api.post('/accounts/change-password', data)
 }
 
-// export const updateInfo = (data: )
+export const updateInfo = (data: AccountRequest) => {
+    return api.post('/accounts/update-info', data);
+}
