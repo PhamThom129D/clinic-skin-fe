@@ -58,6 +58,7 @@ export const register = async (data: RegisterFormData): Promise<AuthResponse> =>
 
 export const logoutClient = async () => {
   try {
+
     await api.post("/auth/logout").catch(() => {
     });
   } catch (err) {
@@ -71,10 +72,16 @@ export const logoutClient = async () => {
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("account");
   sessionStorage.removeItem("userRole");
+  
+  localStorage.removeItem("chatKey");
+  localStorage.removeItem("guestId");
+  // sessionStorage.removeItem("chatKey");
+  sessionStorage.removeItem("guestId");
+
 
   if (typeof window !== "undefined") {
     // Thông báo cho Header cập nhật UI
-    window.dispatchEvent(new Event("authChange")); 
+    window.dispatchEvent(new Event("authChange"));
     // Chuyển về trang login
     window.location.href = "/auth";
   }

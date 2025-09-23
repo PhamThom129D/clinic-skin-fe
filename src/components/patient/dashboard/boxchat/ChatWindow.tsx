@@ -3,21 +3,34 @@
 import { Box, Paper, TextField, Button, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState, useRef, useEffect } from "react";
+import { useChatSession } from "@/services/chatbox";
 
 interface ChatWindowProps {
   messages: { text: string; sender: "staff" | "user" | "guest"; sentAt?: string }[];
-  onSend: (msg: string) => void;
+  onSend: (msg: string, chatKey: string, guestId: string | null) => void;
   onClose: () => void;
+  userId: number | null,
   userAvatar?: string;
 }
 
-export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClose, userAvatar }) => {
+export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClose, userId }) => {
   const [input, setInput] = useState("");
+  const [localMessages, setLocalMessages] = useState(messages);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { chatKey, guestId } = useChatSession(userId);
+
+ useEffect(() => {
+  if (userId === null) {
+    setLocalMessages([]);  
+  } else {
+    setLocalMessages(messages); 
+  }
+}, [userId, messages]);
+
 
   const handleSend = () => {
-    if (input.trim()) {
-      onSend(input);
+    if (input.trim() && chatKey) {
+      onSend(input, chatKey, guestId);
       setInput("");
     }
   };
@@ -43,7 +56,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
           sx={{
             display: "flex",
             alignItems: "flex-end",
-            
+
             gap: 1,
             mb: 1.5,
           }}
@@ -91,7 +104,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
                   p: 1.2,
                   borderRadius: 2,
                   maxWidth: "70%",
-                  wordBreak: "break-word",  
+                  wordBreak: "break-word",
                   whiteSpace: "pre-wrap",
                 }}
               >
@@ -117,7 +130,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
                   p: 1.2,
                   borderRadius: 2,
                   maxWidth: "70%",
-                    wordBreak: "break-word",  
+                  wordBreak: "break-word",
                   whiteSpace: "pre-wrap",
                 }}
               >
