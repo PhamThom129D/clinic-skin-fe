@@ -12,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import InputField from "../common/InputField";
-import { BookingData } from "@/types/booking";
+import { BookingData } from "@/types/screen";
 import { Doctor } from "@/types/screen";
 import { getDoctorsBasic } from "@/services/screenService";
 import { useFetchData } from "@/hooks/useFetchData";
@@ -43,11 +43,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     dateOfBirth: "",
     appointmentDate: "",
     appointmentTime: "",
-    note: "",
-    doctorId: 0,
+    note: ""
   });
 
-  const { data: doctors, isLoading } = useFetchData<Doctor[]>(getDoctorsBasic);
   const [errors, setErrors] = useState<Errors>({});
 
   const handleChange = (
@@ -56,7 +54,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "doctorId" ? Number(value) : value,
+    [name]: value
     }));
     const err = validateField(name as keyof BookingData, value);
     setErrors((prev) => ({ ...prev, [name]: err }));
@@ -69,11 +67,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
-  const handleSelectDoctor = (id: number) => {
-    setForm((prev) => ({ ...prev, doctorId: id }));
-    const err = validateField("doctorId", id);
-    setErrors((prev) => ({ ...prev, doctorId: err }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,8 +91,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
         dateOfBirth: "",
         appointmentDate: "",
         appointmentTime: "",
-        note: "",
-        doctorId: 0,
+        note: ""
       });
       setErrors({});
     } catch (error) {
@@ -144,25 +136,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 Thông tin cá nhân
               </Typography>
 
-              <InputField
-                label="Họ và tên"
-                name="fullName"
-                value={form.fullName}
-                onChange={handleChange}
-                error={!!errors.fullName}
-                helperText={errors.fullName}
-                sx={{ backgroundColor: "#eaf9ee" }}
-              />
-              <InputField
-                label="Email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                type="email"
-                error={!!errors.email}
-                helperText={errors.email}
-                sx={{ backgroundColor: "#eaf9ee" }}
-              />
+           
+        
               <InputField
                 label="Số điện thoại"
                 name="phoneNumber"
@@ -229,6 +204,25 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
               >
                 Thông tin đặt lịch
               </Typography>
+                 <InputField
+                label="Họ và tên"
+                name="fullName"
+                value={form.fullName}
+                onChange={handleChange}
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+                sx={{ backgroundColor: "#eaf9ee" }}
+              />
+                    <InputField
+                label="Email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                type="email"
+                error={!!errors.email}
+                helperText={errors.email}
+                sx={{ backgroundColor: "#eaf9ee" }}
+              />
               <InputField
                 label="Ngày khám"
                 name="appointmentDate"
@@ -258,82 +252,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
                 rows={4}
                 sx={{ backgroundColor: "#eaf9ee" }}
               />
-
-              {/* Chọn bác sĩ */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                  Chọn bác sĩ
-                </Typography>
-
-                {isLoading ? (
-                  <Typography>Đang tải danh sách bác sĩ...</Typography>
-                ) : !doctors || doctors.length === 0 ? (
-                  <Typography>Không có bác sĩ nào.</Typography>
-                ) : (
-                  <Grid container spacing={2} justifyContent="center">
-                    {doctors.map((doc) => (
-                      <Grid item key={doc.doctorId} xs={12} sm={6} md={4}>
-                        <Box
-                          sx={{
-                            width: 200,
-                            height: 200,
-                            borderRadius: 3,
-                            border:
-                              form.doctorId === doc.doctorId
-                                ? "2px solid #158437"
-                                : "1px solid #cce9dd",
-                            p: 2,
-                            cursor: "pointer",
-                            textAlign: "center",
-                            transition: "all 0.25s",
-                            "&:hover": {
-                              transform: "scale(1.05)",
-                              borderColor: "#158437",
-                              boxShadow:
-                                "0 6px 16px rgba(21,132,55,0.15)",
-                            },
-                            bgcolor:
-                              form.doctorId === doc.doctorId
-                                ? "#d4f8e0"
-                                : "#fdfdfd",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          onClick={() => handleSelectDoctor(doc.doctorId)}
-                        >
-                          <Avatar
-                            src={doc.avtPath}
-                            alt={doc.fullName}
-                            sx={{ width: 100, height: 100, mb: 1 }}
-                          />
-                          <Typography
-                            variant="body2"
-                            fontWeight={600}
-                            gutterBottom
-                            sx={{ fontSize: "0.75rem", textAlign: "center" }}
-                          >
-                            {doc.fullName}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{ fontSize: "0.65rem", textAlign: "center" }}
-                          >
-                            {doc.specialty}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    ))}
-                  </Grid>
-                )}
-                {errors.doctorId && (
-                  <Typography color="error" variant="caption">
-                    {errors.doctorId}
-                  </Typography>
-                )}
-              </Box>
             </Stack>
           </Stack>
 
