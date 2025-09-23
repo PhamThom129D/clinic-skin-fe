@@ -92,3 +92,145 @@
     font-weight: 500;  
     opacity: 1;     
 }
+/* === Light mode (mặc định) === */
+.chat-window {
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.chat-window h4 {
+    margin: 0 0 8px;
+    font-size: 2em;
+    font-weight: bold;
+    color: #027d44;
+    padding: 10px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #fafafa;
+    border-radius: 20px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+}
+
+.chat-message span {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.chat-message.staff {
+    text-align: right;
+}
+
+.chat-message.staff span {
+    font-size: 1.3em;
+    background: #027d44;
+    color: #fff;
+}
+
+.chat-message.customer {
+    text-align: left;
+}
+
+.chat-message.customer span {
+    font-size: 1.3em;
+    background: #eee;
+    color: #000;
+}
+
+.chat-input {
+    height: 60px;
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    background: #fff;
+    color: #000;
+}
+
+.chat-input button {
+    width: 100px;
+    padding: 6px 12px;
+    background: #027d44;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat-input button:hover {
+    background: #026836;
+}
+
+.chat-input input::placeholder {
+    font-size: 1.2em; 
+    color: #888;       
+    font-weight: 500;  
+    opacity: 1;     
+}
+
+/* === Dark mode === */
+.chat-window.dark {
+    background: #1e1e2e;
+    color: #f0f0f0;
+    border: 1px solid #333;
+}
+
+.chat-window.dark h4 {
+    color: #00e676;
+}
+
+.chat-window.dark .chat-messages {
+    background: #2a2a3b;
+    border: 1px solid #444;
+}
+
+.chat-window.dark .chat-message.staff span {
+    background: #00c853;
+    color: #f0f0f0;
+}
+
+.chat-window.dark .chat-message.customer span {
+    background: #444;
+    color: #f0f0f0;
+}
+
+.chat-window.dark .chat-input input {
+    background: #1e1e2e;
+    color: #f0f0f0;
+    border: 1px solid #555;
+}
+
+.chat-window.dark .chat-input button {
+    background: #00c853;
+    color: #fff;
+}
+
+.chat-window.dark .chat-input button:hover {
+    background: #009624;
+}
+
+.chat-window.dark .chat-input input::placeholder {
+    color: #aaa;
+}
