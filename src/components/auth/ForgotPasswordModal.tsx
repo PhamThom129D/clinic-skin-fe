@@ -84,7 +84,7 @@ const handleVerifyOTP = async (otpCode: string) => {
         return; 
       }
       notifyWarning(err.response?.data?.error || "Xác thực OTP thất bại");
-      return;
+      return;     
     }
     if (err instanceof Error) {
       notifyWarning(err.message);
