@@ -16,7 +16,11 @@ import {
 import { fetchInbox, Conversation } from "@/services/chatbox";
 import { connectChatSocket } from "@/services/chatSocket";
 
-export default function StaffChatInbox() {
+interface StaffChatInboxProps {
+  darkMode: boolean;
+}
+
+export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [unread, setUnread] = useState<Record<string, boolean>>({});
@@ -63,7 +67,6 @@ export default function StaffChatInbox() {
   useEffect(() => {
     loadInbox();
 
-    // WebSocket: tách riêng ra service
     const disconnect = connectChatSocket(staffId, () => {
       loadInbox();
     });
@@ -74,7 +77,15 @@ export default function StaffChatInbox() {
   const activeConv = conversations.find((c) => c.key === activeKey) ?? null;
 
   return (
-    <Box sx={{ display: "flex", gap: 2, height: "92vh", padding: "20px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        gap: 2,
+        height: "92vh",
+        padding: "20px",
+        backgroundColor: darkMode ? "#1e1e2e" : "#f5f6fa",
+      }}
+    >
       {/* Sidebar */}
       <Paper
         sx={{
@@ -83,6 +94,8 @@ export default function StaffChatInbox() {
           flexDirection: "column",
           borderRadius: 2,
           overflow: "hidden",
+          bgcolor: darkMode ? "#2c2c3a" : "#fff",
+          color: darkMode ? "#f0f0f0" : "inherit",
         }}
         elevation={4}
       >
@@ -104,8 +117,16 @@ export default function StaffChatInbox() {
                   setUnread((prev) => ({ ...prev, [conv.key]: false }));
                 }}
                 sx={{
-                  bgcolor: activeKey === conv.key ? "rgba(2,125,68,0.1)" : "#fff",
-                  borderBottom: "1px solid #eee",
+                  bgcolor:
+                    activeKey === conv.key
+                      ? darkMode
+                        ? "rgba(2,125,68,0.2)"
+                        : "rgba(2,125,68,0.1)"
+                      : darkMode
+                      ? "#2c2c3a"
+                      : "#fff",
+                  borderBottom: darkMode ? "1px solid #444" : "1px solid #eee",
+                  color: darkMode ? "#f0f0f0" : "inherit",
                 }}
               >
                 <ListItemAvatar>
@@ -121,7 +142,10 @@ export default function StaffChatInbox() {
                 <ListItemText
                   primary={<Typography fontWeight="bold">{conv.customerName}</Typography>}
                   secondary={
-                    <Typography noWrap sx={{ fontSize: 13, color: "#555" }}>
+                    <Typography
+                      noWrap
+                      sx={{ fontSize: 18, color: darkMode ? "#ccc" : "#555" }}
+                    >
                       {lastMsg}
                     </Typography>
                   }
@@ -140,13 +164,23 @@ export default function StaffChatInbox() {
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
+          bgcolor: darkMode ? "#1e1e2e" : "#fff",
+          color: darkMode ? "#f0f0f0" : "inherit",
         }}
         elevation={4}
       >
         {activeConv ? (
-          <StaffChatWindow conversation={activeConv} staffId={staffId} />
+          <StaffChatWindow conversation={activeConv} staffId={staffId} darkMode={darkMode} />
         ) : (
-          <Box sx={{ p: 4, fontSize: "2em", margin: "auto", textAlign: "center", color: "#777" }}>
+          <Box
+            sx={{
+              p: 4,
+              fontSize: "2em",
+              margin: "auto",
+              textAlign: "center",
+              color: darkMode ? "#888" : "#777",
+            }}
+          >
             👉 Chọn khách để bắt đầu chat
           </Box>
         )}

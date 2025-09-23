@@ -21,9 +21,11 @@ interface SidebarProps {
   role: Role;
   onMenuSelect: (menu: string) => void; // 🔹 callback khi click menu
 }
+import { useTheme } from "@mui/material/styles";
 
 export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
   const router = useRouter();
+  const theme = useTheme(); // 🔹 Lấy theme hiện tại
 
   const handleLogout = () => {
     localStorage.clear();
@@ -31,7 +33,6 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
     router.push("/auth");
   };
 
-  // Lấy menu dựa trên role
   const menuItems: MenuItemWithIcon[] = getMenuByRole(role);
 
   return (
@@ -48,20 +49,19 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
           pt: 10,
           overflowX: "hidden",
           borderRight: "none",
-          background: "linear-gradient(180deg, #e6f7f9 0%, #ffffff 100%)",
+          background: theme.palette.background.paper, // 🔹 dùng theme
           boxShadow: "2px 0 6px rgba(0,0,0,0.05)",
           display: "flex",
           flexDirection: "column",
         },
       }}
     >
-      {/* Nội dung sidebar */}
       <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
         <List>
           {menuItems.map((item, idx) => (
             <ListItem key={idx} disablePadding>
               <ListItemButton
-                onClick={() => onMenuSelect(item.label)} 
+                onClick={() => onMenuSelect(item.label)}
                 sx={{
                   borderRadius: 2,
                   mx: 1,
@@ -69,10 +69,13 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2,
-                  color: "#6b7280",
+                  color: theme.palette.text.secondary, // 🔹 dùng màu text phụ
                   "&:hover": {
-                    bgcolor: "#e6f0f9",
-                    color: "#1976d2",
+                    bgcolor:
+                      theme.palette.mode === "light"
+                        ? "rgba(100,206,130,0.1)"
+                        : "rgba(100,206,130,0.15)", // hover màu theme
+                    color: theme.palette.primary.main,
                   },
                 }}
               >
@@ -98,7 +101,6 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
         </List>
       </Box>
 
-      {/* Nút Logout luôn nằm cuối */}
       <Box sx={{ p: 2 }}>
         <ListItem disablePadding>
           <ListItemButton
@@ -106,10 +108,13 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
               borderRadius: 2,
               justifyContent: open ? "initial" : "center",
               px: 2,
-              color: "#dc2626",
+              color: theme.palette.error.main, // 🔹 dùng màu error
               "&:hover": {
-                bgcolor: "#fee2e2",
-                color: "#b91c1c",
+                bgcolor:
+                  theme.palette.mode === "light"
+                    ? "rgba(244,67,54,0.1)"
+                    : "rgba(244,67,54,0.2)", // hover màu error theme
+                color: theme.palette.error.dark,
               },
             }}
             onClick={handleLogout}

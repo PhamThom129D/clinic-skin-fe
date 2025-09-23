@@ -10,13 +10,17 @@ interface Conversation {
   messages?: ChatMessage[];
 }
 
+interface StaffChatWindowProps {
+  conversation: Conversation;
+  staffId: number;
+  darkMode?: boolean;
+}
+
 export default function StaffChatWindow({
   conversation,
   staffId,
-}: {
-  conversation: Conversation;
-  staffId: number;
-}) {
+  darkMode = false,
+}: StaffChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(conversation.messages || []);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -64,7 +68,7 @@ export default function StaffChatWindow({
   }, [messages]);
 
   return (
-    <div className="chat-window">
+    <div className={`chat-window ${darkMode ? "dark" : ""}`}>
       <h4>Chat với {conversation.customerName}</h4>
 
       <div className="chat-messages" ref={scrollRef}>
