@@ -3,17 +3,15 @@ import React from "react";
 import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/material";
 import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
-import { EmergencyContact } from "@/types/userinfo"; 
 import UserInfoRow from "../section/UserInfoRow";
 import StyledPaper from "@/components/common/StyledPaper";
 
 interface UserInfoProps {
   account: AuthResponse;
-  emergencyContact?: EmergencyContact | null;
   onEditClick: () => void;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditClick }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ account, onEditClick }) => {
   const getGenderText = (gender: string) => {
     switch (gender) {
       case "FEMALE":
@@ -34,11 +32,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
     { label: "Ngày sinh", value: account?.dateOfBirth },
     { label: "Email", value: account?.email },
     { label: "Địa chỉ", value: account?.address },
-  ];
-
-  const emergencyFields = [
-    { label: "Họ tên", value: emergencyContact?.contact_name },
-    { label: "Số điện thoại", value: emergencyContact?.contact_phone },
   ];
 
   if (!account) {
@@ -84,17 +77,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, emergencyContact, onEditCl
           <Box sx={{ flexGrow: 1, width: { xs: "100%", md: "67%" } }}>
             {renderFields(infoFields, 'info')}
             
-            <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2, textAlign: { xs: 'center', md: 'left' } }}>
-              Liên hệ khẩn cấp
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            {renderFields(emergencyFields, 'emergency')}
-
             <Box sx={{ mt: 3, textAlign: "center" }}>
               <Button variant="contained" color="primary" onClick={onEditClick}>
                 Chỉnh sửa thông tin
               </Button>
-            </Box>
+            </Box>  
           </Box>
         </Grid>
       </StyledPaper>

@@ -11,3 +11,5 @@ export const resetPassword = (data: PasswordResetData) => {
 export const changePassword = (data: PasswordChangeData) => {
     return api.post('/accounts/change-password', data)
 }
+
+// export const updateInfo = (data: )

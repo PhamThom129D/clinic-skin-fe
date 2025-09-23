@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
-import { styled } from "@mui/system";
+import React from "react";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/patient/info/section/PasswordInput";
 import ButtonPrimary from "@/components/common/ButtonPrimary";
 import {
@@ -20,7 +15,6 @@ import { notifySuccess, notifyWarning, notifyError } from "@/utils/toast";
 import StyledPaper from "@/components/common/StyledPaper";
 import { ChangePasswordFormData, PasswordChangeData } from "@/types/userinfo";
 import { AuthResponse } from "@/types/auth";
-import { el } from "date-fns/locale";
 import { changePassword } from "@/services/accountService";
 import { isAxiosError } from "axios";
 
@@ -30,38 +24,42 @@ interface ChangePasswordProps {
 
 const ChangePassword: React.FC<ChangePasswordProps> = ({ account }) => {
   const theme = useTheme();
-  const {
-    control,
-    handleSubmit,
-    getValues,
-    reset,
-  } = useForm<ChangePasswordFormData>();
+  const router = useRouter();
 
-  const handleChangePassword: SubmitHandler<ChangePasswordFormData> = async (data) => {
-    console.log("Dữ liệu đổi mật khẩu:", data);
+  const { control, handleSubmit, getValues } = useForm<ChangePasswordFormData>({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+  });
+
+  const handleChangePassword: SubmitHandler<ChangePasswordFormData> = async (
+    data
+  ) => {
     try {
-        const userEmail = account.email;
-        const dataString: PasswordChangeData = {
-          email: userEmail,
-          oldPassword: data.oldPassword,
-          newPassword: data.newPassword
-        }
-        console.log(dataString);
-        await changePassword (dataString);
-        notifySuccess("Đổi mật khẩu thành công!");
-        reset();
+      const userEmail = account.email;
+      const dataString: PasswordChangeData = {
+        email: userEmail,
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
+      };
+
+      await changePassword(dataString);
+      notifySuccess("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+      router.push("/auth");
     } catch (error) {
-        if (isAxiosError(error) && error.response && error.response.status === 400) {
-                    const errorMessage = error.response.data;
-                    if (errorMessage === "Mật khẩu cũ không chính xác") {
-                        notifyError("Mật khẩu cũ không đúng. Vui lòng thử lại.");
-                    } else {
-                        notifyError(errorMessage || "Có lỗi xảy ra. Vui lòng thử lại.");
-                    }
-                } else {
-                    notifyWarning("Đổi mật khẩu thất bại. Vui lòng thử lại.");
-                }    
+      if (isAxiosError(error) && error.response && error.response.status === 400) {
+        const errorMessage = error.response.data;
+        if (errorMessage === "Mật khẩu cũ không chính xác") {
+          notifyError("Mật khẩu cũ không đúng. Vui lòng thử lại.");
+        } else {
+          notifyError(errorMessage || "Có lỗi xảy ra. Vui lòng thử lại.");
+        }
+      } else {
+        notifyWarning("Đổi mật khẩu thất bại. Vui lòng thử lại.");
       }
+    }
   };
 
   return (

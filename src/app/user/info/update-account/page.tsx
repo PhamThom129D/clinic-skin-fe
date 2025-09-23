@@ -4,51 +4,47 @@ import { Box, Typography } from "@mui/material";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { AuthResponse } from "@/types/auth";
-import { EmergencyContact } from "@/types/userinfo";
+import { AccountResponse } from "@/types/userinfo";
 import UserInfoUpdate from "@/components/patient/info/layout/UserInfoUpdate";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const { account, setAccount } = useUser();
-  const router = useRouter();
-  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact | null>(null);
+  const { account, setAccount } = useUser();
+  const router = useRouter();
 
-  useEffect(() => {
-    if (account) {
-      const dummyEmergencyContact: EmergencyContact = {
-        emergency_id: 1,
-        contact_name: "Phạm T",
-        contact_phone: "0397464805",
-        patient_id: 101,
-      };
-      setEmergencyContact(dummyEmergencyContact);
-    }
-  }, [account]);
+  const handleUpdateSuccess = (updatedFormData: AccountResponse) => {
+    // setAccount({
+    //   ...(account as AuthResponse),
+    //   avatarUrl: updatedFormData.avatarUrl,
+    //   fullName: updatedFormData.fullName,
+    //   phoneNumber: updatedFormData.phoneNumber,
+    //   email: updatedFormData.email,
+    //   address: updatedFormData.address,
+    //   dateOfBirth: updatedFormData.dateOfBirth,
+    //   gender: updatedFormData.gender,
+    // });
+    router.push("/user/info");
+  };
 
-  const handleUpdateSuccess = (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => {
-    setAccount(updatedAccount); 
-    router.push("/user/info");
-  };
-  
-  const handleBackClick = () => {
-    router.push("/user/info");
-  };
+  const handleBackClick = () => {
+    router.push("/user/info");
+  };
 
-  if (!account) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <Typography>Đang tải thông tin...</Typography>
-      </Box>
-    );
-  }
+  if (!account) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <Typography>Đang tải thông tin...</Typography>
+      </Box>
+    );
+  }
 
-  return (
-    <UserInfoUpdate
-      account={account}
-      emergencyContact={emergencyContact}
-      onBackClick={handleBackClick}
-      onUpdateSuccess={handleUpdateSuccess}
-    />
-  );
+  const formData: AccountResponse = mapToFormData(account);
+
+  return (
+    <UserInfoUpdate
+      formData={formData}
+      onBackClick={handleBackClick}
+      onUpdateSuccess={handleUpdateSuccess}
+    />
+  );
 }
-

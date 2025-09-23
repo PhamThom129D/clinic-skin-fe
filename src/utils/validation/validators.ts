@@ -117,14 +117,18 @@ export const formatDateForInput = (dateString: string | null | undefined): strin
 
 // ==== Rule nâng cao có phụ thuộc ngày/giờ ====
 export const dateOfBirthRule = {
-  required: "Vui lòng nhập ngày sinh",
-  validate: (v: string) => {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return "Ngày sinh không hợp lệ (YYYY-MM-DD)";
-    const dob = toDateOnly(v);
-    const today = toDateOnly(todayStr());
-    return dob < today || "Ngày sinh phải trước hôm nay";
+  required: "Ngày sinh là bắt buộc",
+  validate: (v: string | number) => {
+    if (!v || typeof v !== "string")
+      return "Ngày sinh không hợp lệ (YYYY-MM-DD)";
+    const date = new Date(v);
+    const today = new Date();
+    if (isNaN(date.getTime())) return "Ngày sinh không hợp lệ (YYYY-MM-DD)";
+    if (date >= today) return "Ngày sinh phải trước hôm nay";
+    return true;
   },
 };
+
 
 // Tạo rule động để có thể dùng getValues() từ react-hook-form
 export const createBookingRules = (getValues?: GetValues) => {

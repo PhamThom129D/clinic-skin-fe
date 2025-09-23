@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AuthResponse } from "@/types/auth";
-import { logoutClient } from "@/services/authService"; // Giả sử có service này
-
+import { logoutClient } from "@/services/authService";
 export const useUser = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [account, setAccount] = useState<AuthResponse | null>(null);
