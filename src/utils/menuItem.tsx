@@ -43,7 +43,7 @@ export const roleMenu: Record<Role, string[]> = {
   ROLE_LAB_STAFF: ["Lịch hẹn", "Thông tin bệnh nhân", "Cập nhật mẫu/xét nghiệm", "Báo cáo"],
   ROLE_CONSULTANT: ["Tư vấn trực tuyến", "Hồ sơ điều trị", "Hướng dẫn bệnh nhân", "Nhắc trễ hẹn"],
   ROLE_CASHIER: ["Thanh toán", "Cập nhật trạng thái", "In hóa đơn", "Hoàn tiền"],
-  ROLE_ADMIN: ["Trang chủ","Hồ sơ bệnh nhân", "Quản lý nhân sự", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"],
+  ROLE_ADMIN: ["Trang chủ","Hồ sơ bệnh nhân", "Quản lý tài khoản", "Dịch vụ & thuốc", "Vật tư & tồn kho", "Báo cáo", "Cấu hình"],
 };
 
 // 🔹 Icon cho từng menu
@@ -76,7 +76,7 @@ export const menuIcons: Record<string, React.ReactNode> = {
   "In hóa đơn": <ReceiptIcon />,
   "Hoàn tiền": <PaymentIcon />,
 
-  "Quản lý nhân sự": <PeopleIcon />,
+  "Quản lý tài khoản": <PeopleIcon />,
   "Dịch vụ & thuốc": <LocalHospitalIcon />,
   "Vật tư & tồn kho": <InventoryIcon />,
   "Cấu hình": <SettingsIcon />,
