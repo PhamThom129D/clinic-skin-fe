@@ -19,13 +19,13 @@ import { Role } from "@/utils/menuItem";
 interface SidebarProps {
   open: boolean;
   role: Role;
-  onMenuSelect: (menu: string) => void; // 🔹 callback khi click menu
+  onMenuSelect: (menu: string) => void; 
 }
 import { useTheme } from "@mui/material/styles";
 
 export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
   const router = useRouter();
-  const theme = useTheme(); // 🔹 Lấy theme hiện tại
+  const theme = useTheme();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -40,16 +40,16 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
       variant="permanent"
       open={open}
       sx={{
-        width: open ? 280 : 72,
+        width: open ? 360 : 72,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          width: open ? 280 : 72,
+          width: open ? 360 : 72,
           boxSizing: "border-box",
           transition: "width 0.3s",
           pt: 10,
           overflowX: "hidden",
           borderRight: "none",
-          background: theme.palette.background.paper, // 🔹 dùng theme
+          background: theme.palette.background.paper, 
           boxShadow: "2px 0 6px rgba(0,0,0,0.05)",
           display: "flex",
           flexDirection: "column",
@@ -65,16 +65,16 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  my: 0.5,
+                  my: 1,
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
-                  px: 2,
-                  color: theme.palette.text.secondary, // 🔹 dùng màu text phụ
+                  px: 3,
+                  color: theme.palette.text.secondary, 
                   "&:hover": {
                     bgcolor:
                       theme.palette.mode === "light"
                         ? "rgba(100,206,130,0.1)"
-                        : "rgba(100,206,130,0.15)", // hover màu theme
+                        : "rgba(100,206,130,0.15)", 
                     color: theme.palette.primary.main,
                   },
                 }}
@@ -92,7 +92,7 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
                 {open && (
                   <ListItemText
                     primary={item.label}
-                    primaryTypographyProps={{ fontSize: 24, fontWeight: 500 }}
+                    primaryTypographyProps={{ fontSize: 26, fontWeight: 500 }}
                   />
                 )}
               </ListItemButton>
@@ -108,12 +108,12 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
               borderRadius: 2,
               justifyContent: open ? "initial" : "center",
               px: 2,
-              color: theme.palette.error.main, // 🔹 dùng màu error
+              color: theme.palette.error.main, 
               "&:hover": {
                 bgcolor:
                   theme.palette.mode === "light"
                     ? "rgba(244,67,54,0.1)"
-                    : "rgba(244,67,54,0.2)", // hover màu error theme
+                    : "rgba(244,67,54,0.2)", 
                 color: theme.palette.error.dark,
               },
             }}
@@ -131,8 +131,8 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
             </ListItemIcon>
             {open && (
               <ListItemText
-                primary="Logout"
-                primaryTypographyProps={{ fontSize: 18, fontWeight: 600 }}
+                primary="Đăng xuất"
+                primaryTypographyProps={{ fontSize: 28, fontWeight: 600 }}
               />
             )}
           </ListItemButton>
