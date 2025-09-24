@@ -50,13 +50,14 @@ useEffect(() => {
   const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (data) => {
     try {
       const updatedData: AccountRequest = {
-       fullName: data.fullName,
-      phoneNumber: data.phoneNumber,
-      email: data.email,
-      address: data.address,
-      dateOfBirth: data.dateOfBirth,
-      gender: data.gender as AccountRequest["gender"],
-      avatarFile: avatarFile,
+        id: account.id,
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        address: data.address,
+        dateOfBirth: data.dateOfBirth,
+        gender: data.gender as AccountRequest["gender"],
+        avatarFile: avatarFile,
       };
       console.log(updatedData);
       onUpdateSuccess(updatedData);

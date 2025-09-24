@@ -14,6 +14,7 @@ export default function Page() {
   const router = useRouter();
 
   const handleUpdateSuccess = async (data: AccountRequest) => {
+    
     await updateInfo(data);
     router.push("/user/info");
   };

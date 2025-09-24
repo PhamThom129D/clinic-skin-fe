@@ -23,6 +23,7 @@ export interface ChangePasswordFormData {
 }
 
 export interface AccountRequest {
+  id: number;
   fullName: string;
   phoneNumber: string;
   email: string;
