@@ -115,6 +115,16 @@ export const formatDateForInput = (dateString: string | null | undefined): strin
   return "";
 };
 
+export const formatDateToDisplay = (dateString: string | null | undefined): string => {
+  if (!dateString) return "";
+  const parts = dateString.split("-");
+  if (parts.length === 3) {
+    // Chuyển từ YYYY-MM-DD sang DD-MM-YYYY
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return "";
+};
+
 // ==== Rule nâng cao có phụ thuộc ngày/giờ ====
 export const dateOfBirthRule = {
   required: "Ngày sinh là bắt buộc",

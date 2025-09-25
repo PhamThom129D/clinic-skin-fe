@@ -25,10 +25,12 @@ export interface ChangePasswordFormData {
 export interface AccountRequest {
   id: number;
   fullName: string;
-  phoneNumber: string;
   email: string;
+  phoneNumber: string;
   address: string;
-  dateOfBirth: string; 
-  gender: "MALE" | "FEMALE" | "OTHER"; 
-  avatarFile: File | null; 
+  dateOfBirth: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  password?: string;
+  avatarFile?: File;
+  role?: string;
 }
