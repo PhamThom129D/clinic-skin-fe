@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export interface ChatMessage {
   senderId: number | null;
   guestId: string | null;
@@ -73,3 +75,36 @@ export async function sendReply(
     body: JSON.stringify(body),
   });
 }
+
+
+export function useChatSession(userId: number | null) {
+  const [guestId, setGuestId] = useState<string | null>(null);
+  const [chatKey, setChatKey] = useState<string>("");
+
+  useEffect(() => {
+    async function initGuest() {
+      let gid = localStorage.getItem("guestId");
+      if (!gid) {
+        const res = await fetch(`${API_BASE}/init-guest`);
+        gid = await res.text();
+        localStorage.setItem("guestId", gid);
+      }
+      setGuestId(gid);
+    }
+
+    if (!userId) {
+      initGuest();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      setChatKey(`user-${userId}`);
+    } else if (guestId) {
+      setChatKey(`guest-${guestId}`);
+    }
+  }, [userId, guestId]);
+
+  return { chatKey, guestId };
+}
+

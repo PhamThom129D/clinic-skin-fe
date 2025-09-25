@@ -31,14 +31,27 @@ export default function ChatBox() {
       localStorage.getItem("authToken") ||
       sessionStorage.getItem("authToken");
 
-    if (token) {
-      try {
-        const decoded: any = JSON.parse(atob(token.split(".")[1]));
-        setUserId(decoded.id);
-      } catch {
-        console.error("Token invalid");
-      }
-    }
+  if (token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const decoded = JSON.parse(jsonPayload);
+
+    console.log("Decoded JWT payload:", decoded); 
+    setUserId(decoded.userId);  // ✅ đúng key
+    console.log("Token exp:", decoded.exp); 
+
+  } catch (err) {
+    console.error("Token invalid", err);
+  }
+}
+
 
     let gid = localStorage.getItem("guestId");
     if (!gid) {
@@ -51,8 +64,8 @@ export default function ChatBox() {
   const key = userId
     ? `user-${userId}`
     : guestId
-    ? `guest-${guestId}`
-    : null;
+      ? `guest-${guestId}`
+      : null;
 
   useEffect(() => {
     if (!open || !key) return;
@@ -77,8 +90,8 @@ export default function ChatBox() {
             m.senderId === staffId
               ? "staff"
               : m.senderId === userId
-              ? "user"
-              : "guest",
+                ? "user"
+                : "guest",
           sentAt: new Date(m.sentAt).toISOString(),
         }))
       );
@@ -109,8 +122,8 @@ export default function ChatBox() {
               body.senderId === staffId
                 ? "staff"
                 : body.senderId === userId
-                ? "user"
-                : "guest",
+                  ? "user"
+                  : "guest",
             sentAt: new Date(body.sentAt).toISOString(),
           },
         ];
