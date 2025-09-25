@@ -13,6 +13,7 @@ import { emailRule, fullNameRule, phoneNumberRule, addressRule, dateOfBirthRule,
 import StyledPaper from "@/components/common/StyledPaper";
 import { AuthResponse } from "@/types/auth";
 import { AccountRequest } from "@/types/userinfo";
+import { mapToAccountRequest } from "@/utils/accountMappers";
 
 export interface UserInfoUpdateProps {
   account: AuthResponse;
@@ -47,24 +48,15 @@ useEffect(() => {
     setAvatarPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (data) => {
-    try {
-      const updatedData: AccountRequest = {
-       fullName: data.fullName,
-      phoneNumber: data.phoneNumber,
-      email: data.email,
-      address: data.address,
-      dateOfBirth: data.dateOfBirth,
-      gender: data.gender as AccountRequest["gender"],
-      avatarFile: avatarFile,
-      };
-      console.log(updatedData);
-      onUpdateSuccess(updatedData);
-      notifySuccess("Cập nhật thông tin thành công!");
-    } catch (err) {
-      notifyWarning("Cập nhật thông tin thất bại.");
-    }
-  };
+const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (formData) => {
+  try {
+    const requestData = mapToAccountRequest(formData, avatarFile ?? undefined);
+    onUpdateSuccess(requestData);
+    notifySuccess("Cập nhật thông tin thành công!");
+  } catch (err) {
+    notifyWarning("Cập nhật thông tin thất bại.");
+  }
+};
 
   return (
     <Box sx={{ bgcolor: "#f0f2f5" }}>

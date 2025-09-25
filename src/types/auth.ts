@@ -13,6 +13,7 @@ export type FieldErrorResponse = {
 
 export interface AuthResponse {
   token: string;
+  id: number;
   fullName: string;
   email: string;
   phoneNumber: string;
