@@ -13,7 +13,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import AddAccountForm from "../../sections/admin/manage-account/AccountForm";
 
-
 interface AccountDialogProps {
   open: boolean;
   account?: any; // account để edit, nếu undefined là thêm mới
@@ -59,7 +58,7 @@ export default function AccountDialog({
         <Button onClick={onClose} variant="outlined">
           Hủy
         </Button>
-        <Button type="submit" form="add-account-form" variant="contained">
+        <Button type="submit" form="account-form" variant="contained">
           Lưu
         </Button>
       </DialogActions>

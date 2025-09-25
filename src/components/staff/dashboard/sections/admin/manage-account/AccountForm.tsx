@@ -41,7 +41,14 @@ const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSubmit, onCancel }) =
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3, maxWidth: 1300, mx: "auto" }} elevation={3}>
-      <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} display="flex" flexDirection="column" gap={4}>
+      <Box
+  id="account-form"
+  component="form"
+  onSubmit={handleSubmit(handleFormSubmit)}
+  display="flex"
+  flexDirection="column"
+  gap={4}
+>
         {/* Avatar */}
         <Controller
           name="avatarFile"
@@ -58,8 +65,6 @@ const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSubmit, onCancel }) =
           <PersonalInfoSection control={control} />
           <AccountInfoSection control={control} />
         </Box>
-
-        <RolesSection control={control} register={register} />
       </Box>
     </Paper>
   );
