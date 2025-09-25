@@ -7,6 +7,9 @@ import { getLabTestsAndDiseases, getTreatmentForDisease } from "@/services/aiSer
 import { getPatientsByDate, Patient, getVisitHistory } from "@/services/patientList";
 import "@/css/doctor/PatientDashboard.css";
 
+interface PatientDashboardProps {
+  darkMode: boolean;
+}
 // --- Component gõ chữ an toàn
 const AiTyping: React.FC<{ text: string; speed?: number }> = ({ text, speed = 30 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -78,7 +81,7 @@ const DiseaseButtons: React.FC<{
   );
 });
 
-export default function PatientDashboard() {
+export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
@@ -250,7 +253,13 @@ export default function PatientDashboard() {
 
   // --- JSX
   return (
-    <div className="dashboard-container">
+        <div
+      className={`dashboard-container ${darkMode ? "dark" : ""}`}
+      style={{
+        backgroundColor: darkMode ? "#1e1e2f" : "#fff",
+        color: darkMode ? "#f0f0f0" : "inherit",
+      }}
+    >
       {!selectedPatient ? (
         loadingPatients ? (
           <p>⏳ Đang tải danh sách bệnh nhân...</p>

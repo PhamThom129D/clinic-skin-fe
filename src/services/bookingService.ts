@@ -1,5 +1,5 @@
 // src/services/contactService.ts
-import { BookingData } from "@/types/booking";
+import { BookingData } from "@/types/screen";
 import api from "../api/api";
 import {
   ContactPayload,
