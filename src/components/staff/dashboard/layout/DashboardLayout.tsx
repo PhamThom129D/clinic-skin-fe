@@ -13,6 +13,7 @@ import StaffChatInbox from "../components/consultant/ListUser";
 import { getCurrentUserRole, Role } from "@/utils/menuHelper";
 import { lightTheme, darkTheme } from "../../../../theme"; // import 2 theme
 import ManageAccount from "../sections/admin/manage-account/ManageAccount"; // gọi tới component mới
+import Footer from "./Footer";
 
 export default function LayoutDashboard() {
   const [open, setOpen] = useState(true);
@@ -67,6 +68,7 @@ export default function LayoutDashboard() {
           </Box>
         </Box>
       </Box>
+      <Footer />
     </ThemeProvider>
   );
 }

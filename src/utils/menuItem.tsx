@@ -15,6 +15,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 
 // 🔹 Định nghĩa Role
 export type Role =
+"ROLE_PATIENT"
   | "ROLE_RECEPTIONIST"
   | "ROLE_DOCTOR"
   | "ROLE_LAB_STAFF"
@@ -24,6 +25,7 @@ export type Role =
 
 // 🔹 Menu theo từng Role
 export const roleMenu: Record<Role, string[]> = {
+  ROLE_PATIENT: [],
   ROLE_RECEPTIONIST: [
     "Lịch hẹn",
     "Check-in",

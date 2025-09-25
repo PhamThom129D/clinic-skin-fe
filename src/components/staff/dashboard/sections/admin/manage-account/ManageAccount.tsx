@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Stack, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Box, Typography, Button, Stack } from "@mui/material";
 import { AccountTable, Account } from "./AccountTable";
 import { getListAccounts } from "@/services/accountService";
+import { roleLabels } from "@/utils/enums";
+import AccountDialog from "../../../components/admin/AccountDialog";
 
 interface ManageAccountProps {
   darkMode?: boolean;
@@ -12,9 +14,13 @@ interface ManageAccountProps {
 export default function ManageAccount({ darkMode = false }: ManageAccountProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
-  const [openAddDialog, setOpenAddDialog] = useState(false);
 
-  // Fetch accounts từ API khi mount
+  // State cho dialog
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
+  const [dialogTitle, setDialogTitle] = useState("Thêm mới tài khoản");
+
+  // Lấy danh sách tài khoản
   useEffect(() => {
     setLoadingAccounts(true);
     getListAccounts()
@@ -23,25 +29,35 @@ export default function ManageAccount({ darkMode = false }: ManageAccountProps) 
           id: a.id,
           fullName: a.fullName,
           email: a.email,
-          roles: a.roles.map((r: string) => {
-            // Map sang tiếng Việt
-            switch (r) {
-              case "ROLE_ADMIN": return "Quản trị viên";
-              case "ROLE_DOCTOR": return "Bác sĩ";
-              case "ROLE_RECEPTIONIST": return "Lễ tân";
-              case "ROLE_CONSULTANT": return "Tư vấn";
-              case "ROLE_CASHIER": return "Thu ngân";
-              case "ROLE_LAB_STAFF": return "Nhân viên lab";
-              case "ROLE_PATIENT": return "Bệnh nhân";
-              default: return r;
-            }
-          }),
+          phoneNumber: a.phoneNumber,
+          address: a.address,
+          dateOfBirth: a.dateOfBirth,
+          gender: a.gender,
+          roles: a.roles.map((r: string) => roleLabels[r] || r),
           avtPath: a.avtPath,
+          status: a.status as "Active" | "Inactive" | "Banned",
+          specialty: a.specialty,
+          level: a.level,
+          certificates: a.certificates || [],
         }));
         setAccounts(mapped);
       })
       .finally(() => setLoadingAccounts(false));
   }, []);
+
+  // Mở dialog thêm mới
+  const handleAdd = () => {
+    setCurrentAccount(null);
+    setDialogTitle("Thêm mới tài khoản");
+    setOpenDialog(true);
+  };
+
+  // Mở dialog sửa / xem chi tiết
+  const handleEdit = (account: Account) => {
+    setCurrentAccount(account);
+    setDialogTitle("Chỉnh sửa tài khoản");
+    setOpenDialog(true);
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -50,7 +66,7 @@ export default function ManageAccount({ darkMode = false }: ManageAccountProps) 
         <Typography variant="h5" fontWeight="bold">
           Danh sách tài khoản
         </Typography>
-        <Button variant="contained" color="primary" onClick={() => setOpenAddDialog(true)}>
+        <Button variant="contained" color="primary" onClick={handleAdd}>
           Thêm mới tài khoản
         </Button>
       </Stack>
@@ -59,17 +75,29 @@ export default function ManageAccount({ darkMode = false }: ManageAccountProps) 
       {loadingAccounts ? (
         <div>Đang tải danh sách tài khoản...</div>
       ) : (
-        <AccountTable data={accounts} darkMode={darkMode} />
+        <AccountTable
+          data={accounts}
+          darkMode={darkMode}
+          onEdit={handleEdit}    // thêm props onEdit
+          onView={handleEdit}    // dùng chung dialog
+        />
       )}
 
-      {/* Add Account Dialog */}
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Thêm mới tài khoản</DialogTitle>
-        <DialogContent>
-          {/* TODO: Form thêm tài khoản */}
-          <Typography>Form thêm tài khoản sẽ ở đây</Typography>
-        </DialogContent>
-      </Dialog>
+      {/* Dialog chung (thêm / chỉnh sửa / xem chi tiết) */}
+      <AccountDialog
+        open={openDialog}
+        title={dialogTitle}
+        account={currentAccount || undefined}
+        onClose={() => setOpenDialog(false)}
+        onSubmit={(formData) => {
+          if (currentAccount) {
+            console.log("Cập nhật tài khoản:", formData);
+          } else {
+            console.log("Thêm mới tài khoản:", formData);
+          }
+          setOpenDialog(false);
+        }}
+      />
     </Box>
   );
 }
