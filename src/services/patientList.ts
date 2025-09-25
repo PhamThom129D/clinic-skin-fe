@@ -16,14 +16,26 @@ export interface VisitSummary {
 
 const API_BASE = "http://localhost:1209/api";
 
-// Helper: lấy headers có token
+const getToken = (): string | null => {
+  // Ưu tiên lấy trực tiếp
+  const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
+  if (token) return token;
+
+
+  return null;
+};
+
+
 const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = getToken();
+  console.log("Token gửi đi:", token);
+
   return {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };
+
 
 // --- Lấy danh sách bệnh nhân theo ngày
 export const getPatientsByDate = async (date: string): Promise<Patient[]> => {
