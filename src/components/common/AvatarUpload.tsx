@@ -32,7 +32,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ preview, onChange }) => {
         style={{ display: "none" }}
       />
       <Button variant="contained" color="primary" size="medium" onClick={handleClick}>
-        Chọn ảnh đại diện
+        Chọn ảnh
       </Button>
     </Box>
   );
