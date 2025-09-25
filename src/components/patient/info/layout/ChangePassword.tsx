@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
-import { styled } from "@mui/system";
+import React from "react";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/patient/info/section/PasswordInput";
 import ButtonPrimary from "@/components/common/ButtonPrimary";
 import {
@@ -16,44 +11,54 @@ import {
   newPasswordRule,
   confirmNewPasswordRule,
 } from "@/utils/validation/validators";
-import { notifySuccess, notifyWarning } from "@/utils/toast";
+import { notifySuccess, notifyWarning, notifyError } from "@/utils/toast";
+import StyledPaper from "@/components/common/StyledPaper";
+import { ChangePasswordFormData, PasswordChangeData } from "@/types/userinfo";
+import { AuthResponse } from "@/types/auth";
+import { changePassword } from "@/services/accountService";
+import { isAxiosError } from "axios";
 
-// ==== Kiểu dữ liệu form ====
-interface ChangePasswordFormData {
-  oldPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
-}
-
-// ==== Props ====
 interface ChangePasswordProps {
-  onBackClick: () => void;
+  account: AuthResponse;
 }
 
-// ==== Styled Paper ====
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.paper,
-}));
-
-const ChangePassword: React.FC<ChangePasswordProps> = ({ onBackClick }) => {
+const ChangePassword: React.FC<ChangePasswordProps> = ({ account }) => {
   const theme = useTheme();
-  const {
-    control,
-    handleSubmit,
-    getValues,   // 👈 thêm getValues ở đây
-    reset,
-  } = useForm<ChangePasswordFormData>();
+  const router = useRouter();
 
-  const handleChangePassword: SubmitHandler<ChangePasswordFormData> = async (data) => {
-    console.log("Dữ liệu đổi mật khẩu:", data);
+  const { control, handleSubmit, getValues } = useForm<ChangePasswordFormData>({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+  });
 
+  const handleChangePassword: SubmitHandler<ChangePasswordFormData> = async (
+    data
+  ) => {
     try {
-      notifySuccess("Đổi mật khẩu thành công!");
-      reset();
+      const userEmail = account.email;
+      const dataString: PasswordChangeData = {
+        email: userEmail,
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
+      };
+
+      await changePassword(dataString);
+      notifySuccess("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+      router.push("/auth");
     } catch (error) {
-      notifyWarning("Đổi mật khẩu thất bại. Vui lòng thử lại.");
+      if (isAxiosError(error) && error.response && error.response.status === 400) {
+        const errorMessage = error.response.data;
+        if (errorMessage === "Mật khẩu cũ không chính xác") {
+          notifyError("Mật khẩu cũ không đúng. Vui lòng thử lại.");
+        } else {
+          notifyError(errorMessage || "Có lỗi xảy ra. Vui lòng thử lại.");
+        }
+      } else {
+        notifyWarning("Đổi mật khẩu thất bại. Vui lòng thử lại.");
+      }
     }
   };
 

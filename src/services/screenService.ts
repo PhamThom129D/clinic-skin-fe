@@ -3,7 +3,7 @@ import { Doctor, Offer, Testimonial } from "../types/screen";
 
 
 export const getDoctorsBasic = () => {
-  return api.get<Doctor[]>("/doctors/basic");
+  return api.get<Doctor[]>("/doctors");
 };
 
 

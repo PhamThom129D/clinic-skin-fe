@@ -19,11 +19,13 @@ import { Role } from "@/utils/menuItem";
 interface SidebarProps {
   open: boolean;
   role: Role;
-  onMenuSelect: (menu: string) => void; // 🔹 callback khi click menu
+  onMenuSelect: (menu: string) => void; 
 }
+import { useTheme } from "@mui/material/styles";
 
 export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
   const router = useRouter();
+  const theme = useTheme();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -31,7 +33,6 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
     router.push("/auth");
   };
 
-  // Lấy menu dựa trên role
   const menuItems: MenuItemWithIcon[] = getMenuByRole(role);
 
   return (
@@ -39,40 +40,42 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
       variant="permanent"
       open={open}
       sx={{
-        width: open ? 280 : 72,
+        width: open ? 360 : 72,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          width: open ? 280 : 72,
+          width: open ? 360 : 72,
           boxSizing: "border-box",
           transition: "width 0.3s",
           pt: 10,
           overflowX: "hidden",
           borderRight: "none",
-          background: "linear-gradient(180deg, #e6f7f9 0%, #ffffff 100%)",
+          background: theme.palette.background.paper, 
           boxShadow: "2px 0 6px rgba(0,0,0,0.05)",
           display: "flex",
           flexDirection: "column",
         },
       }}
     >
-      {/* Nội dung sidebar */}
       <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
         <List>
           {menuItems.map((item, idx) => (
             <ListItem key={idx} disablePadding>
               <ListItemButton
-                onClick={() => onMenuSelect(item.label)} 
+                onClick={() => onMenuSelect(item.label)}
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  my: 0.5,
+                  my: 1,
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
-                  px: 2,
-                  color: "#6b7280",
+                  px: 3,
+                  color: theme.palette.text.secondary, 
                   "&:hover": {
-                    bgcolor: "#e6f0f9",
-                    color: "#1976d2",
+                    bgcolor:
+                      theme.palette.mode === "light"
+                        ? "rgba(100,206,130,0.1)"
+                        : "rgba(100,206,130,0.15)", 
+                    color: theme.palette.primary.main,
                   },
                 }}
               >
@@ -89,7 +92,7 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
                 {open && (
                   <ListItemText
                     primary={item.label}
-                    primaryTypographyProps={{ fontSize: 24, fontWeight: 500 }}
+                    primaryTypographyProps={{ fontSize: 26, fontWeight: 500 }}
                   />
                 )}
               </ListItemButton>
@@ -98,7 +101,6 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
         </List>
       </Box>
 
-      {/* Nút Logout luôn nằm cuối */}
       <Box sx={{ p: 2 }}>
         <ListItem disablePadding>
           <ListItemButton
@@ -106,10 +108,13 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
               borderRadius: 2,
               justifyContent: open ? "initial" : "center",
               px: 2,
-              color: "#dc2626",
+              color: theme.palette.error.main, 
               "&:hover": {
-                bgcolor: "#fee2e2",
-                color: "#b91c1c",
+                bgcolor:
+                  theme.palette.mode === "light"
+                    ? "rgba(244,67,54,0.1)"
+                    : "rgba(244,67,54,0.2)", 
+                color: theme.palette.error.dark,
               },
             }}
             onClick={handleLogout}
@@ -126,8 +131,8 @@ export default function Sidebar({ open, role, onMenuSelect }: SidebarProps) {
             </ListItemIcon>
             {open && (
               <ListItemText
-                primary="Logout"
-                primaryTypographyProps={{ fontSize: 18, fontWeight: 600 }}
+                primary="Đăng xuất"
+                primaryTypographyProps={{ fontSize: 28, fontWeight: 600 }}
               />
             )}
           </ListItemButton>

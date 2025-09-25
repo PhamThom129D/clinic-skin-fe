@@ -1,150 +1,103 @@
 // src/components/patient/info/section/UserInfoUpdate.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper, Button } from "@mui/material";
-import { styled } from '@mui/system';
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { AuthResponse } from "@/types/auth";
+import { Box, Typography, Button } from "@mui/material";
+import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { notifySuccess, notifyWarning } from "@/utils/toast";
 import AvatarUpload from "@/components/common/AvatarUpload";
 import GenderSelect from "@/components/common/GenderSelect";
 import { FormInput } from "../../../common/FormInput";
 import ButtonPrimary from "../../../common/ButtonPrimary";
-import {
-  emailRule,
-  fullNameRule,
-  phoneNumberRule,
-  addressRule,
-  dateOfBirthRule,
-  formatDateForInput,
+import { emailRule, fullNameRule, phoneNumberRule, addressRule, dateOfBirthRule, formatDateForInput
 } from "@/utils/validation/validators";
-import { EmergencyContact } from "@/types/userinfo";
+import StyledPaper from "@/components/common/StyledPaper";
+import { AuthResponse } from "@/types/auth";
+import { AccountRequest } from "@/types/userinfo";
 
-// (Các interfaces của bạn giữ nguyên)
-
-interface UserInfoUpdateFormData {
-  fullName: string;
-  phoneNumber: string;
-  email: string;
-  dateOfBirth: string;
-  gender: 'MALE' | 'FEMALE' | 'OTHER' | '';
-  address: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-}
-
-interface UserInfoUpdateProps {
-  account: AuthResponse | null;
-  emergencyContact: EmergencyContact | null;
+export interface UserInfoUpdateProps {
+  account: AuthResponse;
   onBackClick: () => void;
-  onUpdateSuccess: (updatedAccount: AuthResponse, updatedEmergencyContact: EmergencyContact) => void;
+  onUpdateSuccess: (data: AccountRequest) => void;
 }
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.paper,
-}));
-
-const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyContact, onBackClick, onUpdateSuccess }) => {
+const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, onBackClick, onUpdateSuccess }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(account.avatarUrl);
+    const [gender, setGender] = useState<AccountRequest["gender"] | "">("");
+  
 
   const {
-  control,
-  handleSubmit,
-  formState: { errors },
-  reset,
-  watch, // Thêm watch
-  setValue, // Thêm setValue
-} = useForm<UserInfoUpdateFormData>();
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<AuthResponse>();
 
-  useEffect(() => {
-    if (account) {
-      reset({
-        fullName: account.fullName ?? "",
-        phoneNumber: account.phoneNumber ?? "",
-        email: account.email ?? "",
-        dateOfBirth: formatDateForInput(account.dateOfBirth),
-        address: account.address ?? "",
-        emergencyContactName: emergencyContact?.contact_name ?? "",
-        emergencyContactPhone: emergencyContact?.contact_phone ?? "",
-        gender: (account.gender as UserInfoUpdateFormData["gender"]) ?? "",
-      });
-      setAvatarPreview(account.avatarUrl ?? null);
-    }
-  }, [account, emergencyContact, reset]);
+useEffect(() => {
+  if (account) {
+    reset({
+      ...account,
+      dateOfBirth: account.dateOfBirth ? formatDateForInput(account.dateOfBirth) : ""
+    });
+  }
+}, [account, reset]);
 
   const handleAvatarChange = (file: File | null) => {
     setAvatarFile(file);
     setAvatarPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  const handleUpdateSubmit: SubmitHandler<UserInfoUpdateFormData> = async (data) => {
-    if (!account) {
-      notifyWarning("Không tìm thấy thông tin người dùng.");
-      return;
-    }
+  const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (data) => {
     try {
-      const updatedAccount: AuthResponse = {
-        ...account,
-        fullName: data.fullName,
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-        dateOfBirth: data.dateOfBirth,
-        address: data.address,
-        gender: data.gender,
-        avatarUrl: avatarPreview || account?.avatarUrl,
+      const updatedData: AccountRequest = {
+       fullName: data.fullName,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
+      address: data.address,
+      dateOfBirth: data.dateOfBirth,
+      gender: data.gender as AccountRequest["gender"],
+      avatarFile: avatarFile,
       };
-
-      const updatedEmergencyContact: EmergencyContact = {
-        emergency_id: emergencyContact?.emergency_id || 0,
-        patient_id: emergencyContact?.patient_id || 0,
-        contact_name: data.emergencyContactName,
-        contact_phone: data.emergencyContactPhone,
-      };
-
-      onUpdateSuccess(updatedAccount, updatedEmergencyContact);
+      console.log(updatedData);
+      onUpdateSuccess(updatedData);
       notifySuccess("Cập nhật thông tin thành công!");
-    } catch (err: unknown) {
+    } catch (err) {
       notifyWarning("Cập nhật thông tin thất bại.");
     }
   };
-  
-  if (!account) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <Typography>Đang tải thông tin...</Typography>
-      </Box>
-    );
-  }
 
   return (
-    <Box
-      sx={{
-        bgcolor: "#f0f2f5",
-      }}
-    >
+    <Box sx={{ bgcolor: "#f0f2f5" }}>
       <StyledPaper elevation={3}>
         <form onSubmit={handleSubmit(handleUpdateSubmit)}>
           <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
             <AvatarUpload preview={avatarPreview} onChange={handleAvatarChange} />
           </Box>
-          <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }} gap={2}>
+          <Box
+            display="grid"
+            gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }}
+            gap={2}
+          >
             <FormInput name="fullName" control={control} label="Họ và tên" rules={fullNameRule} />
             <FormInput name="address" control={control} label="Địa chỉ" rules={addressRule} />
             <FormInput name="email" control={control} label="Email" rules={emailRule} />
             <FormInput name="phoneNumber" control={control} label="Số điện thoại" rules={phoneNumberRule} />
-            <FormInput name="dateOfBirth" control={control} label="Ngày sinh" type="date" rules={dateOfBirthRule} />
-            
+            <FormInput
+              name="dateOfBirth"
+              control={control}
+              label="Ngày sinh"
+              type="date"
+              rules={dateOfBirthRule}
+            />
+
             <Controller
               name="gender"
               control={control}
-              defaultValue="" // Thêm defaultValue ở đây
+              defaultValue="OTHER"
               render={({ field, fieldState: { error } }) => (
                 <GenderSelect
                   name={field.name}
-                  value={field.value as string}
+                  value={field.value}
                   onChange={field.onChange}
                   error={!!error}
                   helperText={error?.message}
@@ -152,16 +105,12 @@ const UserInfoUpdate: React.FC<UserInfoUpdateProps> = ({ account, emergencyConta
               )}
             />
           </Box>
-          <Typography variant="h6" fontWeight="bold" sx={{ mt: 4, mb: 2 }}>
-            Liên hệ khẩn cấp
-          </Typography>
-          <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }} gap={2}>
-            <FormInput name="emergencyContactName" control={control} label="Họ tên" rules={fullNameRule} />
-            <FormInput name="emergencyContactPhone" control={control} label="Số điện thoại" rules={phoneNumberRule} />
-          </Box>
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+
+          <Box
+            sx={{ mt: 3, display: "flex", justifyContent: "space-between", gap: 2 }}
+          >
             <Button variant="outlined" color="primary" sx={{ flex: 1 }} onClick={onBackClick}>
-              Quay lại
+              Hủy
             </Button>
             <ButtonPrimary
               type="submit"
