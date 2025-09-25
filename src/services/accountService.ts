@@ -1,6 +1,7 @@
 // src/services/accountService.ts
-
 import { AccountRequest, PasswordChangeData, PasswordResetData } from "@/types/userinfo";
+
+
 import api from "../api/api";
 import { AuthResponse } from "@/types/auth";
 import { buildFormData } from "@/utils/accountMappers";
@@ -16,7 +17,6 @@ export const changePassword = (data: PasswordChangeData) => {
 export const deleteAccount = (id: number) => {
     return api.delete(`/accounts/${id}`);
 }
-
 
 export const updateInfo = async (data: AccountRequest) => {
   const formData = buildFormData(data);
@@ -39,10 +39,32 @@ export interface Account {
 
 export const getListAccounts = async (): Promise<Account[]> => {
   try {
-    const res = await api.get("/accounts"); 
-    return res.data; 
+    const res = await api.get("/accounts?roles=ROLE_PATIENT");
+    return res.data;
   } catch (err) {
     console.error("Fetch accounts error:", err);
     return [];
   }
 };
+
+
+
+export const createAccount = async (formData: FormData) => {
+  const res = await api.post("/accounts", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};
+// Cập nhật account theo id
+export const updateAccount = async (id: number, formData: FormData) => {
+  const res = await api.put(`/accounts/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};
+// Lấy account theo id
+export const getAccountById = async (id: number) => {
+  const res = await api.get(`/accounts/${id}`);
+  return res.data;
+};
+
