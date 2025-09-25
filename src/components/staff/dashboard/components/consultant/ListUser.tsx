@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import StaffChatWindow from "./ChatWindow";
+import { getAccountById } from "@/services/accountService";
+
 import {
   Box,
   Typography,
@@ -26,43 +28,68 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
   const [unread, setUnread] = useState<Record<string, boolean>>({});
   const staffId = 1;
 
-  const loadInbox = async () => {
-    try {
-      const data = await fetchInbox(staffId);
+ const loadInbox = async () => {
+  try {
+    const data = await fetchInbox(staffId);
 
-      setConversations((prev) => {
-        const newUnread: Record<string, boolean> = { ...unread };
+    setConversations((prev) => {
+      const newUnread: Record<string, boolean> = { ...unread };
 
-        const merged = data.map((conv) => {
-          const lastMsg = conv.messages[conv.messages.length - 1];
-          const existed = prev.find((c) => c.key === conv.key);
+      let guestCounter = 1;
 
-          if (!existed) {
-            if (lastMsg && lastMsg.senderId !== staffId) newUnread[conv.key] = true;
-            else newUnread[conv.key] = false;
-          } else {
-            newUnread[conv.key] = unread[conv.key] ?? false;
+      const merged = data.map((conv, index) => {
+        const lastMsg = conv.messages[conv.messages.length - 1];
+        const existed = prev.find((c) => c.key === conv.key);
 
-            const prevLast = existed.messages[existed.messages.length - 1];
-            if (
-              lastMsg &&
-              lastMsg.senderId !== staffId &&
-              prevLast?.sentAt !== lastMsg.sentAt
-            ) {
-              newUnread[conv.key] = true;
-            }
+        // 🚀 đổi tên hiển thị
+        let displayName = conv.customerName;
+        if (conv.key.startsWith("user-")) {
+          const customerId = Number(conv.key.replace("user-", ""));
+          getAccountById(customerId)
+            .then((acc) => {
+              if (acc?.fullName) {
+                // cập nhật lại tên cho đúng
+                setConversations((prevList) =>
+                  prevList.map((c) =>
+                    c.key === conv.key ? { ...c, customerName: acc.fullName } : c
+                  )
+                );
+              }
+            })
+            .catch(() => {});
+        } else if (conv.key.startsWith("guest-")) {
+          displayName = `Khách vãng lai ${guestCounter++}`;
+        }
+
+        // unread logic giữ nguyên
+        if (!existed) {
+          if (lastMsg && lastMsg.senderId !== staffId)
+            newUnread[conv.key] = true;
+          else newUnread[conv.key] = false;
+        } else {
+          newUnread[conv.key] = unread[conv.key] ?? false;
+
+          const prevLast = existed.messages[existed.messages.length - 1];
+          if (
+            lastMsg &&
+            lastMsg.senderId !== staffId &&
+            prevLast?.sentAt !== lastMsg.sentAt
+          ) {
+            newUnread[conv.key] = true;
           }
+        }
 
-          return conv;
-        });
-
-        setUnread(newUnread);
-        return merged;
+        return { ...conv, customerName: displayName };
       });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
+      setUnread(newUnread);
+      return merged;
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   useEffect(() => {
     loadInbox();
@@ -123,8 +150,8 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
                         ? "rgba(2,125,68,0.2)"
                         : "rgba(2,125,68,0.1)"
                       : darkMode
-                      ? "#2c2c3a"
-                      : "#fff",
+                        ? "#2c2c3a"
+                        : "#fff",
                   borderBottom: darkMode ? "1px solid #444" : "1px solid #eee",
                   color: darkMode ? "#f0f0f0" : "inherit",
                 }}
