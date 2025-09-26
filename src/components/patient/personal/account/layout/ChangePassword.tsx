@@ -4,7 +4,7 @@ import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { PasswordInput } from "@/components/patient/info/section/PasswordInput";
+import { PasswordInput } from "@/components/patient/personal/account/section/PasswordInput";
 import ButtonPrimary from "@/components/common/ButtonPrimary";
 import {
   oldPasswordRule,

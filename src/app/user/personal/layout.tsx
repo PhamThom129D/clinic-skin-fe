@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import Header from "@/components/patient/dashboard/layout/Header";
 import Footer from "@/components/patient/dashboard/layout/Footer";
 import ChatBox from "@/components/patient/dashboard/boxchat/ChatBox";
-import Sidebar from "@/components/patient/info/layout/Sidebar";
+import Sidebar from "@/components/patient/personal/account/layout/Sidebar";
 import { useTheme } from "@mui/material/styles";
 import { AccountProvider } from "@/context/AccountContext";
 import { useUser } from "@/hooks/useUser";

@@ -1,15 +1,17 @@
 "use client";
 
-import React from "react";
-import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Typography } from "@mui/material";
+import ChangePassword from "@/components/patient/personal/account/layout/ChangePassword";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import ResetPassword from "@/components/patient/info/layout/ResetPassword";
 
 export default function Page() {
   const router = useRouter();
   const { account } = useUser();
+
+  const handleBackClick = () => {
+    router.back();
+  };
   
   if (!account) {
     return (
@@ -19,7 +21,5 @@ export default function Page() {
     );
   }
 
-  return (
-    <ResetPassword account={account} />
-  );
+  return <ChangePassword account={account}/>;
 }

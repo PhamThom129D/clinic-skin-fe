@@ -39,7 +39,7 @@ export const AccountDropdown: React.FC<AccountDropdownProps> = ({ anchorEl, open
       <Stack spacing={1} sx={{ p: 1, minWidth: 200 }}>
         <Button
           onClick={() => {
-            router.push("/user/info");
+            router.push("/user/personal");
             onClose();
           }}
           sx={{ justifyContent: "flex-start", "&:hover": { backgroundColor: "#d7d9da" } }}
