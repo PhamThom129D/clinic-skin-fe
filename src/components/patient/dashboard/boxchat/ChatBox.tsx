@@ -136,8 +136,8 @@ export default function ChatBox() {
     if (!msg.trim()) return;
 
     await sendMessage({
-      senderId: userId,
-      guestId,
+      senderId: userId ?? null,
+      guestId: userId ? null : guestId,
       receiverId: staffId,
       content: msg,
     });
