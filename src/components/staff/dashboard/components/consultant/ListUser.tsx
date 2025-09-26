@@ -38,12 +38,10 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
         const newUnread: Record<string, boolean> = { ...unread };
         const newGuestMap: Record<string, number> = { ...guestMap };
 
-        // Tìm số lớn nhất đã gán (nếu chưa có thì 0)
         const existingValues = Object.values(newGuestMap);
         const existingMax = existingValues.length ? Math.max(...existingValues) : 0;
         let nextIndex = existingMax + 1;
 
-        // Tập các guest chưa có trong map, cùng với thời điểm "first message"
         const unassignedGuests = data
           .filter((c) => c.key.startsWith("guest-") && !newGuestMap[c.key])
           .map((c) => {
@@ -52,13 +50,11 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
             return { key: c.key, firstAt };
           });
 
-        // Gán số cho guest mới theo thứ tự firstAt (từ cũ → mới)
         unassignedGuests.sort((a, b) => a.firstAt - b.firstAt);
         for (const g of unassignedGuests) {
           newGuestMap[g.key] = nextIndex++;
         }
 
-        // Tạo mảng merged với displayName dựa trên newGuestMap (và user fullName nếu có)
         const merged = data.map((conv) => {
           const lastMsg = conv.messages && conv.messages.length ? conv.messages[conv.messages.length - 1] : null;
           const existed = prev.find((c) => c.key === conv.key);
@@ -74,14 +70,9 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
                   prevList.map((c) => (c.key === conv.key ? { ...c, customerName: acc.fullName } : c))
                 );
               }
-            }).catch(() => {});
+            }).catch(() => { });
           } else if (conv.key.startsWith("guest-")) {
-            // Dùng số đã map (nếu chưa có thì newGuestMap đã gán ở trên)
-            const num = newGuestMap[conv.key] ?? (() => {
-              // Fallback: nếu vì lý do nào đó vẫn chưa có, gán tạm
-              newGuestMap[conv.key] = nextIndex++;
-              return newGuestMap[conv.key];
-            })();
+            const num = newGuestMap[conv.key] ?? (newGuestMap[conv.key] = nextIndex++);
             displayName = `Khách vãng lai ${num}`;
           }
 
