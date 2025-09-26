@@ -43,9 +43,7 @@ export default function ChatBox() {
     );
     const decoded = JSON.parse(jsonPayload);
 
-    console.log("Decoded JWT payload:", decoded); 
-    setUserId(decoded.userId);  // ✅ đúng key
-    console.log("Token exp:", decoded.exp); 
+    setUserId(decoded.userId); 
 
   } catch (err) {
     console.error("Token invalid", err);

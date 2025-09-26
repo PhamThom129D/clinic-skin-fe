@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -13,10 +13,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import AddAccountForm from "../../sections/admin/manage-account/AccountForm";
 
-
 interface AccountDialogProps {
   open: boolean;
-  account?: any; // account để edit, nếu undefined là thêm mới
+  account?: any;
   title?: string;
   onClose: () => void;
   onSubmit: (formData: FormData, account?: any) => void;
@@ -24,13 +23,35 @@ interface AccountDialogProps {
 
 export default function AccountDialog({
   open,
-  account,
   title = "Tài khoản",
   onClose,
   onSubmit,
+  account,
 }: AccountDialogProps) {
-  const handleSubmit = (formData: FormData) => {
-    onSubmit(formData, account);
+  useEffect(() => {
+    console.log("[AccountDialog] render/mount. props:", { open, title, account });
+  }, []); // mount only
+
+  useEffect(() => {
+    console.log("[AccountDialog] open changed ->", open);
+  }, [open]);
+
+  // wrapper so we can log and then forward to parent
+  const handleInternalSubmit = (formData: FormData) => {
+    try {
+      console.log("[AccountDialog] handleInternalSubmit called. current account:", account);
+
+      const entries = Array.from(formData.entries()).map(([k, v]) => [
+        k,
+        v instanceof File ? `File(${v.name})` : v,
+      ]);
+      console.log("[AccountDialog] received FormData entries:", entries);
+
+      console.log("[AccountDialog] forwarding to props.onSubmit(formData, account) ...");
+      onSubmit(formData, account);
+    } catch (err) {
+      console.error("[AccountDialog] error in handleInternalSubmit:", err);
+    }
   };
 
   return (
@@ -51,7 +72,7 @@ export default function AccountDialog({
       <Divider />
 
       <DialogContent sx={{ p: 3 }}>
-        <AddAccountForm onSubmit={handleSubmit} onCancel={onClose} />
+        <AddAccountForm onSubmit={handleInternalSubmit} onCancel={onClose} />
       </DialogContent>
 
       <Divider />
@@ -59,7 +80,8 @@ export default function AccountDialog({
         <Button onClick={onClose} variant="outlined">
           Hủy
         </Button>
-        <Button type="submit" form="add-account-form" variant="contained">
+        {/* This button submits the form inside AddAccountForm (id="account-form") */}
+        <Button type="submit" form="account-form" variant="contained">
           Lưu
         </Button>
       </DialogActions>
