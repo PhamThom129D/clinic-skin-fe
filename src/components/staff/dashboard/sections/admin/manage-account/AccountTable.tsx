@@ -103,12 +103,7 @@ export function AccountTable({
       },
       { accessorKey: "fullName", header: "Họ và tên" },
       { accessorKey: "email", header: "Email" },
-      {
-        accessorKey: "roles",
-        header: "Vai trò",
-        Cell: ({ row }) =>
-          row.original.roles.map((r) => roleLabels[r] || r).join(", "),
-      },
+
       {
         accessorKey: "status",
         header: "Trạng thái",
