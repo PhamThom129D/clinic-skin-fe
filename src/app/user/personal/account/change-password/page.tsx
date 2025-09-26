@@ -1,3 +1,4 @@
+//personal/account/change-password
 "use client";
 
 import { Box, Typography } from "@mui/material";
