@@ -71,6 +71,11 @@ export const logoutClient = async () => {
   sessionStorage.removeItem("account");
   sessionStorage.removeItem("userRole");
 
+  localStorage.removeItem("chatKey");
+  localStorage.removeItem("guestId");
+  sessionStorage.removeItem("chatKey");
+  sessionStorage.removeItem("guestId");
+
 
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("authChange"));
