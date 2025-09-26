@@ -7,7 +7,7 @@ import "@/css/chat/StaffChatWindow.css";
 
 interface Conversation {
   key: string;
-  customerName: string;
+  customerName: string; // 👈 đã được Inbox gán "Nguyễn Văn A" hoặc "Khách vãng lai 1"
   messages?: ChatMessage[];
 }
 
@@ -24,7 +24,6 @@ export default function StaffChatWindow({
 }: StaffChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(conversation.messages || []);
   const [input, setInput] = useState("");
-  const [customerName, setCustomerName] = useState(conversation.customerName);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   /** Lấy lịch sử tin nhắn */
@@ -34,25 +33,20 @@ export default function StaffChatWindow({
       .catch((err) => console.error("Lỗi fetch history:", err));
   }, [conversation.key]);
 
-  /** Lấy thông tin khách hàng từ key */
+  /** Nếu là user thì cập nhật lại tên chính xác từ DB */
   useEffect(() => {
-    console.log("Conversation key:", conversation.key);
-
     if (conversation.key.startsWith("user-")) {
       const customerId = Number(conversation.key.replace("user-", ""));
       getAccountById(customerId)
         .then((account) => {
           if (account) {
-            setCustomerName(account.fullName);
+            // ⚡ Update trực tiếp conversation.customerName
+            conversation.customerName = account.fullName;
           }
         })
         .catch((err) => console.error("Lỗi getAccountById:", err));
     }
-
-    if (conversation.key.startsWith("guest-")) {
-      const guestId = conversation.key.replace("guest-", "");
-      setCustomerName(`Khách vãng lai ${guestId}`);
-    }
+    // 🚀 Với guest thì KHÔNG đổi nữa, giữ nguyên số thứ tự từ Inbox
   }, [conversation.key]);
 
   /** Lắng nghe socket nhận tin nhắn mới */
@@ -97,7 +91,8 @@ export default function StaffChatWindow({
 
   return (
     <div className={`chat-window ${darkMode ? "dark" : ""}`}>
-      <h4>Chat với {customerName}</h4>
+      {/* ⚡ Dùng conversation.customerName trực tiếp */}
+      <h4>Chat với {conversation.customerName}</h4>
 
       <div className="chat-messages" ref={scrollRef}>
         {messages.map((m, idx) => (

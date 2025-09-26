@@ -31,24 +31,24 @@ export default function ChatBox() {
       localStorage.getItem("authToken") ||
       sessionStorage.getItem("authToken");
 
-  if (token) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    const decoded = JSON.parse(jsonPayload);
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const decoded = JSON.parse(jsonPayload);
 
-    setUserId(decoded.userId); 
+        setUserId(decoded.userId);
 
-  } catch (err) {
-    console.error("Token invalid", err);
-  }
-}
+      } catch (err) {
+        console.error("Token invalid", err);
+      }
+    }
 
 
     let gid = localStorage.getItem("guestId");
@@ -71,15 +71,15 @@ export default function ChatBox() {
     async function loadHistory() {
       let msgs: any[] = [];
 
-      if (userId && guestId) {
-        const guestMsgs = await fetchHistory(`guest-${guestId}`);
-        msgs = msgs.concat(guestMsgs);
+      if (userId) {
+        // Nếu login thì chỉ lấy chat theo userId
+        msgs = await fetchHistory(`user-${userId}`);
+      } else if (guestId) {
+        // Nếu chưa login thì dùng guestId
+        msgs = await fetchHistory(`guest-${guestId}`);
       }
 
-      const userMsgs = await fetchHistory(key);
-      msgs = msgs.concat(userMsgs);
-
-      msgs.sort((a, b) => a.sentAt - b.sentAt);
+      msgs.sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
 
       setMessages(
         msgs.map((m) => ({
@@ -94,6 +94,7 @@ export default function ChatBox() {
         }))
       );
     }
+
 
     loadHistory().catch(console.error);
   }, [open, key, userId, guestId]);
