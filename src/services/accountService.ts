@@ -11,9 +11,6 @@ export const resetPassword = (data: PasswordResetData) => {
 }
 
 
-    return api.put('/accounts/reset-password', data);
-}
-
 export const changePassword = (data: PasswordChangeData) => {
     return api.put(`/accounts/change-password`, data)
 }
