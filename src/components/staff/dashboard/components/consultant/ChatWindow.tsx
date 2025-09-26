@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { ChatMessage, fetchHistory, sendReply } from "@/services/chatbox";
 import { connectMessageSocket } from "@/services/chatSocket";
-import "@/css/chat/StaffChatWindow.css";  
+import { getAccountById } from "@/services/accountService";
+import "@/css/chat/StaffChatWindow.css";
 
 interface Conversation {
   key: string;
@@ -23,21 +24,47 @@ export default function StaffChatWindow({
 }: StaffChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(conversation.messages || []);
   const [input, setInput] = useState("");
+  const [customerName, setCustomerName] = useState(conversation.customerName);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  /** Lấy lịch sử tin nhắn */
   useEffect(() => {
     fetchHistory(conversation.key)
       .then((data) => setMessages(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Lỗi fetch history:", err));
   }, [conversation.key]);
 
+  /** Lấy thông tin khách hàng từ key */
+  useEffect(() => {
+    console.log("Conversation key:", conversation.key);
+
+    if (conversation.key.startsWith("user-")) {
+      const customerId = Number(conversation.key.replace("user-", ""));
+      getAccountById(customerId)
+        .then((account) => {
+          if (account) {
+            setCustomerName(account.fullName);
+          }
+        })
+        .catch((err) => console.error("Lỗi getAccountById:", err));
+    }
+
+    if (conversation.key.startsWith("guest-")) {
+      const guestId = conversation.key.replace("guest-", "");
+      setCustomerName(`Khách vãng lai ${guestId}`);
+    }
+  }, [conversation.key]);
+
+  /** Lắng nghe socket nhận tin nhắn mới */
   useEffect(() => {
     const disconnect = connectMessageSocket(conversation.key, (body: ChatMessage) => {
+      console.log("Tin nhắn mới:", body);
       setMessages((prev) => [...prev, body]);
     });
     return () => disconnect();
   }, [conversation.key]);
 
+  /** Gửi tin nhắn */
   const handleSend = useCallback(async () => {
     if (!input.trim()) return;
 
@@ -56,10 +83,11 @@ export default function StaffChatWindow({
       await sendReply(body, "ROLE_CONSULTANT");
       setInput("");
     } catch (err) {
-      console.error("send error", err);
+      console.error("Lỗi gửi tin:", err);
     }
   }, [input, staffId, conversation.key]);
 
+  /** Auto scroll xuống cuối khi có tin nhắn */
   useEffect(() => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
@@ -69,7 +97,7 @@ export default function StaffChatWindow({
 
   return (
     <div className={`chat-window ${darkMode ? "dark" : ""}`}>
-      <h4>Chat với {conversation.customerName}</h4>
+      <h4>Chat với {customerName}</h4>
 
       <div className="chat-messages" ref={scrollRef}>
         {messages.map((m, idx) => (
