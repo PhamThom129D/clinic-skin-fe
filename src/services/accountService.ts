@@ -46,13 +46,6 @@ export const getListAccounts = async (): Promise<Account[]> => {
   }
 };
 
-export const createAccount = async (formData: FormData) => {
-  const res = await api.post("/accounts", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return res.data;
-};
-
 // Lấy account theo id
 export const getAccountById = async (id: number) => {
   const res = await api.get(`/accounts/${id}`);
