@@ -75,7 +75,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
               maxWidth: "80%",
             }}
           >
-            Bạn cần tư vấn gì?
+           Xin chào, bạn cần tư vấn về mụn, nám, hay vấn đề da liễu nào khác?
           </Box>
         </Box>
 

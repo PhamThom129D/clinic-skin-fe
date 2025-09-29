@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import StaffChatWindow from "./ChatWindow";
+import { getAccountById } from "@/services/accountService";
+
 import {
   Box,
   Typography,
@@ -24,6 +26,8 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [unread, setUnread] = useState<Record<string, boolean>>({});
+  const [guestMap, setGuestMap] = useState<Record<string, number>>({});
+
   const staffId = 1;
 
   const loadInbox = async () => {
@@ -32,37 +36,72 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
 
       setConversations((prev) => {
         const newUnread: Record<string, boolean> = { ...unread };
+        const newGuestMap: Record<string, number> = { ...guestMap };
+
+        const existingValues = Object.values(newGuestMap);
+        const existingMax = existingValues.length ? Math.max(...existingValues) : 0;
+        let nextIndex = existingMax + 1;
+
+        const unassignedGuests = data
+          .filter((c) => c.key.startsWith("guest-") && !newGuestMap[c.key])
+          .map((c) => {
+            const firstMsg = c.messages && c.messages.length ? c.messages[0] : null;
+            const firstAt = firstMsg && firstMsg.sentAt ? new Date(firstMsg.sentAt).getTime() : Number.POSITIVE_INFINITY;
+            return { key: c.key, firstAt };
+          });
+
+        unassignedGuests.sort((a, b) => a.firstAt - b.firstAt);
+        for (const g of unassignedGuests) {
+          newGuestMap[g.key] = nextIndex++;
+        }
 
         const merged = data.map((conv) => {
-          const lastMsg = conv.messages[conv.messages.length - 1];
+          const lastMsg = conv.messages && conv.messages.length ? conv.messages[conv.messages.length - 1] : null;
           const existed = prev.find((c) => c.key === conv.key);
 
+          let displayName = conv.customerName;
+
+          if (conv.key.startsWith("user-")) {
+            const customerId = Number(conv.key.replace("user-", ""));
+            // Lấy tên thực từ DB và cập nhật vào conversations nếu cần
+            getAccountById(customerId).then((acc) => {
+              if (acc?.fullName) {
+                setConversations((prevList) =>
+                  prevList.map((c) => (c.key === conv.key ? { ...c, customerName: acc.fullName } : c))
+                );
+              }
+            }).catch(() => { });
+          } else if (conv.key.startsWith("guest-")) {
+            const num = newGuestMap[conv.key] ?? (newGuestMap[conv.key] = nextIndex++);
+            displayName = `Khách vãng lai ${num}`;
+          }
+
+          // Unread logic (giữ nguyên)
           if (!existed) {
             if (lastMsg && lastMsg.senderId !== staffId) newUnread[conv.key] = true;
             else newUnread[conv.key] = false;
           } else {
             newUnread[conv.key] = unread[conv.key] ?? false;
-
-            const prevLast = existed.messages[existed.messages.length - 1];
-            if (
-              lastMsg &&
-              lastMsg.senderId !== staffId &&
-              prevLast?.sentAt !== lastMsg.sentAt
-            ) {
+            const prevLast = existed.messages && existed.messages.length ? existed.messages[existed.messages.length - 1] : null;
+            if (lastMsg && lastMsg.senderId !== staffId && prevLast?.sentAt !== lastMsg.sentAt) {
               newUnread[conv.key] = true;
             }
           }
 
-          return conv;
+          return { ...conv, customerName: displayName };
         });
 
+        // Lưu guestMap vào state và localStorage để giữ mapping giữa các lần load
+        setGuestMap(newGuestMap);
         setUnread(newUnread);
         return merged;
       });
+
     } catch (err) {
       console.error(err);
     }
   };
+
 
   useEffect(() => {
     loadInbox();
@@ -123,8 +162,8 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
                         ? "rgba(2,125,68,0.2)"
                         : "rgba(2,125,68,0.1)"
                       : darkMode
-                      ? "#2c2c3a"
-                      : "#fff",
+                        ? "#2c2c3a"
+                        : "#fff",
                   borderBottom: darkMode ? "1px solid #444" : "1px solid #eee",
                   color: darkMode ? "#f0f0f0" : "inherit",
                 }}
