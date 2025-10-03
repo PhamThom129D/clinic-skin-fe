@@ -1,31 +1,34 @@
-import axios from "axios";
-import { Employee, EmployeeFormData } from "@/types/employee";
+// services/api.ts
+import axios, { AxiosInstance } from "axios";
 
-const api = axios.create({
-  baseURL: "/api", 
+const USERNAME = "admin";  // đổi theo user muốn dùng
+const PASSWORD = "123456";  // đổi theo password
+
+// Encode Base64 cho Basic Auth
+const basicToken = btoa(`${USERNAME}:${PASSWORD}`);
+
+const api: AxiosInstance = axios.create({
+  baseURL: "http://localhost:1209/api",
+  timeout: 8000,
+  withCredentials: true,
+  headers: {
+    Authorization: `Basic ${basicToken}`,
+  },
 });
 
-// ========== EMPLOYEE ==========
-export const getEmployees = async (): Promise<Employee[]> => {
-  const res = await api.get<Employee[]>("/employees");
-  return res.data;
-};
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const status = err.response?.status;
+    if (status === 401) {
+      console.warn("⛔ Unauthorized - kiểm tra username/password");
+    } else if (status === 403) {
+      console.warn("⛔ Forbidden - không có quyền truy cập");
+    } else {
+      console.error("🚨 Lỗi API:", err.message);
+    }
+    return Promise.reject(err);
+  }
+);
 
-export const getEmployeeById = async (id: number): Promise<Employee> => {
-  const res = await api.get<Employee>(`/employees/${id}`);
-  return res.data;
-};
-
-export const createEmployee = async (data: EmployeeFormData) => {
-  const res = await api.post("/employees", data);
-  return res.data;
-};
-
-export const updateEmployee = async (id: number, data: EmployeeFormData) => {
-  const res = await api.put(`/employees/${id}`, data);
-  return res.data;
-};
-
-export const deleteEmployee = async (id: number) => {
-  await api.delete(`/employees/${id}`);
-};
+export default api;

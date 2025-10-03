@@ -2,12 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, MenuItem
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  MenuItem,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
-import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
 import { Employee, EmployeeFormData, Department } from "@/types/employee";
+import { departmentService, employeeService } from "@/services/service";
 
 interface EmployeeFormProps {
   open: boolean;
@@ -16,41 +21,63 @@ interface EmployeeFormProps {
   editingEmployee: Employee | null;
 }
 
-export default function EmployeeForm({ open, onClose, reload, editingEmployee }: EmployeeFormProps) {
-  const { register, handleSubmit, reset } = useForm<EmployeeFormData>({
-    defaultValues: { name: "", age: 0, salary: 0, departmentId: "" },
+export default function EmployeeForm({
+  open,
+  onClose,
+  reload,
+  editingEmployee,
+}: EmployeeFormProps) {
+  const { control, register, handleSubmit, reset } = useForm<EmployeeFormData>({
+    defaultValues: { code: "", name: "", age: 0, salary: 0, departmentId: undefined },
   });
+
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [loadingDepartments, setLoadingDepartments] = useState(true);
 
-  useEffect(() => {
-    if (editingEmployee) {
-      reset({
-        name: editingEmployee.name,
-        age: editingEmployee.age,
-        salary: editingEmployee.salary,
-        departmentId: editingEmployee.department?.id || "",
-      });
-    } else {
-      reset({ name: "", age: 0, salary: 0, departmentId: "" });
-    }
-  }, [editingEmployee, reset]);
-
+  // Load departments
   useEffect(() => {
     const fetchDepartments = async () => {
-      const res = await axios.get<Department[]>("/api/departments");
-      setDepartments(res.data);
+      try {
+        const data = await departmentService.getAll();
+        setDepartments(data);
+      } catch (e) {
+        console.error("❌ Lỗi load departments:", e);
+      } finally {
+        setLoadingDepartments(false);
+      }
     };
     fetchDepartments();
   }, []);
 
-  const onSubmit = async (data: EmployeeFormData) => {
-    if (editingEmployee) {
-      await axios.put(`/api/employees/${editingEmployee.id}?departmentId=${data.departmentId}`, data);
-    } else {
-      await axios.post(`/api/employees?departmentId=${data.departmentId}`, data);
+  // Reset form khi editingEmployee hoặc departments thay đổi
+  useEffect(() => {
+    if (!loadingDepartments) {
+      if (editingEmployee) {
+        reset({
+          code: editingEmployee.code ?? "",
+          name: editingEmployee.name ?? "",
+          age: editingEmployee.age ?? 0,
+          salary: editingEmployee.salary ?? 0,
+          departmentId: editingEmployee.departmentId ?? undefined,
+        });
+      } else {
+        reset({ code: "", name: "", age: 0, salary: 0, departmentId: undefined });
+      }
     }
-    reload();
-    onClose();
+  }, [editingEmployee, loadingDepartments, reset]);
+
+  const onSubmit = async (data: EmployeeFormData) => {
+    try {
+      if (editingEmployee) {
+        await employeeService.update(editingEmployee.id, data);
+      } else {
+        await employeeService.create(data);
+      }
+      reload();
+      onClose();
+    } catch (e) {
+      console.error("❌ Lỗi submit:", e);
+    }
   };
 
   return (
@@ -58,29 +85,58 @@ export default function EmployeeForm({ open, onClose, reload, editingEmployee }:
       <DialogTitle>{editingEmployee ? "Update Employee" : "Add Employee"}</DialogTitle>
       <DialogContent>
         <TextField
-          fullWidth margin="dense" label="Name"
+          fullWidth
+          margin="dense"
+          label="Employee Code"
+          {...register("code", { required: true })}
+        />
+        <TextField
+          fullWidth
+          margin="dense"
+          label="Name"
           {...register("name", { required: true })}
         />
         <TextField
-          fullWidth margin="dense" label="Age" type="number"
+          fullWidth
+          margin="dense"
+          label="Age"
+          type="number"
           {...register("age", { required: true, valueAsNumber: true })}
         />
         <TextField
-          fullWidth margin="dense" label="Salary" type="number"
+          fullWidth
+          margin="dense"
+          label="Salary"
+          type="number"
           {...register("salary", { required: true, valueAsNumber: true })}
         />
-        <TextField
-          select fullWidth margin="dense" label="Department"
-          defaultValue=""
-          {...register("departmentId", { required: true, valueAsNumber: true })}
-        >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.id}>
-              {dept.name}
-            </MenuItem>
-          ))}
-        </TextField>
+
+        {/* Department Select sử dụng Controller */}
+        <Controller
+          name="departmentId"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <TextField
+              select
+              fullWidth
+              margin="dense"
+              label="Department"
+              {...field}
+              value={field.value ?? ""}
+              onChange={(e) => field.onChange(Number(e.target.value))}
+              disabled={loadingDepartments}
+            >
+              {departments.map((dept) => (
+                <MenuItem key={dept.id} value={dept.id}>
+                  {dept.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" onClick={handleSubmit(onSubmit)}>

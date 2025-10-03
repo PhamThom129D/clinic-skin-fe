@@ -1,24 +1,20 @@
 // src/app/layout.tsx
-'use client';
+import type { Metadata } from "next";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./globals.css"; 
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Provider as ReduxProvider } from 'react-redux';
-import { store } from '@/redux/store';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-const queryClient = new QueryClient();
+export const metadata: Metadata = {
+  title: "Clinic Skin App",
+  description: "Basic Next.js app layout",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ReduxProvider store={store}>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <ToastContainer />
-          </QueryClientProvider>
-        </ReduxProvider>
+        {children}
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   );
