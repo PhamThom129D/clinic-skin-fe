@@ -50,8 +50,7 @@ export default function StaffChatWindow({
     }
 
     if (conversation.key.startsWith("guest-")) {
-      const guestId = conversation.key.replace("guest-", "");
-      setCustomerName(`Khách vãng lai ${guestId}`);
+      setCustomerName(conversation.customerName);
     }
   }, [conversation.key]);
 

@@ -164,7 +164,8 @@ export default function ChatBox() {
         <ChatWindow
           messages={messages}
           onSend={handleSend}
-          onClose={() => setOpen(false)}
+          onClose={() => setOpen(false)
+          }
         />
       )}
     </>
