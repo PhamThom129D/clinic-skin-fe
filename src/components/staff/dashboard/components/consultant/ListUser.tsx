@@ -63,7 +63,6 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
 
           if (conv.key.startsWith("user-")) {
             const customerId = Number(conv.key.replace("user-", ""));
-            // Lấy tên thực từ DB và cập nhật vào conversations nếu cần
             getAccountById(customerId).then((acc) => {
               if (acc?.fullName) {
                 setConversations((prevList) =>
@@ -76,7 +75,6 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
             displayName = `Khách vãng lai ${num}`;
           }
 
-          // Unread logic (giữ nguyên)
           if (!existed) {
             if (lastMsg && lastMsg.senderId !== staffId) newUnread[conv.key] = true;
             else newUnread[conv.key] = false;
@@ -91,7 +89,6 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
           return { ...conv, customerName: displayName };
         });
 
-        // Lưu guestMap vào state và localStorage để giữ mapping giữa các lần load
         setGuestMap(newGuestMap);
         setUnread(newUnread);
         return merged;

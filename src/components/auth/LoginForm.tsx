@@ -64,37 +64,37 @@ export default function LoginForm() {
     },
   };
 
-  const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
-    if (!data.emailOrPhone) {
-      notifyWarning("Vui lòng nhập email hoặc số điện thoại");
-      return;
-    }
-
-    try {
-      const response = await loginApi({ emailOrPhone: data.emailOrPhone, password: data.password });
-      const user = response.data;
-
-      notifySuccess("Đăng nhập thành công!");
-      const role = user.roles[0] || "ROLE_PATIENT";
-
-      if (data.rememberMe) {
-        localStorage.setItem("authToken", user.token);
-        localStorage.setItem("account", JSON.stringify(user));
-        localStorage.setItem("userRole", role);
-      } else {
-        sessionStorage.setItem("authToken", user.token);
-        sessionStorage.setItem("account", JSON.stringify(user));
-        sessionStorage.setItem("userRole", role);
+    const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
+      if (!data.emailOrPhone) {
+        notifyWarning("Vui lòng nhập email hoặc số điện thoại");
+        return;
       }
-      window.dispatchEvent(new Event("authChange"));
 
-      redirectByRole(role, router);
+      try {
+        const response = await loginApi({ emailOrPhone: data.emailOrPhone, password: data.password });
+        const user = response.data;
+
+        notifySuccess("Đăng nhập thành công!");
+        const role = user.roles[0] || "ROLE_PATIENT";
+
+        if (data.rememberMe) {
+          localStorage.setItem("authToken", user.token);
+          localStorage.setItem("account", JSON.stringify(user));
+          localStorage.setItem("userRole", role);
+        } else {
+          sessionStorage.setItem("authToken", user.token);
+          sessionStorage.setItem("account", JSON.stringify(user));
+          sessionStorage.setItem("userRole", role);
+        }
+        window.dispatchEvent(new Event("authChange"));
+
+        redirectByRole(role, router);
 
 
-    } catch (err: unknown) {
-      notifyWarning(err instanceof Error ? err.message : "Đăng nhập thất bại");
-    }
-  };
+      } catch (err: unknown) {
+        notifyWarning(err instanceof Error ? err.message : "Đăng nhập thất bại");
+      }
+    };
 
   return (
     <>

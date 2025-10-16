@@ -42,6 +42,7 @@ interface HeaderProps {
   onToggleSidebar: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  onMenuSelect: (menu: string) => void;
 }
 
 const ringAnimation = {
@@ -57,7 +58,7 @@ const ringAnimation = {
 };
 
 const formatDateTime = (date: Date) => {
-  const days = ["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
+  const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
   const dayName = days[date.getDay()];
   const d = String(date.getDate()).padStart(2, "0");
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -68,13 +69,16 @@ const formatDateTime = (date: Date) => {
   return `${dayName}, ${d}/${m}/${y} - ${h}:${min}:${s}`;
 };
 
-export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode }: HeaderProps) {
+export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode, onMenuSelect }: HeaderProps) {
   const router = useRouter();
   const [messageAnchor, setMessageAnchor] = useState<HTMLElement | null>(null);
   const [notificationAnchor, setNotificationAnchor] = useState<HTMLElement | null>(null);
   const [accountAnchor, setAccountAnchor] = useState<HTMLElement | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState<User | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+
 
   // Đồng hồ
   useEffect(() => {
@@ -120,9 +124,19 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode }: 
           </IconButton>
 
           <IconButton sx={{ mx: 1.5 }} onClick={(e) => setMessageAnchor(e.currentTarget)}>
-            <Badge badgeContent={3} color="error"><Mail sx={{ fontSize: 36 }} /></Badge>
+            <Badge badgeContent={unreadCount} color="error">
+              <Mail sx={{ fontSize: 36 }} />
+            </Badge>
           </IconButton>
-          <MessageDropdown anchorEl={messageAnchor} onClose={() => setMessageAnchor(null)} />
+
+          <MessageDropdown
+            anchorEl={messageAnchor}
+            onClose={() => setMessageAnchor(null)}
+            onSelectMenu={onMenuSelect}
+            onUnreadCountChange={setUnreadCount} 
+          />
+
+
 
           <IconButton sx={{ mx: 1.5 }} onClick={(e) => setNotificationAnchor(e.currentTarget)}>
             <Badge badgeContent={7} color="error"><Notifications sx={{ fontSize: 36 }} /></Badge>

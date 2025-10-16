@@ -19,13 +19,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
   const scrollRef = useRef<HTMLDivElement>(null);
   const { chatKey, guestId } = useChatSession(userId);
 
- useEffect(() => {
-  if (userId === null) {
-    setLocalMessages([]);  
-  } else {
-    setLocalMessages(messages); 
-  }
-}, [userId, messages]);
+  useEffect(() => {
+    if (userId === null) {
+      setLocalMessages([]);
+    } else {
+      setLocalMessages(messages);
+    }
+  }, [userId, messages]);
 
 
   const handleSend = () => {
@@ -75,7 +75,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
               maxWidth: "80%",
             }}
           >
-           Xin chào, bạn cần tư vấn về mụn, nám, hay vấn đề da liễu nào khác?
+            Xin chào, bạn cần tư vấn về mụn, nám, hay vấn đề da liễu nào khác?
           </Box>
         </Box>
 
@@ -141,16 +141,46 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
           )
         )}
       </Box>
-      <Box sx={{ display: "flex", p: 1, borderTop: "1px solid #ccc" }}>
+      <Box sx={{ display: "flex", alignItems: "center", p: 1, borderTop: "1px solid #ccc" }}>
         <TextField
-          fullWidth size="small"
+          fullWidth
+          multiline
+          minRows={1}
+          maxRows={5}
           placeholder="Nhập tin nhắn..."
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          sx={{
+            "& .MuiInputBase-root": {
+              alignItems: "flex-start",
+              paddingY: 0.5,
+            },
+            "& textarea": {
+              overflowY: "auto",
+            },
+          }}
         />
-        <Button onClick={handleSend} sx={{ ml: 1, bgcolor: "#027d44", "&:hover": { bgcolor: "#026836" }, color: "#fff" }}>Gửi</Button>
+        <Button
+          onClick={handleSend}
+          sx={{
+            ml: 1,
+            bgcolor: "#027d44",
+            "&:hover": { bgcolor: "#026836" },
+            color: "#fff",
+            height: "40px",          // ✅ Cố định chiều cao
+            alignSelf: "flex-end",   // ✅ Giữ nút ở đáy
+          }}
+        >
+          Gửi
+        </Button>
       </Box>
+
     </Paper>
   );
 };

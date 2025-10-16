@@ -77,4 +77,3 @@ export const updateAccount = async (id: number, formData: FormData) => {
 
   return res.data;
 };
-

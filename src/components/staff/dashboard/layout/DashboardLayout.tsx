@@ -36,6 +36,7 @@ export default function LayoutDashboard() {
   };
 
   const renderContent = () => {
+    console.log(selectedMenu)
     switch (selectedMenu) {
       case "Dashboard":
         return <Content selectedMenu="Dashboard" darkMode={darkMode} />;
@@ -62,6 +63,8 @@ export default function LayoutDashboard() {
             darkMode={darkMode}
             onToggleDarkMode={handleToggleDarkMode}
             onToggleSidebar={handleToggleSidebar}
+             onMenuSelect={setSelectedMenu}
+          
           />
           <Box sx={{ flex: 1, overflow: "auto", pt: "64px", px: 2 }}>
             {renderContent()}
