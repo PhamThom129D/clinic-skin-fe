@@ -1,27 +1,40 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Box,
-  Button,
   Popover,
   Stack,
   Typography,
+  Button,
+  Box,
+  Badge,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import ScienceIcon from "@mui/icons-material/Science";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
-// Dữ liệu mẫu thông báo
-const initialNotifications = [
-  { id: 1, title: "Ưu đãi đặc biệt: Giảm 20% dịch vụ chăm sóc da chuyên sâu!", type: "promotion", time: "10 giờ trước", isRead: false },
-  { id: 2, title: "Xác nhận lịch hẹn khám da liễu vào 10:00, 15/07.", type: "appointment", time: "2 ngày trước", isRead: false },
-  { id: 3, title: "Kết quả phân tích da của bạn đã có.", type: "result", time: "1 tuần trước", isRead: false },
-  { id: 4, title: "Bác sĩ đã trả lời câu hỏi của bạn.", type: "chat", time: "2 tuần trước", isRead: true },
-  { id: 5, title: "Tin tức: Mở rộng dịch vụ Laser Tái Tạo Da mới nhất.", type: "promotion", time: "3 tuần trước", isRead: true },
-  { id: 6, title: "Nhắc nhở: Lịch hẹn của bạn vào 14:00 hôm nay.", type: "appointment", time: "1 tháng trước", isRead: true },
-];
+import { fetchInbox, markAsRead } from "@/services/chatbox";
+import { connectMessageSocket } from "@/services/chatSocket";
+import { id } from "date-fns/locale";
+
+interface Notification {
+  id: string; // conversationId
+  title: string;
+  type: string;
+  time: number;
+  isRead: boolean;
+  displayName?: string;
+}
+
+
+interface NotificationsDropdownProps {
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+  onUnreadCountChange: (count: number) => void;
+  userId: number | null;
+}
 
 const getIconForNotificationType = (type: string) => {
   switch (type) {
@@ -38,72 +51,119 @@ const getIconForNotificationType = (type: string) => {
   }
 };
 
-const NotificationItem = ({ title, type, time, isRead }: { title: string, type: string, time: string, isRead: boolean }) => {
+export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
+  anchorEl,
+  onClose,
+  onUnreadCountChange,
+  userId,
+}) => {
   const theme = useTheme();
-  return (
-    <Button
-      fullWidth
-      sx={{
-        justifyContent: "flex-start",
-        textAlign: "left",
-        textTransform: "none",
-        p: 1.5,
-        borderRadius: 2,
-        backgroundColor: isRead ? "background.paper" : theme.palette.action.selected,
-        boxShadow: 1,
-        "&:hover": {
-          backgroundColor: theme.palette.action.hover,
-        },
-      }}
-    >
-      <Stack direction="row" spacing={1.5} alignItems="center">
-        {getIconForNotificationType(type)}
-        <Box flexGrow={1}>
-          <Typography
-            variant="body2"
-            fontWeight="bold"
-            sx={{
-              whiteSpace: "normal",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {time}
-          </Typography>
-        </Box>
-      </Stack>
-    </Button>
-  );
-};
+  const open = Boolean(anchorEl);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
 
-interface NotificationsDropdownProps {
-  anchorEl: HTMLElement | null;
-  open: boolean;
-  onClose: () => void;
-  onUnreadCountChange: (count: number) => void;
-}
+  const formatTime = (timestamp: number) => {
+    const diff = Date.now() - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "Vừa xong";
+    if (minutes < 60) return `${minutes} phút trước`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} giờ trước`;
+    const days = Math.floor(hours / 24);
+    return `${days} ngày trước`;
+  };
 
-export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ anchorEl, open, onClose, onUnreadCountChange }) => {
-  const theme = useTheme();
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const loadNotifications = async () => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      const inbox = await fetchInbox(userId);
+      setNotifications((prev) => {
+        const updated = [...prev];
+        inbox.forEach((conv) => {
+          const lastMsg =
+            conv.messages && conv.messages.length
+              ? conv.messages[conv.messages.length - 1]
+              : null;
+          if (!lastMsg) return;
+          const conversationKey = conv.key.startsWith("user-")
+            ? conv.key
+            : `user-${conv.key}`;
+
+          console.log("🟡 Conversation key:", conv.key);
+
+          const existsIndex = updated.findIndex((n) => n.id === conv.key);
+          const newNotif: Notification = {
+            id: conversationKey,
+            title: lastMsg.content,
+            type: "chat",
+            time: lastMsg.sentAt,
+            isRead: existsIndex !== -1 ? updated[existsIndex].isRead : false,
+            displayName: conv.displayName || "Thu Cúc Clinic",
+          };
+
+          console.log("vdsuf", id)
+
+          if (existsIndex !== -1) updated[existsIndex] = newNotif;
+          else updated.push(newNotif);
+        });
+        return updated.sort((a, b) => b.time - a.time);
+      });
+    } catch (err) {
+      console.error("❌ Lỗi tải thông báo:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
-    const count = notifications.filter(notif => !notif.isRead).length;
+    if (open) loadNotifications();
+  }, [open, userId]);
+
+  useEffect(() => {
+    const count = notifications.filter((n) => !n.isRead).length;
     onUnreadCountChange(count);
   }, [notifications, onUnreadCountChange]);
 
   useEffect(() => {
-    if (open) {
-      setNotifications(prevNotifications =>
-        prevNotifications.map(notif => ({ ...notif, isRead: true }))
+    if (!userId) return;
+    const disconnect = connectMessageSocket(String(userId), (msg) => {
+      const conversationId = msg.conversationId || `user-${msg.senderId}-shop`;
+      setNotifications(prev => {
+        const updated = [...prev];
+        const existsIndex = updated.findIndex(n => n.id === conversationId);
+
+        const newNotif: Notification = {
+          id: conversationId,
+          title: msg.content || "Tin nhắn mới",
+          type: "chat",
+          time: Date.now(),
+          isRead: false,
+          displayName: "Thu Cúc Clinic",
+        };
+
+        if (existsIndex !== -1) updated[existsIndex] = newNotif;
+        else updated.unshift(newNotif);
+
+        return updated.sort((a, b) => b.time - a.time);
+      });
+    });
+    return disconnect;
+  }, [userId]);
+
+  const handleClick = async (notif: Notification) => {
+    if (!userId) return;
+    try {
+      await markAsRead(notif.id, userId);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
       );
+    } catch (err) {
+      console.error("Không thể đánh dấu đã đọc:", err);
     }
-  }, [open]);
+    onClose();
+  };
 
   return (
     <Popover
@@ -114,39 +174,131 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ an
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
       slotProps={{
-        paper: { sx: { mt: 2.5, width: 300, maxHeight: 400, borderRadius: 2 } },
+        paper: {
+          sx: {
+            mt: 2.5,
+            width: 400,
+            maxHeight: 420,
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+          },
+        },
       }}
     >
-      <Stack
-        spacing={1}
-        sx={{
-          p: 1,
-          overflowY: "auto",
-          "&::-webkit-scrollbar": {
-            width: "0.4em",
-          },
-          "&::-webkit-scrollbar-track": {
-            boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0,0,0,.1)",
-            borderRadius: "5px",
-          },
-        }}
-      >
-        <Typography variant="h6" sx={{ px: 1, pt: 1, fontWeight: "bold" }}>Thông báo</Typography>
-        {notifications.map((notif) => (
-          <NotificationItem key={notif.id} {...notif} />
-        ))}
+      <Stack sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ px: 2, pt: 1, fontWeight: "bold" }}>
+          Thông báo
+        </Typography>
+
+        <Stack
+          spacing={1}
+          sx={{
+            p: 1,
+            flexGrow: 1,
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: "0.4em" },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0,0,0,.1)",
+              borderRadius: "5px",
+            },
+          }}
+        >
+          {loading ? (
+            <Box sx={{ textAlign: "center", py: 3 }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : notifications.length === 0 ? (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "center", py: 2 }}
+            >
+              Không có thông báo
+            </Typography>
+          ) : (
+            notifications.map((n) => (
+              <Button
+                key={n.id}
+                fullWidth
+                onClick={() => handleClick(n)}
+                sx={{
+                  justifyContent: "flex-start",
+                  textAlign: "left",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  p: 1.5,
+                  backgroundColor: n.isRead
+                    ? "background.paper"
+                    : theme.palette.action.selected,
+                  "&:hover": { backgroundColor: theme.palette.action.hover },
+                }}
+              >
+                <Stack direction="row" spacing={1.5} alignItems="flex-start" width="100%">
+                  <Badge
+                    color="error"
+                    variant="dot"
+                    overlap="circular"
+                    invisible={n.isRead}
+                  >
+                    {getIconForNotificationType(n.type)}
+                  </Badge>
+
+                  <Box flexGrow={1} minWidth={0}>
+                    {/* Dòng 1: Tên người gửi */}
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="bold"
+                      color="text.primary"
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {n.displayName || "Thu Cúc Clinic"}
+                    </Typography>
+
+                    {/* Dòng 2: Tin nhắn + thời gian */}
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          flexGrow: 1,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {n.displayName === "Bạn"
+                          ? `Bạn: ${n.title}`
+                          : n.title}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.disabled"
+                        sx={{ flexShrink: 0, ml: 1 }}
+                      >
+                        {formatTime(n.time)}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </Stack>
+              </Button>
+            ))
+          )}
+        </Stack>
+
         <Button
           fullWidth
           sx={{
             justifyContent: "center",
             textTransform: "none",
             fontWeight: "bold",
-            mt: 1,
             py: 1,
+            borderTop: `1px solid ${theme.palette.divider}`,
             color: theme.palette.primary.main,
             "&:hover": { backgroundColor: theme.palette.action.hover },
           }}
