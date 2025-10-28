@@ -3,7 +3,7 @@
 import { Box, Paper, TextField, Button, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState, useRef, useEffect } from "react";
-import { useChatSession } from "@/services/chatbox";
+import { useChatSession, markAsRead } from "@/services/chatbox";
 
 interface ChatWindowProps {
   messages: { text: string; sender: "staff" | "user" | "guest"; sentAt?: string }[];
@@ -19,6 +19,26 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
   const scrollRef = useRef<HTMLDivElement>(null);
   const { chatKey, guestId } = useChatSession(userId);
 
+
+  useEffect(() => {
+
+    if (!chatKey || !messages.length || !userId) return;
+
+    const lastMessage = messages[messages.length - 1];
+
+    if (lastMessage.sender === "staff") {
+      markAsRead(chatKey, userId)
+        .then(() => {
+          window.dispatchEvent(new CustomEvent("messageRead", {
+            detail: { key: chatKey }
+          }));
+        })
+        .catch((err) => console.error("❌ markAsRead auto failed:", err));
+    }
+  }, [messages, chatKey, userId]);
+
+
+
   useEffect(() => {
     if (userId === null) {
       setLocalMessages([]);
@@ -27,13 +47,18 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
     }
   }, [userId, messages]);
 
-
   const handleSend = () => {
     if (input.trim() && chatKey) {
       onSend(input, chatKey, guestId);
       setInput("");
-    }
-  };
+
+      if (userId !== null) {
+        markAsRead(chatKey, userId)
+          .catch(err => console.error("❌ Auto read on send error:", err));
+      }
+    };
+  }
+
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });

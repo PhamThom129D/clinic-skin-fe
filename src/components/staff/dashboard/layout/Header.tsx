@@ -77,7 +77,7 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode, on
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState<User | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
-
+ const userId = typeof window !== "undefined" ? Number(localStorage.getItem("userId")) || null : null;
 
 
   // Đồng hồ
@@ -93,6 +93,18 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode, on
     sessionStorage.clear();
     router.push("/auth");
   };
+
+  useEffect(() => {
+    const handleMessageRead = (e: any) => {
+      const { receiverId } = e.detail;
+      if (Number(receiverId) === Number(userId)) {
+        setUnreadCount(0);
+      }
+    };
+    window.addEventListener("messageRead", handleMessageRead);
+    return () => window.removeEventListener("messageRead", handleMessageRead);
+  }, [userId]);
+
 
   return (
     <AppBar position="fixed" color="inherit" elevation={1} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -123,17 +135,17 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode, on
             <CalendarToday sx={{ fontSize: 36, color: "#0f3b70" }} />
           </IconButton>
 
-          <IconButton sx={{ mx: 1.5 }} onClick={(e) => setMessageAnchor(e.currentTarget)}>
+          <IconButton sx={{ mx: 1.5 }} onClick={(e) => setMessageAnchor(e.currentTarget)} >
             <Badge badgeContent={unreadCount} color="error">
               <Mail sx={{ fontSize: 36 }} />
             </Badge>
           </IconButton>
 
-          <MessageDropdown
+          <MessageDropdown 
             anchorEl={messageAnchor}
             onClose={() => setMessageAnchor(null)}
             onSelectMenu={onMenuSelect}
-            onUnreadCountChange={setUnreadCount} 
+            onUnreadCountChange={setUnreadCount}
           />
 
 

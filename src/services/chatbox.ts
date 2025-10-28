@@ -113,7 +113,7 @@
     const res = await fetch(`${API_BASE}/mark-read`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key , staffId}),
+      body: JSON.stringify({ key}),
     });
     if (!res.ok) throw new Error("Không thể đánh dấu đã đọc");
     return res.text();
