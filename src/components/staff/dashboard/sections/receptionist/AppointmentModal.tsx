@@ -15,12 +15,16 @@ import {
   Tabs,
   CircularProgress,
 } from "@mui/material";
-import { AppointmentResponse, updateAppointment, getAppointmentById } from "@/services/bookingService";
+import {
+  AppointmentResponse,
+  updateAppointment,
+  getAppointmentById,
+} from "@/services/bookingService";
 
 interface AppointmentModalProps {
   open: boolean;
   appointment?: AppointmentResponse | null;
-  appointmentId?: number; // fallback nếu chỉ có id
+  appointmentId?: number;
   onClose: () => void;
   onUpdateSuccess: (updated: AppointmentResponse) => void;
 }
@@ -45,14 +49,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [formData, setFormData] = useState<Partial<AppointmentResponse>>({});
   const [loading, setLoading] = useState(false);
 
-
+  // Fetch chi tiết khi mở modal
   useEffect(() => {
-    if (open) return;
+    if (!open) return;
 
     const fetchDetail = async () => {
       try {
-        if (!appointment && appointmentId) {
-          setLoading(true);
+        setLoading(true);
+        if (appointmentId && !appointment) {
           const res = await getAppointmentById(appointmentId);
           setFormData(res.data);
         } else if (appointment) {
@@ -65,30 +69,34 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
       }
     };
     fetchDetail();
-  }, [appointment, appointmentId, open]);
+  }, [open, appointment, appointmentId]);
 
   const handleChange = (field: keyof AppointmentResponse, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleUpdate = async () => {
-    if (!formData?.id) return;
-    try {
-      setLoading(true);
-      const updated = await updateAppointment(formData.id, {
-        appointmentDate: formData.appointmentDate!,
-        appointmentTime: formData.appointmentTime!,
-        note: formData.note,
-        status: formData.status!,
-      });
-      onUpdateSuccess(updated);
-      onClose();
-    } catch (err) {
-      console.error("❌ Lỗi cập nhật lịch hẹn:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleUpdate = async () => {
+  if (!formData.id) return;
+  try {
+    setLoading(true);
+    const res = await updateAppointment(formData.id, {
+      appointmentDate: formData.appointmentDate!,
+      appointmentTime: formData.appointmentTime!,
+      note: formData.note,
+      status: formData.status!,
+    });
+
+    const updated: AppointmentResponse = res.data;
+
+    onUpdateSuccess(updated);
+    onClose();
+  } catch (err) {
+    console.error("❌ Lỗi cập nhật lịch hẹn:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   if (!open) return null;
 
@@ -99,6 +107,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         <Tab label="Chi tiết" />
         <Tab label="Cập nhật" />
       </Tabs>
+
       <DialogContent dividers>
         {loading ? (
           <Stack alignItems="center" justifyContent="center" minHeight={200}>
@@ -107,8 +116,8 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         ) : (
           <>
             {tab === 0 && formData && (
-              <Stack spacing={2}>
-                <Typography variant="subtitle1">
+              <Stack spacing={1.5}>
+                <Typography>
                   <b>Họ và tên:</b> {formData.patient?.account.fullName || "Chưa có"}
                 </Typography>
                 <Typography>
@@ -137,9 +146,9 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
                 <Typography>
                   <b>Nghề nghiệp:</b> {formData.patient?.occupation || "Chưa có"}
                 </Typography>
-      
               </Stack>
             )}
+
             {tab === 1 && formData && (
               <Stack spacing={2}>
                 <TextField
@@ -184,6 +193,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
           </>
         )}
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Đóng</Button>
         {tab === 1 && (
@@ -193,7 +203,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
             onClick={handleUpdate}
             disabled={loading}
           >
-            Lưu
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Lưu"}
           </Button>
         )}
       </DialogActions>
