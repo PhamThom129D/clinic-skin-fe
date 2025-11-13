@@ -27,8 +27,9 @@ export type Role =
 export const roleMenu: Record<Role, string[]> = {
   ROLE_PATIENT: [],
   ROLE_RECEPTIONIST: [
-    "Lịch hẹn",
-    "Check-in",
+    "Danh sách đặt lịch",
+    "Danh sách khám",
+    "Tạo lịch khám",
     "Quản lý hồ sơ",
     "In phiếu khám",
     "Nhắc trễ hẹn",
@@ -52,8 +53,9 @@ export const roleMenu: Record<Role, string[]> = {
 export const menuIcons: Record<string, React.ReactNode> = {
   "Trang chủ": <DashboardIcon />,
 
-  "Lịch hẹn": <EventNoteIcon />,
-  "Check-in": <PeopleIcon />,
+  "Danh sách đặt lịch": <EventNoteIcon />,
+  "Danh sách khám": <EventNoteIcon />,
+  "Tạo lịch khám": <PeopleIcon />,
   "Quản lý hồ sơ": <DescriptionIcon />,
   "In phiếu khám": <ReceiptIcon />,
   "Nhắc trễ hẹn": <NotificationsIcon />,

@@ -138,7 +138,7 @@ export default function Header() {
                   fontSize: { sm: "1rem", md: "1.2rem" },
                 }}
               >
-                Thu Cúc Clinic
+                Clinic Skin
               </Box>
               <Box
                 sx={{
@@ -175,10 +175,10 @@ export default function Header() {
 
             <ThemeToggle />
 
-            {/* Booking Button Desktop */}
+        
             <BookingButton onClick={() => setBookingOpen(true)} />
 
-            {/* AuthButton Desktop */}
+    
             <AuthButton isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} account={account}/>
           </Box>
 
