@@ -12,12 +12,15 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import LoginIcon from "@mui/icons-material/Login";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { NotificationsDropdown } from "./NotificationsDropdown"; 
-import { AccountDropdown } from "./AccountDropdown"; 
-import { AuthResponse } from "@/types/auth"; 
+import React, { useEffect, useState } from "react";
+import { NotificationsDropdown } from "./NotificationsDropdown";
+import { AccountDropdown } from "./AccountDropdown";
+import { AuthResponse } from "@/types/auth";
+import { connectMessageSocket } from "@/services/chatSocket";
+import { fetchInbox, markAsRead } from "@/services/chatbox";
 
-export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "email"> {}
+
+export interface AccountInfo extends Pick<AuthResponse, "fullName" | "avatarUrl" | "email"> { }
 
 interface AuthButtonProps {
   isLoggedIn: boolean;
@@ -58,14 +61,32 @@ export function BookingButton({ onClick, fullWidth = false }: { onClick: () => v
   );
 }
 
+
+
 export default function AuthButton({ isLoggedIn, setIsLoggedIn, fullWidth = false, account }: AuthButtonProps) {
+  const [userId, setUserId] = useState<number | null>(null);
   const theme = useTheme();
   const router = useRouter();
+  const [openConversationId, setOpenConversationId] = useState<string | null>(null);
 
   const goToAuth = () => router.push("/auth");
 
   const [avtDropdown, setAvtDropdown] = useState<null | HTMLElement>(null);
   const openAvt = Boolean(avtDropdown);
+  useEffect(() => {
+    const storedAccount =
+      localStorage.getItem("account") || sessionStorage.getItem("account");
+
+    if (storedAccount) {
+      try {
+        const user = JSON.parse(storedAccount);
+        setUserId(user.id || null);
+      } catch (err) {
+        console.warn("Không thể parse dữ liệu account:", err);
+      }
+    }
+  }, []);
+
   const handleAvtOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAvtDropdown(event.currentTarget);
   };
@@ -75,14 +96,88 @@ export default function AuthButton({ isLoggedIn, setIsLoggedIn, fullWidth = fals
 
   const [notifDropdown, setNotifDropdown] = useState<null | HTMLElement>(null);
   const openNotif = Boolean(notifDropdown);
-  const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => {
+
+  const handleNotifOpen = async (event: React.MouseEvent<HTMLElement>) => {
     setNotifDropdown(event.currentTarget);
+
+    if (!userId || unreadCount === 0) return;
+
+    try {
+      const inbox = await fetchInbox(userId);
+      for (const conv of inbox) {
+        console.log("📌 markAsRead payload:", { chatKey: conv.key, userId });
+        await markAsRead(conv.key, userId);
+      }
+
+      requestAnimationFrame(() => {
+        setUnreadCount(0);
+      });
+
+      window.dispatchEvent(
+        new CustomEvent("allNotificationsRead", { detail: { userId } })
+      );
+    } catch (err) {
+      console.error("Không thể đánh dấu đã đọc:", err);
+    }
   };
   const handleNotifClose = () => {
     setNotifDropdown(null);
   };
 
-  // set tạm có 3 thông báo chưa đọc
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      if (!userId) return;
+      try {
+        const inbox = await fetchInbox(userId);
+        const unread = inbox.reduce((acc, conv) => {
+          const unreadMessages = conv.messages?.filter((m) => !m.markAsRead)?.length || 0;
+          return acc + (unreadMessages > 0 ? 1 : 0);
+        }, 0);
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error("Không thể load số thông báo:", err);
+      }
+    };
+    loadUnreadCount();
+  }, [userId]);
+
+  useEffect(() => {
+    const handleMessageRead = (e: Event) => {
+      const event = e as CustomEvent<{ receiverId: number }>;
+
+      if (Number(event.detail.receiverId) === Number(userId)) {
+        setUnreadCount(0);
+      }
+    };
+
+    window.addEventListener("messageRead", handleMessageRead);
+    return () => window.removeEventListener("messageRead", handleMessageRead);
+  }, [userId]);
+
+
+
+
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const key = `user-${userId}`;
+
+    const disconnect = connectMessageSocket(key, (msg: any) => {
+
+      if (Number(msg.senderId) === 1 && Number(msg.receiverId) === Number(userId)) {
+        setUnreadCount(prev => prev + 1);
+
+        window.dispatchEvent(new CustomEvent("newMessage", { detail: msg }));
+      }
+    });
+
+    return disconnect;
+  }, [userId]);
+
+
+
+
   const [unreadCount, setUnreadCount] = useState(3);
 
   return isLoggedIn ? (
@@ -102,15 +197,16 @@ export default function AuthButton({ isLoggedIn, setIsLoggedIn, fullWidth = fals
           <NotificationsIcon fontSize="medium" />
         </IconButton>
       </Badge>
-      
-      {/* Notifications Dropdown */}
-      <NotificationsDropdown 
-        anchorEl={notifDropdown} 
-        open={openNotif} 
-        onClose={handleNotifClose} 
-        onUnreadCountChange={setUnreadCount} 
-      />
 
+      {/* Notifications Dropdown */}
+      <NotificationsDropdown
+        anchorEl={notifDropdown}
+        onClose={handleNotifClose}
+        onUnreadCountChange={setUnreadCount}
+        userId={userId}
+      // }}
+
+      />
       {/* Avatar Icon */}
       <IconButton onClick={handleAvtOpen} sx={{ p: 0 }}>
         <Avatar alt={account?.fullName} src={account?.avatarUrl || "/images/avatar.png"} />

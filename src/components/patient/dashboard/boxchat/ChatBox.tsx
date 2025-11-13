@@ -18,11 +18,17 @@ function generateGuestId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
 
-export default function ChatBox() {
+interface ChatBoxProps {
+  openConversationId?: string | null;
+}
+
+export default function ChatBox({ openConversationId }: ChatBoxProps) {
   const [open, setOpen] = useState(false);
+  const [conversationKey, setConversationKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [guestId, setGuestId] = useState<string | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const staffId = 1;
 
@@ -65,6 +71,23 @@ export default function ChatBox() {
       ? `guest-${guestId}`
       : null;
 
+
+  useEffect(() => {
+    const handleOpenChat = (e: CustomEvent<{ conversationId?: string }>) => {
+      if (e.detail?.conversationId) {
+        setConversationKey(e.detail.conversationId);
+      }
+      setOpen(true);
+    };
+
+    window.addEventListener("openChatBox", handleOpenChat as EventListener);
+
+    return () => {
+      window.removeEventListener("openChatBox", handleOpenChat as EventListener);
+    };
+  }, []);
+
+
   useEffect(() => {
     if (!open || !key) return;
 
@@ -72,10 +95,8 @@ export default function ChatBox() {
       let msgs: any[] = [];
 
       if (userId) {
-        // Nếu login thì chỉ lấy chat theo userId
         msgs = await fetchHistory(`user-${userId}`);
       } else if (guestId) {
-        // Nếu chưa login thì dùng guestId
         msgs = await fetchHistory(`guest-${guestId}`);
       }
 
@@ -131,7 +152,6 @@ export default function ChatBox() {
 
     return () => disconnect();
   }, [key, userId]);
-
   const handleSend = async (msg: string) => {
     if (!msg.trim()) return;
 
@@ -141,12 +161,40 @@ export default function ChatBox() {
       receiverId: staffId,
       content: msg,
     });
+
+    if (key && userId) {
+      try {
+        await fetchHistory(key); 
+        window.dispatchEvent(
+          new CustomEvent("messageRead", { detail: { key, receiverId: userId } })
+        );
+        setUnreadCount(0);
+      } catch (err) {
+        console.error("❌ Reset unread on send failed:", err);
+      }
+    }
   };
+
 
   return (
     <>
       <IconButton
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={async () => {
+          setOpen((prev) => !prev);
+
+          if (!key || !userId) return;
+
+          try {
+            await fetchHistory(key);
+            window.dispatchEvent(
+              new CustomEvent("messageRead", { detail: { key, receiverId: userId } })
+            );
+
+            setUnreadCount(0);
+          } catch (err) {
+            console.error("❌ Reset unread failed:", err);
+          }
+        }}
         sx={{
           position: "fixed",
           bottom: 20,
@@ -160,11 +208,14 @@ export default function ChatBox() {
         {open ? <CloseIcon /> : <ChatIcon />}
       </IconButton>
 
+
       {open && (
         <ChatWindow
           messages={messages}
           onSend={handleSend}
-          onClose={() => setOpen(false)}
+          userId={userId}
+          onClose={() => setOpen(false)
+          }
         />
       )}
     </>

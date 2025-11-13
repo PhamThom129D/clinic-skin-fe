@@ -14,6 +14,8 @@ import { getCurrentUserRole, Role } from "@/utils/menuHelper";
 import { lightTheme, darkTheme } from "../../../../theme"; // import 2 theme
 import ManageAccount from "../sections/admin/manage-account/ManageAccount"; // gọi tới component mới
 import Footer from "./Footer";
+import BookingFormStaff from "../sections/receptionist/BookingFormStaff";
+import DoctorAppointmentTable from "../sections/receptionist/AppointmentTable";
 
 export default function LayoutDashboard() {
   const [open, setOpen] = useState(true);
@@ -21,7 +23,6 @@ export default function LayoutDashboard() {
   const [role, setRole] = useState<Role | null>(null);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Load role và darkMode khi mount
   useEffect(() => {
     setRole(getCurrentUserRole());
     const savedTheme = localStorage.getItem("darkMode");
@@ -41,6 +42,15 @@ export default function LayoutDashboard() {
         return <Content selectedMenu="Dashboard" darkMode={darkMode} />;
       case "Khám & điều trị":
         return <PatientDashboard darkMode={darkMode} />;
+        case "Danh sách đặt lịch":
+        return <DoctorAppointmentTable darkMode={darkMode} />;
+          case "Danh sách khám":
+        return <PatientDashboard darkMode={darkMode} />;
+     case "Tạo lịch khám":
+  return <BookingFormStaff darkMode={darkMode} />;
+
+                  case "Quản lý lịch khám":
+                    return <PatientDashboard darkMode={darkMode} />;
       case "Tư vấn trực tuyến":
         return <StaffChatInbox darkMode={darkMode} />;
       case "Quản lý tài khoản":
@@ -62,6 +72,8 @@ export default function LayoutDashboard() {
             darkMode={darkMode}
             onToggleDarkMode={handleToggleDarkMode}
             onToggleSidebar={handleToggleSidebar}
+             onMenuSelect={setSelectedMenu}
+          
           />
           <Box sx={{ flex: 1, overflow: "auto", pt: "64px", px: 2 }}>
             {renderContent()}

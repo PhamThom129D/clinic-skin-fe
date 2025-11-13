@@ -50,8 +50,7 @@ export default function StaffChatWindow({
     }
 
     if (conversation.key.startsWith("guest-")) {
-      const guestId = conversation.key.replace("guest-", "");
-      setCustomerName(`Khách vãng lai ${guestId}`);
+      setCustomerName(conversation.customerName);
     }
   }, [conversation.key]);
 
@@ -110,16 +109,66 @@ export default function StaffChatWindow({
         ))}
       </div>
 
-      <div className="chat-input">
-        <input
+      <div className="chat-input" style={{ display: "flex", alignItems: "flex-end", gap: "6px" }}>
+        <textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            const el = e.target;
+            el.style.height = "auto";
+            el.style.height = Math.min(el.scrollHeight, 120) + "px";
+            
+            const maxHeight = 120;
+            const newHeight = el.scrollHeight;
+            if (newHeight > maxHeight) {
+              el.style.height = maxHeight + "px";
+              el.style.overflowY = "auto"; 
+            } else {
+              el.style.height = newHeight + "px";
+              el.style.overflowY = "hidden"; 
+            }
+          }}
           placeholder="Nhập tin nhắn..."
+          rows={1}
+          style={{
+            flex: 1,
+            resize: "none",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            padding: "8px 10px",
+            minHeight: "45px",
+            maxHeight: "120px",
+            overflowY: "auto",
+            lineHeight: "1.4",
+            fontSize: "18px",
+            transition: "height 0.1s ease-out",
+          }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
           }}
         />
-        <button onClick={handleSend}>Gửi</button>
+
+        <button
+          onClick={handleSend}
+          style={{
+            backgroundColor: "#027d44",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            padding: "10px 16px",
+            cursor: "pointer",
+            fontWeight: 500,
+            height: "45px", // 👉 khớp với chiều cao textarea
+            transition: "background-color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#026836")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#027d44")}
+        >
+          Gửi
+        </button>
       </div>
     </div>
   );

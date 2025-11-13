@@ -8,6 +8,34 @@ import {
 } from "../types/contact";
 import { ConsultationStatus } from "../types/enums";
 
+// services/bookingService.ts (hoặc file types.ts riêng)
+
+export interface AppointmentResponse {
+  id: number;
+  appointmentDate: string; // YYYY-MM-DD
+  appointmentTime: string; // HH:mm
+  note?: string;
+  status: "PENDING" | "IN_PROGRESS" | "APPROVED" | "REJECTED";
+  patient: {
+    id: number;
+    passportNumber?: string;
+    occupation?: string;
+    account: {
+      id: number;
+      fullName: string;
+      email: string;
+      phoneNumber?: string;
+      gender?: "MALE" | "FEMALE" | "OTHER";
+      avtPath?: string | null;
+      dateOfBirth?: string | null;
+      address?: string | null;
+      roles?: string[];
+      status?: string;
+      createdAt?: string;
+      updatedAt?: string;
+    };
+  };
+}
 
 
 export const createContact = (data: ContactPayload) => {
@@ -45,3 +73,29 @@ export const getAppointmentsByUser = (email: string) => {
 export const cancelAppointment = (id: number) => {
   return api.delete(`/appointments/${id}`);
 };
+
+
+
+// ---- Lấy danh sách lịch hẹn (tất cả hoặc theo ngày) ----
+export const getAppointments = (date?: string) => {
+  return api.get("/appointments", {
+    params: date ? { date } : {},
+  });
+};
+
+// ---- Lấy lịch hẹn theo ID ----
+export const getAppointmentById = (id: number) => {
+  return api.get(`/appointments/${id}`);
+};
+
+
+// ---- Cập nhật lịch hẹn (approve/reject) ----
+export const updateAppointment = (id: number, data: Partial<BookingData & {status: string}>) => {
+  return api.put(`/appointments/${id}`, data);
+};
+
+// ---- Xóa lịch hẹn ----
+export const deleteAppointment = (id: number) => {
+  return api.delete(`/appointments/${id}`);
+};
+
