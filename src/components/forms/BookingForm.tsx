@@ -106,17 +106,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
         status: isStaff ? "IN_PROGRESS" : "PENDING",
       };
 
-      await registerAppointment(dataToSubmit);
-
-      notifySuccess(
-        isStaff
-          ? "✅ Nhân viên đã tạo lịch khám thành công!"
-          : "🎉 Đặt lịch thành công! Chúng tôi sẽ liên hệ bạn sớm."
-      );
-
       onSubmit?.(dataToSubmit);
-
-   
+ 
       const now = new Date();
       const currentDate = now.toISOString().split("T")[0];
       const currentTime = now.toTimeString().slice(0, 5);
