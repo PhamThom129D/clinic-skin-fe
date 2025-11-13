@@ -3,13 +3,17 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import debounce from "lodash.debounce";
 import PatientList from "./PatientList";
 import MedicationsTable from "./MedicationsTable";
-import { getLabTestsAndDiseases, getTreatmentForDisease } from "@/services/aiService";
+import {
+  getLabTestsAndDiseases,
+  getTreatmentForDisease,
+} from "@/services/aiService";
 import { getPatientsByDate, Patient, getVisitHistory } from "@/services/patientList";
 import "@/css/doctor/PatientDashboard.css";
 
 interface PatientDashboardProps {
   darkMode: boolean;
 }
+
 // --- Component gõ chữ an toàn
 const AiTyping: React.FC<{ text: string; speed?: number }> = ({ text, speed = 30 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -40,47 +44,48 @@ const AiTyping: React.FC<{ text: string; speed?: number }> = ({ text, speed = 30
 };
 
 // --- Button Xét nghiệm
-const LabTestButtons: React.FC<{
+const LabTestButtonsInner: React.FC<{
   labTests: string[];
   selectedLabTest: string;
   onSelect: (t: string) => void;
-}> = React.memo(({ labTests, selectedLabTest, onSelect }) => {
-  return (
-    <div className="lab-tests-buttons">
-      {labTests.map((t) => (
-        <button
-          key={`lab-${t}`}
-          className={`lab-test-btn ${selectedLabTest === t ? "selected" : ""}`}
-          onClick={() => onSelect(t)}
-        >
-          <AiTyping text={t} speed={40} />
-        </button>
-      ))}
-    </div>
-  );
-});
+}> = ({ labTests, selectedLabTest, onSelect }) => (
+  <div className="lab-tests-buttons">
+    {labTests.map((t) => (
+      <button
+        key={`lab-${t}`}
+        className={`lab-test-btn ${selectedLabTest === t ? "selected" : ""}`}
+        onClick={() => onSelect(t)}
+      >
+        <AiTyping text={t} speed={40} />
+      </button>
+    ))}
+  </div>
+);
+LabTestButtonsInner.displayName = "LabTestButtons";
+const LabTestButtons = React.memo(LabTestButtonsInner);
 
 // --- Button Bệnh
-const DiseaseButtons: React.FC<{
+const DiseaseButtonsInner: React.FC<{
   diseases: string[];
   selectedDisease: string;
   onSelect: (d: string) => void;
-}> = React.memo(({ diseases, selectedDisease, onSelect }) => {
-  return (
-    <div className="lab-tests-buttons">
-      {diseases.map((d) => (
-        <button
-          key={`disease-${d}`}
-          className={`lab-test-btn ${selectedDisease === d ? "selected" : ""}`}
-          onClick={() => onSelect(d)}
-        >
-          <AiTyping text={d} speed={50} />
-        </button>
-      ))}
-    </div>
-  );
-});
+}> = ({ diseases, selectedDisease, onSelect }) => (
+  <div className="lab-tests-buttons">
+    {diseases.map((d) => (
+      <button
+        key={`disease-${d}`}
+        className={`lab-test-btn ${selectedDisease === d ? "selected" : ""}`}
+        onClick={() => onSelect(d)}
+      >
+        <AiTyping text={d} speed={50} />
+      </button>
+    ))}
+  </div>
+);
+DiseaseButtonsInner.displayName = "DiseaseButtons";
+const DiseaseButtons = React.memo(DiseaseButtonsInner);
 
+// --- Main Dashboard
 export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -98,55 +103,45 @@ export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
   const [loading, setLoading] = useState(false);
   const [loadingPatients, setLoadingPatients] = useState(false);
 
-  // Hàm format ngày theo local timezone
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
   const [visitHistory, setVisitHistory] = useState<string>("");
 
+  // --- Format date
+  const formatDate = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
 
+  // --- Lấy lịch sử khám
   useEffect(() => {
     const fetchHistory = async () => {
       if (selectedPatient?.id) {
         const history = await getVisitHistory(selectedPatient.id);
-        setVisitHistory(history?.superShort || "");
+        setVisitHistory(typeof history?.superShort === "string" ? history.superShort : "");
       }
     };
     fetchHistory();
   }, [selectedPatient]);
 
-  // --- Lấy danh sách bệnh nhân theo ngày hiện tại
+  // --- Lấy danh sách bệnh nhân hôm nay
   useEffect(() => {
     let isMounted = true;
-
     const fetchPatients = async () => {
       setLoadingPatients(true);
       try {
-        const today = formatDate(new Date()); // ngày local VN
+        const today = formatDate(new Date());
         const data = await getPatientsByDate(today);
-        if (isMounted) {
-          setPatients(data);
-        }
+        if (isMounted) setPatients(data);
       } catch (err) {
         console.error("Lỗi khi lấy danh sách bệnh nhân:", err);
       } finally {
-        if (isMounted) {
-          setLoadingPatients(false);
-        }
+        if (isMounted) setLoadingPatients(false);
       }
     };
-
     fetchPatients();
-
     return () => {
       isMounted = false;
     };
   }, []);
-
 
   // --- Gợi ý labTest + bệnh từ triệu chứng
   const fetchSuggestionsBySymptoms = useCallback(
@@ -251,9 +246,14 @@ export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
     alert("✅ Đã lưu thành công!");
   };
 
+  // --- Tách visitHistory thành array an toàn
+  const visitHistoryItems = typeof visitHistory === "string"
+    ? visitHistory.split(";").map(item => item.trim()).filter(Boolean)
+    : [];
+
   // --- JSX
   return (
-        <div
+    <div
       className={`dashboard-container ${darkMode ? "dark" : ""}`}
       style={{
         backgroundColor: darkMode ? "#1e1e2f" : "#fff",
@@ -290,27 +290,20 @@ export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
 
           <div className="dashboard-info-box">
             <h2 className="dashboard-title">📋 Thông tin bệnh nhân</h2>
-            <p>
-              <b>👤 Họ tên:</b> {selectedPatient.name}
-            </p>
-            <p>
-              <b>👨‍⚕️ Bác sĩ:</b> {selectedPatient.doctorName}
-            </p>
-            <p>
-              {visitHistory && (
-                <div className="visit-history-box">
-                  <div className="visit-history-title">Ghi chú các lần khám trước</div>
-                  <ul className="visit-history-list">
-                    {visitHistory.split(";").map((item, idx) => (
-                      <li key={idx}>{item.trim()}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            <p><b>👤 Họ tên:</b> {selectedPatient.name}</p>
+            <p><b>👨‍⚕️ Bác sĩ:</b> {selectedPatient.doctorName}</p>
 
-            </p>
+            {visitHistoryItems.length > 0 && (
+              <div className="visit-history-box">
+                <div className="visit-history-title">Ghi chú các lần khám trước</div>
+                <ul className="visit-history-list">
+                  {visitHistoryItems.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-
 
           <div className="dashboard-card">
             <h3>📝 Triệu chứng</h3>
@@ -359,7 +352,6 @@ export default function PatientDashboard({ darkMode }: PatientDashboardProps) {
 
           {treatmentSteps.length > 0 && (
             <div className="medications-wrapper">
-              {/* <TreatmentStepsTable steps={treatmentSteps} setSteps={setTreatmentSteps} /> */}
               <MedicationsTable medications={medications} setMedications={setMedications} />
               <div className="save-btn-wrapper">
                 <button
