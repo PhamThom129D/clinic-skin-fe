@@ -1,10 +1,11 @@
+//personal/account/update-account
 "use client";
 
 import { Box, Typography } from "@mui/material";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { AuthResponse } from "@/types/auth";
-import UserInfoUpdate from "@/components/patient/info/layout/UserInfoUpdate";
+import UserInfoUpdate from "@/components/patient/personal/account/layout/UserInfoUpdate";
 import { useRouter } from "next/navigation";
 import { AccountRequest } from "@/types/userinfo";
 import { updateInfo } from "@/services/accountService";
@@ -31,7 +32,7 @@ export default function Page() {
                         console.log(">>> [DEBUG] AccountResponse (Từ API):", updatedAccountData);
 
         setAccount(updatedAccountData); 
-        router.push("/user/info");
+        router.push("/user/personal");
   } catch (error: any) {
       console.error("Lỗi khi cập nhật thông tin:", error);
       let errorMessage = "Cập nhật thất bại. Vui lòng thử lại.";
@@ -50,7 +51,7 @@ export default function Page() {
 };
 
   const handleBackClick = () => {
-    router.push("/user/info");
+    router.push("/user/personal");
   };
 
   if (!account) {

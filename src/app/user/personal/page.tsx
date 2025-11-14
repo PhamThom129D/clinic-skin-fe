@@ -4,7 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { AuthResponse } from "@/types/auth";
-import UserInfo from "@/components/patient/info/layout/UserInfo";
+import UserInfo from "@/components/patient/personal/account/layout/UserInfo";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
@@ -12,7 +12,7 @@ export default function Page() {
     const router = useRouter();
 
     const handleEditClick = () => {
-         router.push("/user/info/update-account");
+         router.push("/user/personal/account/update-account");
     };
 
     if (!account) {

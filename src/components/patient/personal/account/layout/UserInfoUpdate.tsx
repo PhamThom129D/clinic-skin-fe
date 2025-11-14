@@ -1,4 +1,4 @@
-// src/components/patient/info/section/UserInfoUpdate.tsx
+// src/components/patient/personal/account/section/UserInfoUpdate.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
@@ -6,8 +6,8 @@ import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { notifySuccess, notifyWarning } from "@/utils/toast";
 import AvatarUpload from "@/components/common/AvatarUpload";
 import GenderSelect from "@/components/common/GenderSelect";
-import { FormInput } from "../../../common/FormInput";
-import ButtonPrimary from "../../../common/ButtonPrimary";
+import { FormInput } from "../../../../common/FormInput";
+import ButtonPrimary from "../../../../common/ButtonPrimary";
 import { emailRule, fullNameRule, phoneNumberRule, addressRule, dateOfBirthRule, formatDateForInput
 } from "@/utils/validation/validators";
 import StyledPaper from "@/components/common/StyledPaper";
