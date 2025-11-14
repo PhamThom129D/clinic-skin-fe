@@ -67,9 +67,11 @@ const handleFinalSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     // Lưu vào sessionStorage
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
+    sessionStorage.setItem("user", JSON.stringify(response));
 
     notifySuccess("Đăng ký thành công!");
   redirectByRole(role, router);
+
   } catch (err: unknown) {
     let message = "Đăng ký thất bại. Vui lòng thử lại.";
     let field: keyof RegisterFormData = "email";

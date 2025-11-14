@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
-  TextField,
   InputAdornment,
   IconButton,
   Checkbox,
@@ -29,7 +28,6 @@ import { login as loginApi } from "@/services/authService";
 import { redirectByRole } from "@/utils/authUtils";
 import { FormInput } from "@/components/common/FormInput";
 
-
 export default function LoginForm() {
   const router = useRouter();
   const theme = useTheme();
@@ -40,6 +38,7 @@ export default function LoginForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null); // ✅ ADD ERROR STATE
 
   const inputStyles = {
     "& .MuiOutlinedInput-root": {
@@ -64,122 +63,150 @@ export default function LoginForm() {
     },
   };
 
-    const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
-      if (!data.emailOrPhone) {
-        notifyWarning("Vui lòng nhập email hoặc số điện thoại");
-        return;
+  const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
+    setLoginError(null); // ❌ Reset mỗi lần login
+
+    if (!data.emailOrPhone) {
+      setLoginError("Vui lòng nhập email hoặc số điện thoại");
+      notifyWarning("Vui lòng nhập email hoặc số điện thoại");
+      return;
+    }
+
+    try {
+      const response = await loginApi({
+        emailOrPhone: data.emailOrPhone,
+        password: data.password,
+      });
+
+      const user = response.data;
+
+      notifySuccess("Đăng nhập thành công!");
+
+      const role = user.roles[0] || "ROLE_PATIENT";
+
+      if (data.rememberMe) {
+        localStorage.setItem("authToken", user.token);
+        localStorage.setItem("account", JSON.stringify(user));
+        localStorage.setItem("userRole", role);
+      } else {
+        sessionStorage.setItem("authToken", user.token);
+        sessionStorage.setItem("account", JSON.stringify(user));
+        sessionStorage.setItem("userRole", role);
       }
+      window.dispatchEvent(new Event("authChange"));
 
-      try {
-        const response = await loginApi({ emailOrPhone: data.emailOrPhone, password: data.password });
-        const user = response.data;
+      redirectByRole(role, router);
+    } catch (err: any) {
 
-        notifySuccess("Đăng nhập thành công!");
-        const role = user.roles[0] || "ROLE_PATIENT";
-
-        if (data.rememberMe) {
-          localStorage.setItem("authToken", user.token);
-          localStorage.setItem("account", JSON.stringify(user));
-          localStorage.setItem("userRole", role);
-        } else {
-          sessionStorage.setItem("authToken", user.token);
-          sessionStorage.setItem("account", JSON.stringify(user));
-          sessionStorage.setItem("userRole", role);
-        }
-        window.dispatchEvent(new Event("authChange"));
-
-        redirectByRole(role, router);
+  let message = err?.response?.data?.message;
 
 
-      } catch (err: unknown) {
-        notifyWarning(err instanceof Error ? err.message : "Đăng nhập thất bại");
-      }
-    };
+  if (err?.response?.status === 400) {
+    message = "Sai tài khoản hoặc mật khẩu, vui lòng thử lại.";
+  }
+
+
+  if (!message) {
+    message = "Đăng nhập thất bại, vui lòng thử lại.";
+  }
+
+  setLoginError(message);
+
+}
+
+  };
 
   return (
     <>
-      <Box sx={{ width: "100%",maxWidth: 500, mx: "auto", py: 4 }}>
-  <Typography
-    variant="h2"
-    fontWeight="bold"
-    textAlign="center"
-    sx={{ mb: 9, color: theme.palette.primary.main }}
-  >
-    Đăng nhập
-  </Typography>
-  <form onSubmit={handleSubmit(handleFinalSubmit)}>
-    {/* Email/Phone */}
-    <FormInput
-      name="emailOrPhone"
-      control={control}
-      label="Email hoặc số điện thoại"
-      rules={{ required: "Vui lòng nhập email hoặc số điện thoại" }}
-      sx={inputStyles}
-    />
+      <Box sx={{ width: "100%", maxWidth: 500, mx: "auto", py: 4 }}>
+        <Typography
+          variant="h2"
+          fontWeight="bold"
+          textAlign="center"
+          sx={{ mb: 9, color: theme.palette.primary.main }}
+        >
+          Đăng nhập
+        </Typography>
 
-    {/* Password */}
-    <FormInput
-      name="password"
-      control={control}
-      label="Mật khẩu"
-      type={showPassword ? "text" : "password"}
-      rules={passwordRule}
-      sx={inputStyles}
-      endAdornment={
-        <InputAdornment position="end">
-          <IconButton
-            onClick={() => setShowPassword((v) => !v)}
-            edge="end"
-            size="small"
-            sx={{ color: theme.palette.primary.main }}
-          >
-            {showPassword ? <VisibilityOff /> : <Visibility />}
-          </IconButton>
-        </InputAdornment>
-      }
-    />
-
-    {/* Remember Me + Forgot Password */}
-    <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ my: 2 }}>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={watch("rememberMe")}
-            onChange={(e) => setValue("rememberMe", e.target.checked)}
-            color="primary"
+        <form onSubmit={handleSubmit(handleFinalSubmit)}>
+          <FormInput
+            name="emailOrPhone"
+            control={control}
+            label="Email hoặc số điện thoại"
+            rules={{ required: "Vui lòng nhập email hoặc số điện thoại" }}
+            sx={inputStyles}
           />
-        }
-        label={<Typography variant="body2">Nhớ tài khoản</Typography>}
-      />
-      <Link
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          setForgotOpen(true);
-        }}
-        sx={{ fontWeight: 600 }}
-      >
-        Quên mật khẩu?
-      </Link>
-    </Box>
 
-    {/* Submit */}
-    <ButtonPrimary type="submit" fullWidth sx={{ mb: 3, py: 1.5 }}>
-      Đăng nhập
-    </ButtonPrimary>
+          <FormInput
+            name="password"
+            control={control}
+            label="Mật khẩu"
+            type={showPassword ? "text" : "password"}
+            rules={passwordRule}
+            sx={inputStyles}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword((v) => !v)}
+                  edge="end"
+                  size="small"
+                  sx={{ color: theme.palette.primary.main }}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
 
-    {/* Divider */}
-    <Divider sx={{ my: 2 }}>
-      <Typography variant="body2" sx={{ color: "text.secondary" }}>
-        Hoặc
-      </Typography>
-    </Divider>
+          {/* Remember + Forgot */}
+          <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ my: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={watch("rememberMe")}
+                  onChange={(e) => setValue("rememberMe", e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={<Typography variant="body2">Nhớ tài khoản</Typography>}
+            />
 
-    {/* Google Login */}
-    <GoogleLoginButton />
-  </form>
-</Box>
+            <Link
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setForgotOpen(true);
+              }}
+              sx={{ fontWeight: 600 }}
+            >
+              Quên mật khẩu?
+            </Link>
+          </Box>
 
+          {/* ⚠️ HIỂN THỊ LỖI */}
+          {loginError && (
+            <Typography
+              variant="body2"
+              color="error"
+              sx={{ mb: 2, fontWeight: 600, textAlign: "center" }}
+            >
+              {loginError}
+            </Typography>
+          )}
+
+          <ButtonPrimary type="submit" fullWidth sx={{ mb: 3, py: 1.5 }}>
+            Đăng nhập
+          </ButtonPrimary>
+
+          <Divider sx={{ my: 2 }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              Hoặc
+            </Typography>
+          </Divider>
+
+          <GoogleLoginButton />
+        </form>
+      </Box>
 
       <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </>
