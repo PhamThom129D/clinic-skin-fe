@@ -68,7 +68,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, onSend, onClos
   return (
     <Paper sx={{
       position: "fixed", bottom: 70, right: 20,
-      width: { xs: "90vw", sm: 400, md: 450 }, height: 500,
+      width: { xs: "calc(100vw - 40px)", sm: 400, md: 450 }, height: 500,
       display: "flex", flexDirection: "column", borderRadius: 2, overflow: "hidden", zIndex: 1000
     }} elevation={6}>
       <Box sx={{ p: 1, bgcolor: "#027d44", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>

@@ -18,6 +18,7 @@ import { emailRule } from "@/utils/validation/validators";
 import { loginWithOtp, resendOtp, verifyOtp } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import { redirectByRole } from "@/utils/authUtils";
 
 interface ForgotPasswordModalProps {
   open: boolean;
@@ -72,9 +73,10 @@ const handleVerifyOTP = async (otpCode: string) => {
     localStorage.setItem("account", JSON.stringify(user.data));
     localStorage.setItem("userRole", role);
 
-    if (role === "ROLE_ADMIN") router.push("/dashboard");
-    else router.push("/home");
+    // if (role === "ROLE_ADMIN") router.push("staff/dashboard");
+    // else router.push("/user/dashboard");
 
+    redirectByRole(role, router);
     setOtpStage(false);
     reset();
   } catch (err: unknown) {

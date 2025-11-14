@@ -6,7 +6,7 @@ import {
   DialogContent,
 } from "@mui/material";
 import { notifyWarning, notifySuccess } from "@/utils/toast";
-import OTPVerification from "../../../auth/OTPVerification";
+import OTPVerification from "../../../../auth/OTPVerification";
 import { resendOtp, verifyOtp } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";

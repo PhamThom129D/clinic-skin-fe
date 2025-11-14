@@ -1,4 +1,4 @@
-// src/components/patients/info/layout/ResetPassword.tsx
+// src/components/patients/personal/account/layout/ResetPassword.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FormInput } from "@/components/common/FormInput";
-import { PasswordInput } from "@/components/patient/info/section/PasswordInput";
+import { PasswordInput } from "@/components/patient/personal/account/section/PasswordInput";
 import ButtonPrimary from "@/components/common/ButtonPrimary";
 import { emailRule } from "@/utils/validation/validators";
 

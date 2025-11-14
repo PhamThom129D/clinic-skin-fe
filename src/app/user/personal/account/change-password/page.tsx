@@ -1,7 +1,8 @@
+//personal/account/change-password
 "use client";
 
 import { Box, Typography } from "@mui/material";
-import ChangePassword from "@/components/patient/info/layout/ChangePassword";
+import ChangePassword from "@/components/patient/personal/account/layout/ChangePassword";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 

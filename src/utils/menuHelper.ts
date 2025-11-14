@@ -1,15 +1,11 @@
 import React from "react";
 import { Role, roleMenu, menuIcons } from "./menuItem";
 
-// Kiểu trả về mỗi mục menu
 export interface MenuItemWithIcon {
   label: string;
   icon: React.ReactNode;
 }
 
-/**
- * Lấy role hiện tại từ sessionStorage hoặc localStorage
- */
 export const getCurrentUserRole = (): Role | null => {
   const storedRole =
     sessionStorage.getItem("userRole") || localStorage.getItem("userRole");
