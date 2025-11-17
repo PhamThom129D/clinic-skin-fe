@@ -9,9 +9,9 @@ import { useRouter } from "next/navigation";
 import { RegisterFormData } from "@/types/auth";
 import { register as registerAPI } from "@/services/authService";
 
-import GenderSelect from "@/components/common/GenderSelect";
-import { FormInput } from "../common/FormInput";
-import ButtonPrimary from "../common/ButtonPrimary";
+import GenderSelect from "../../../common/GenderSelect";
+import { FormInput } from "../../../common/FormInput";
+import ButtonPrimary from "../../../common/ButtonPrimary";
 
 import {
   emailRule,

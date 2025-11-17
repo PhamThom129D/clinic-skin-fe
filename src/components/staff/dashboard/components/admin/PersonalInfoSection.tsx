@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Typography, Divider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Controller, Control } from "react-hook-form";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../../../../common/FormInput";
 import { GenderEnum, genderLabels, StatusEnum, statusLabels } from "@/utils/enums";
 
 interface PersonalInfoSectionProps {

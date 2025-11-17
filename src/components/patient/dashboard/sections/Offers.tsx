@@ -1,6 +1,6 @@
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import React, { useState } from "react";
-import CardHover from "../../../common/CardHover";
+import CardHover from "../../../../../common/CardHover";
 import { Offer } from "@/types/screen";
 import { getOffers } from "@/services/screenService";
 import { useFetchData } from "@/hooks/useFetchData";

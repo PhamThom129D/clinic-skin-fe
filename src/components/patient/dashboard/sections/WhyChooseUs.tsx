@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { WorkspacePremium, MedicalServices, Favorite } from "@mui/icons-material";
-import CardHover from "@/components/common/CardHover";
+import CardHover from "../../../../../common/CardHover";
 import StarIcon from "@mui/icons-material/Star";
 
 const reasons = [

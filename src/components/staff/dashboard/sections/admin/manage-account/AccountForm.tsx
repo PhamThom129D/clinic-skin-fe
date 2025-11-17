@@ -5,7 +5,7 @@ import { Box, Paper } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import PersonalInfoSection from "../../../components/admin/PersonalInfoSection";
 import AccountInfoSection from "../../../components/admin/AccountInfoSection";
-import AvatarUpload from "@/components/common/AvatarUpload";
+import AvatarUpload from "../../../../../../../common/AvatarUpload";
 
 interface AddAccountFormProps {
   onSubmit: (data: FormData) => void;

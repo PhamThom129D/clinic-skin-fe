@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FormInput } from "../common/FormInput";
+import { FormInput } from "../../../common/FormInput";
 import { notifyError, notifySuccess, notifyWarning } from "@/utils/toast";
 import OTPVerification from "./OTPVerification";
 import { emailRule } from "@/utils/validation/validators";

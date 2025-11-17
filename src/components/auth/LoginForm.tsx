@@ -19,14 +19,16 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import GoogleLoginButton from "./GoogleLoginButton";
-import ButtonPrimary from "../common/ButtonPrimary";
+import ButtonPrimary from "../../../common/ButtonPrimary";
 
 import { LoginRequest } from "@/types/auth";
 import { passwordRule } from "@/utils/validation/validators";
 import { notifyWarning, notifySuccess } from "@/utils/toast";
 import { login as loginApi } from "@/services/authService";
 import { redirectByRole } from "@/utils/authUtils";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../common/FormInput";
+import loadingBus from "@/utils/loadingBus";
+
 
 export default function LoginForm() {
   const router = useRouter();
@@ -63,58 +65,60 @@ export default function LoginForm() {
     },
   };
 
-  const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
-    setLoginError(null); // ❌ Reset mỗi lần login
+ const handleFinalSubmit: SubmitHandler<LoginRequest> = async (data) => {
+  setLoginError(null);
+  loadingBus.start(); // 🏥 bật loading ngay
 
-    if (!data.emailOrPhone) {
-      setLoginError("Vui lòng nhập email hoặc số điện thoại");
-      notifyWarning("Vui lòng nhập email hoặc số điện thoại");
-      return;
+  if (!data.emailOrPhone) {
+    loadingBus.stop();
+    setLoginError("Vui lòng nhập email hoặc số điện thoại");
+    notifyWarning("Vui lòng nhập email hoặc số điện thoại");
+    return;
+  }
+
+  try {
+    const response = await loginApi({
+      emailOrPhone: data.emailOrPhone,
+      password: data.password,
+    });
+
+    const user = response.data;
+    notifySuccess("Đăng nhập thành công!");
+
+    const role = user.roles[0] || "ROLE_PATIENT";
+
+    if (data.rememberMe) {
+      localStorage.setItem("authToken", user.token);
+      localStorage.setItem("account", JSON.stringify(user));
+      localStorage.setItem("userRole", role);
+    } else {
+      sessionStorage.setItem("authToken", user.token);
+      sessionStorage.setItem("account", JSON.stringify(user));
+      sessionStorage.setItem("userRole", role);
     }
 
-    try {
-      const response = await loginApi({
-        emailOrPhone: data.emailOrPhone,
-        password: data.password,
-      });
+    window.dispatchEvent(new Event("authChange"));
 
-      const user = response.data;
+    redirectByRole(role, router);
 
-      notifySuccess("Đăng nhập thành công!");
+    // Tắt loading sau khi route load xong
+    setTimeout(() => loadingBus.stop(), 500);
 
-      const role = user.roles[0] || "ROLE_PATIENT";
+  } catch (err: any) {
+    loadingBus.stop();
 
-      if (data.rememberMe) {
-        localStorage.setItem("authToken", user.token);
-        localStorage.setItem("account", JSON.stringify(user));
-        localStorage.setItem("userRole", role);
-      } else {
-        sessionStorage.setItem("authToken", user.token);
-        sessionStorage.setItem("account", JSON.stringify(user));
-        sessionStorage.setItem("userRole", role);
-      }
-      window.dispatchEvent(new Event("authChange"));
+    let message = err?.response?.data?.message;
+    if (err?.response?.status === 400) {
+      message = "Sai tài khoản hoặc mật khẩu, vui lòng thử lại.";
+    }
+    if (!message) {
+      message = "Đăng nhập thất bại, vui lòng thử lại.";
+    }
 
-      redirectByRole(role, router);
-    } catch (err: any) {
-
-  let message = err?.response?.data?.message;
-
-
-  if (err?.response?.status === 400) {
-    message = "Sai tài khoản hoặc mật khẩu, vui lòng thử lại.";
+    setLoginError(message);
   }
+};
 
-
-  if (!message) {
-    message = "Đăng nhập thất bại, vui lòng thử lại.";
-  }
-
-  setLoginError(message);
-
-}
-
-  };
 
   return (
     <>
