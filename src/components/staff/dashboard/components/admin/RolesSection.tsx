@@ -5,7 +5,7 @@ import { Card, Typography, FormGroup, FormControlLabel, Checkbox, Box } from "@m
 import { Control, useWatch, UseFormRegister } from "react-hook-form";
 import { RoleEnum, roleLabels } from "@/utils/enums";
 import DoctorCertificates from "./DoctorCertificates";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../../../../common/FormInput";
 
 interface RolesSectionProps {
   control: Control<any>;

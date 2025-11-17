@@ -16,8 +16,8 @@ import Image from "next/image";
 
 import ThemeToggle from "@/components/ThemeToggle";
 import BookingModal from "../sections/BookingModal";
-import menuItems from "@/components/common/menuItems";
-import MenuButton from "@/components/common/MenuButton";
+import menuItems from "../../../../../common/menuItems";
+import MenuButton from "../../../../../common/MenuButton";
 import AuthButton, { BookingButton } from "../sections/AuthButton";
 import { useRouter } from "next/navigation";
 

@@ -4,13 +4,13 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { notifySuccess, notifyWarning } from "@/utils/toast";
-import AvatarUpload from "@/components/common/AvatarUpload";
-import GenderSelect from "@/components/common/GenderSelect";
-import { FormInput } from "../../../../common/FormInput";
-import ButtonPrimary from "../../../../common/ButtonPrimary";
+import AvatarUpload from "../../../../../../common/AvatarUpload";
+import GenderSelect from "../../../../../../common/GenderSelect";
+import { FormInput } from "../../../../../../common/FormInput";
+import ButtonPrimary from "../../../../../../common/ButtonPrimary";
 import { emailRule, fullNameRule, phoneNumberRule, addressRule, dateOfBirthRule, formatDateForInput
 } from "@/utils/validation/validators";
-import StyledPaper from "@/components/common/StyledPaper";
+import StyledPaper from "../../../../../../common/StyledPaper";
 import { AuthResponse } from "@/types/auth";
 import { AccountRequest } from "@/types/userinfo";
 import { mapToAccountRequest } from "@/utils/accountMappers";

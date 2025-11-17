@@ -4,7 +4,7 @@ import { Box, Typography, Paper, Grid, Button, Avatar, Divider } from "@mui/mate
 import { styled } from '@mui/system';
 import { AuthResponse } from "@/types/auth";
 import UserInfoRow from "../section/UserInfoRow";
-import StyledPaper from "@/components/common/StyledPaper";
+import StyledPaper from "../../../../../../common/StyledPaper";
 
 interface UserInfoProps {
   account: AuthResponse;

@@ -1,7 +1,7 @@
 import { Box, Container, Stack, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
-import InputField from "../common/InputField";
-import ButtonPrimary from "../common/ButtonPrimary";
+import InputField from "../../../common/InputField";
+import ButtonPrimary from "../../../common/ButtonPrimary";
 import { validateFormContact } from "@/utils/validation/contactValidator";
 
 interface ContactFormProps {

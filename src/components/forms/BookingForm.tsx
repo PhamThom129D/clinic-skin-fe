@@ -9,8 +9,8 @@ import {
   SelectChangeEvent,
   useTheme,
 } from "@mui/material";
-import InputField from "../common/InputField";
-import GenderSelect from "../common/GenderSelect";
+import InputField from "../../../common/InputField";
+import GenderSelect from "../../../common/GenderSelect";
 import { BookingData } from "@/types/screen";
 import {
   validateField,
