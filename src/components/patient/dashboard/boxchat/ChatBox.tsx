@@ -18,11 +18,17 @@ function generateGuestId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
 
-export default function ChatBox() {
+interface ChatBoxProps {
+  openConversationId?: string | null;
+}
+
+export default function ChatBox({ openConversationId }: ChatBoxProps) {
   const [open, setOpen] = useState(false);
+  const [conversationKey, setConversationKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [guestId, setGuestId] = useState<string | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const staffId = 1;
 
@@ -31,24 +37,24 @@ export default function ChatBox() {
       localStorage.getItem("authToken") ||
       sessionStorage.getItem("authToken");
 
-  if (token) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    const decoded = JSON.parse(jsonPayload);
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const decoded = JSON.parse(jsonPayload);
 
-    setUserId(decoded.userId); 
+        setUserId(decoded.userId);
 
-  } catch (err) {
-    console.error("Token invalid", err);
-  }
-}
+      } catch (err) {
+        console.error("Token invalid", err);
+      }
+    }
 
 
     let gid = localStorage.getItem("guestId");
@@ -65,21 +71,36 @@ export default function ChatBox() {
       ? `guest-${guestId}`
       : null;
 
+
+  useEffect(() => {
+    const handleOpenChat = (e: CustomEvent<{ conversationId?: string }>) => {
+      if (e.detail?.conversationId) {
+        setConversationKey(e.detail.conversationId);
+      }
+      setOpen(true);
+    };
+
+    window.addEventListener("openChatBox", handleOpenChat as EventListener);
+
+    return () => {
+      window.removeEventListener("openChatBox", handleOpenChat as EventListener);
+    };
+  }, []);
+
+
   useEffect(() => {
     if (!open || !key) return;
 
     async function loadHistory() {
       let msgs: any[] = [];
 
-      if (userId && guestId) {
-        const guestMsgs = await fetchHistory(`guest-${guestId}`);
-        msgs = msgs.concat(guestMsgs);
+      if (userId) {
+        msgs = await fetchHistory(`user-${userId}`);
+      } else if (guestId) {
+        msgs = await fetchHistory(`guest-${guestId}`);
       }
 
-      const userMsgs = await fetchHistory(key);
-      msgs = msgs.concat(userMsgs);
-
-      msgs.sort((a, b) => a.sentAt - b.sentAt);
+      msgs.sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime());
 
       setMessages(
         msgs.map((m) => ({
@@ -94,6 +115,7 @@ export default function ChatBox() {
         }))
       );
     }
+
 
     loadHistory().catch(console.error);
   }, [open, key, userId, guestId]);
@@ -130,22 +152,49 @@ export default function ChatBox() {
 
     return () => disconnect();
   }, [key, userId]);
-
   const handleSend = async (msg: string) => {
     if (!msg.trim()) return;
 
     await sendMessage({
-      senderId: userId,
-      guestId,
+      senderId: userId ?? null,
+      guestId: userId ? null : guestId,
       receiverId: staffId,
       content: msg,
     });
+
+    if (key && userId) {
+      try {
+        await fetchHistory(key); 
+        window.dispatchEvent(
+          new CustomEvent("messageRead", { detail: { key, receiverId: userId } })
+        );
+        setUnreadCount(0);
+      } catch (err) {
+        console.error("❌ Reset unread on send failed:", err);
+      }
+    }
   };
+
 
   return (
     <>
       <IconButton
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={async () => {
+          setOpen((prev) => !prev);
+
+          if (!key || !userId) return;
+
+          try {
+            await fetchHistory(key);
+            window.dispatchEvent(
+              new CustomEvent("messageRead", { detail: { key, receiverId: userId } })
+            );
+
+            setUnreadCount(0);
+          } catch (err) {
+            console.error("❌ Reset unread failed:", err);
+          }
+        }}
         sx={{
           position: "fixed",
           bottom: 20,
@@ -159,11 +208,14 @@ export default function ChatBox() {
         {open ? <CloseIcon /> : <ChatIcon />}
       </IconButton>
 
+
       {open && (
         <ChatWindow
           messages={messages}
           onSend={handleSend}
-          onClose={() => setOpen(false)}
+          userId={userId}
+          onClose={() => setOpen(false)
+          }
         />
       )}
     </>

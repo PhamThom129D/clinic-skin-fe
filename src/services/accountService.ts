@@ -3,7 +3,6 @@ import { AccountRequest, PasswordChangeData, PasswordResetData } from "@/types/u
 
 
 import api from "../api/api";
-import { AuthResponse } from "@/types/auth";
 import { buildFormData } from "@/utils/accountMappers";
 
 export const resetPassword = (data: PasswordResetData) => {
@@ -50,6 +49,7 @@ export const getListAccounts = async (): Promise<Account[]> => {
   }
 };
 
+
 export const getAccountById = async (id: number): Promise<Account | null> => {
   try {
     const res = await api.get(`/accounts/${id}`);
@@ -73,6 +73,6 @@ export const updateAccount = async (id: number, formData: FormData) => {
   const res = await api.put(`/accounts/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+
   return res.data;
 };
-

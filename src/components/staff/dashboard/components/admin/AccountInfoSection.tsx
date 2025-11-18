@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import { Control } from "react-hook-form";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../../../../common/FormInput";
 
 interface AccountInfoSectionProps {
   control: Control<any>;

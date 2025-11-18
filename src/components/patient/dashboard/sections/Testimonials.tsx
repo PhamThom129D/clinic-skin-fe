@@ -1,4 +1,4 @@
-import AvatarCard from "@/components/common/AvatarCard";
+import AvatarCard from "../../../../../common/AvatarCard";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { Testimonial } from "@/types/screen";

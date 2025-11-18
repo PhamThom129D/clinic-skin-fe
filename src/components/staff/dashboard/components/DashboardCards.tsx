@@ -57,16 +57,16 @@ const cardData: CardInfo[] = [
     subtitle: "in last 7 Days",
     data: [5000, 5200, 5100, 5300, 5400, 5500, 5600],
   },
-  {
-    title: "Consult Requests",
-    value: 342,
-    icon: <FaUserInjured />, // bạn có thể đổi icon khác
-    color: "#ff9f43",
-    trend: "up",
-    trendValue: 18,
-    subtitle: "in last 7 Days",
-    data: [40, 50, 45, 60, 55, 70, 65],
-  }
+  // {
+  //   title: "Consult Requests",
+  //   value: 342,
+  //   icon: <FaUserInjured />, // bạn có thể đổi icon khác
+  //   color: "#ff9f43",
+  //   trend: "up",
+  //   trendValue: 18,
+  //   subtitle: "in last 7 Days",
+  //   data: [40, 50, 45, 60, 55, 70, 65],
+  // }
 
 ];
 

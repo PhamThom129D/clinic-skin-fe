@@ -4,8 +4,8 @@ import React from "react";
 import { Box, Typography, Divider, Card, IconButton, Button, Tooltip } from "@mui/material";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import { useFieldArray, Control, Controller } from "react-hook-form";
-import { FormInput } from "@/components/common/FormInput";
-import ButtonPrimary from "@/components/common/ButtonPrimary";
+import { FormInput } from "../../../../../../common/FormInput";
+import ButtonPrimary from "../../../../../../common/ButtonPrimary";
 
 interface DoctorCertificatesProps {
   control: Control<any>;

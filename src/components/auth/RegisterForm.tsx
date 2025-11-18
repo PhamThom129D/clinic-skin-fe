@@ -9,9 +9,9 @@ import { useRouter } from "next/navigation";
 import { RegisterFormData } from "@/types/auth";
 import { register as registerAPI } from "@/services/authService";
 
-import GenderSelect from "@/components/common/GenderSelect";
-import { FormInput } from "../common/FormInput";
-import ButtonPrimary from "../common/ButtonPrimary";
+import GenderSelect from "../../../common/GenderSelect";
+import { FormInput } from "../../../common/FormInput";
+import ButtonPrimary from "../../../common/ButtonPrimary";
 
 import {
   emailRule,
@@ -67,9 +67,11 @@ const handleFinalSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     // Lưu vào sessionStorage
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
+    sessionStorage.setItem("user", JSON.stringify(response));
 
     notifySuccess("Đăng ký thành công!");
   redirectByRole(role, router);
+
   } catch (err: unknown) {
     let message = "Đăng ký thất bại. Vui lòng thử lại.";
     let field: keyof RegisterFormData = "email";

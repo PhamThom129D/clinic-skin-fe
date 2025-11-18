@@ -5,14 +5,14 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/patient/personal/account/section/PasswordInput";
-import ButtonPrimary from "@/components/common/ButtonPrimary";
+import ButtonPrimary from "../../../../../../common/ButtonPrimary";
 import {
   oldPasswordRule,
   newPasswordRule,
   confirmNewPasswordRule,
 } from "@/utils/validation/validators";
 import { notifySuccess, notifyWarning, notifyError } from "@/utils/toast";
-import StyledPaper from "@/components/common/StyledPaper";
+import StyledPaper from "../../../../../../common/StyledPaper";
 import { ChangePasswordFormData, PasswordChangeData } from "@/types/userinfo";
 import { AuthResponse } from "@/types/auth";
 import { changePassword } from "@/services/accountService";

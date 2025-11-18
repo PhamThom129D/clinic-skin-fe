@@ -26,69 +26,78 @@ export default function StaffChatInbox({ darkMode }: StaffChatInboxProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [unread, setUnread] = useState<Record<string, boolean>>({});
+  const [guestMap, setGuestMap] = useState<Record<string, number>>({});
+
   const staffId = 1;
 
- const loadInbox = async () => {
-  try {
-    const data = await fetchInbox(staffId);
+  const loadInbox = async () => {
+    try {
+      const data = await fetchInbox(staffId);
 
-    setConversations((prev) => {
-      const newUnread: Record<string, boolean> = { ...unread };
+      setConversations((prev) => {
+        const newUnread: Record<string, boolean> = { ...unread };
+        const newGuestMap: Record<string, number> = { ...guestMap };
 
-      let guestCounter = 1;
+        const existingValues = Object.values(newGuestMap);
+        const existingMax = existingValues.length ? Math.max(...existingValues) : 0;
+        let nextIndex = existingMax + 1;
 
-      const merged = data.map((conv, index) => {
-        const lastMsg = conv.messages[conv.messages.length - 1];
-        const existed = prev.find((c) => c.key === conv.key);
+        const unassignedGuests = data
+          .filter((c) => c.key.startsWith("guest-") && !newGuestMap[c.key])
+          .map((c) => {
+            const firstMsg = c.messages && c.messages.length ? c.messages[0] : null;
+            const firstAt = firstMsg && firstMsg.sentAt ? new Date(firstMsg.sentAt).getTime() : Number.POSITIVE_INFINITY;
+            return { key: c.key, firstAt };
+          });
 
-        // 🚀 đổi tên hiển thị
-        let displayName = conv.customerName;
-        if (conv.key.startsWith("user-")) {
-          const customerId = Number(conv.key.replace("user-", ""));
-          getAccountById(customerId)
-            .then((acc) => {
+        unassignedGuests.sort((a, b) => a.firstAt - b.firstAt);
+        for (const g of unassignedGuests) {
+          newGuestMap[g.key] = nextIndex++;
+        }
+
+        const merged = data.map((conv) => {
+          const lastMsg = conv.messages && conv.messages.length ? conv.messages[conv.messages.length - 1] : null;
+          const existed = prev.find((c) => c.key === conv.key);
+
+          let displayName = conv.customerName;
+
+          if (conv.key.startsWith("user-")) {
+            const customerId = Number(conv.key.replace("user-", ""));
+            getAccountById(customerId).then((acc) => {
               if (acc?.fullName) {
-                // cập nhật lại tên cho đúng
                 setConversations((prevList) =>
-                  prevList.map((c) =>
-                    c.key === conv.key ? { ...c, customerName: acc.fullName } : c
-                  )
+                  prevList.map((c) => (c.key === conv.key ? { ...c, customerName: acc.fullName } : c))
                 );
               }
-            })
-            .catch(() => {});
-        } else if (conv.key.startsWith("guest-")) {
-          displayName = `Khách vãng lai ${guestCounter++}`;
-        }
-
-        // unread logic giữ nguyên
-        if (!existed) {
-          if (lastMsg && lastMsg.senderId !== staffId)
-            newUnread[conv.key] = true;
-          else newUnread[conv.key] = false;
-        } else {
-          newUnread[conv.key] = unread[conv.key] ?? false;
-
-          const prevLast = existed.messages[existed.messages.length - 1];
-          if (
-            lastMsg &&
-            lastMsg.senderId !== staffId &&
-            prevLast?.sentAt !== lastMsg.sentAt
-          ) {
-            newUnread[conv.key] = true;
+            }).catch(() => { });
+          } else if (conv.key.startsWith("guest-")) {
+            const num = newGuestMap[conv.key] ?? (newGuestMap[conv.key] = nextIndex++);
+            displayName = `Khách vãng lai ${num}`;
           }
-        }
 
-        return { ...conv, customerName: displayName };
+          if (!existed) {
+            if (lastMsg && lastMsg.senderId !== staffId) newUnread[conv.key] = true;
+            else newUnread[conv.key] = false;
+          } else {
+            newUnread[conv.key] = unread[conv.key] ?? false;
+            const prevLast = existed.messages && existed.messages.length ? existed.messages[existed.messages.length - 1] : null;
+            if (lastMsg && lastMsg.senderId !== staffId && prevLast?.sentAt !== lastMsg.sentAt) {
+              newUnread[conv.key] = true;
+            }
+          }
+
+          return { ...conv, customerName: displayName };
+        });
+
+        setGuestMap(newGuestMap);
+        setUnread(newUnread);
+        return merged;
       });
 
-      setUnread(newUnread);
-      return merged;
-    });
-  } catch (err) {
-    console.error(err);
-  }
-};
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
 
   useEffect(() => {

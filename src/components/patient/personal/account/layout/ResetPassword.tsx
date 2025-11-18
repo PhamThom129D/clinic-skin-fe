@@ -9,9 +9,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../../../../common/FormInput";
 import { PasswordInput } from "@/components/patient/personal/account/section/PasswordInput";
-import ButtonPrimary from "@/components/common/ButtonPrimary";
+import ButtonPrimary from "../../../../../../common/ButtonPrimary";
 import { emailRule } from "@/utils/validation/validators";
 
 // Import các hàm API và interface
@@ -23,7 +23,7 @@ import { notifyError, notifySuccess } from "@/utils/toast";
 import { AxiosError } from "axios";
 import ResetPasswordModal from "../section/ResetPasswordModal";
 import { useRouter } from "next/navigation";
-import StyledPaper from "@/components/common/StyledPaper";
+import StyledPaper from "../../../../../../common/StyledPaper";
 import { AuthResponse } from "@/types/auth";
 
 interface ChangePasswordProps {
@@ -80,7 +80,6 @@ const ResetPassword: React.FC<ChangePasswordProps> = ({ account}) => {
         email: account.email,
         newPassword: formData.newPassword,
       };
-      console.log("Dữ liệu đặt lại mật khẩu:", data);
       await resetPassword(data);
 
       notifySuccess("Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.");

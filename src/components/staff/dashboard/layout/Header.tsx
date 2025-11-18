@@ -42,6 +42,7 @@ interface HeaderProps {
   onToggleSidebar: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  onMenuSelect: (menu: string) => void;
 }
 
 const ringAnimation = {
@@ -57,7 +58,7 @@ const ringAnimation = {
 };
 
 const formatDateTime = (date: Date) => {
-  const days = ["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
+  const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
   const dayName = days[date.getDay()];
   const d = String(date.getDate()).padStart(2, "0");
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -68,13 +69,16 @@ const formatDateTime = (date: Date) => {
   return `${dayName}, ${d}/${m}/${y} - ${h}:${min}:${s}`;
 };
 
-export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode }: HeaderProps) {
+export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode, onMenuSelect }: HeaderProps) {
   const router = useRouter();
   const [messageAnchor, setMessageAnchor] = useState<HTMLElement | null>(null);
   const [notificationAnchor, setNotificationAnchor] = useState<HTMLElement | null>(null);
   const [accountAnchor, setAccountAnchor] = useState<HTMLElement | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState<User | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+ const userId = typeof window !== "undefined" ? Number(localStorage.getItem("userId")) || null : null;
+
 
   // Đồng hồ
   useEffect(() => {
@@ -89,6 +93,18 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode }: 
     sessionStorage.clear();
     router.push("/auth");
   };
+
+  useEffect(() => {
+    const handleMessageRead = (e: any) => {
+      const { receiverId } = e.detail;
+      if (Number(receiverId) === Number(userId)) {
+        setUnreadCount(0);
+      }
+    };
+    window.addEventListener("messageRead", handleMessageRead);
+    return () => window.removeEventListener("messageRead", handleMessageRead);
+  }, [userId]);
+
 
   return (
     <AppBar position="fixed" color="inherit" elevation={1} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -119,10 +135,20 @@ export default function Header({ onToggleSidebar, darkMode, onToggleDarkMode }: 
             <CalendarToday sx={{ fontSize: 36, color: "#0f3b70" }} />
           </IconButton>
 
-          <IconButton sx={{ mx: 1.5 }} onClick={(e) => setMessageAnchor(e.currentTarget)}>
-            <Badge badgeContent={3} color="error"><Mail sx={{ fontSize: 36 }} /></Badge>
+          <IconButton sx={{ mx: 1.5 }} onClick={(e) => setMessageAnchor(e.currentTarget)} >
+            <Badge badgeContent={unreadCount} color="error">
+              <Mail sx={{ fontSize: 36 }} />
+            </Badge>
           </IconButton>
-          <MessageDropdown anchorEl={messageAnchor} onClose={() => setMessageAnchor(null)} />
+
+          <MessageDropdown 
+            anchorEl={messageAnchor}
+            onClose={() => setMessageAnchor(null)}
+            onSelectMenu={onMenuSelect}
+            onUnreadCountChange={setUnreadCount}
+          />
+
+
 
           <IconButton sx={{ mx: 1.5 }} onClick={(e) => setNotificationAnchor(e.currentTarget)}>
             <Badge badgeContent={7} color="error"><Notifications sx={{ fontSize: 36 }} /></Badge>

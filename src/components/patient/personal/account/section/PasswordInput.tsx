@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { IconButton, InputAdornment, useTheme } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { FormInput } from "@/components/common/FormInput";
+import { FormInput } from "../../../../../../common/FormInput";
 import { Control, FieldValues, Path, RegisterOptions } from "react-hook-form";
 
 interface PasswordInputProps<T extends FieldValues> {

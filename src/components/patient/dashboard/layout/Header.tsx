@@ -16,8 +16,8 @@ import Image from "next/image";
 
 import ThemeToggle from "@/components/ThemeToggle";
 import BookingModal from "../sections/BookingModal";
-import menuItems from "@/components/common/menuItems";
-import MenuButton from "@/components/common/MenuButton";
+import menuItems from "../../../../../common/menuItems";
+import MenuButton from "../../../../../common/MenuButton";
 import AuthButton, { BookingButton } from "../sections/AuthButton";
 import { useRouter } from "next/navigation";
 
@@ -138,7 +138,7 @@ export default function Header() {
                   fontSize: { sm: "1rem", md: "1.2rem" },
                 }}
               >
-                Thu Cúc Clinic
+                Clinic Skin
               </Box>
               <Box
                 sx={{
@@ -155,7 +155,7 @@ export default function Header() {
             </Box>
           </Box>
 
-          {/* Desktop Menu */}
+          {/* Desktop Menu */}  
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -175,10 +175,10 @@ export default function Header() {
 
             <ThemeToggle />
 
-            {/* Booking Button Desktop */}
+        
             <BookingButton onClick={() => setBookingOpen(true)} />
 
-            {/* AuthButton Desktop */}
+    
             <AuthButton isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} account={account}/>
           </Box>
 

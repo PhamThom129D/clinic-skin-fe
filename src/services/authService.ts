@@ -56,36 +56,33 @@ export const register = async (data: RegisterFormData): Promise<AuthResponse> =>
 };
 
 
+// src/services/authService.ts
 export const logoutClient = async () => {
   try {
-
-    await api.post("/auth/logout").catch(() => {
-    });
+    await api.post("/auth/logout").catch(() => { });
   } catch (err) {
     console.warn("Logout API error:", err);
   }
 
-  // Xóa sạch storage trước khi redirect
   localStorage.removeItem("authToken");
   localStorage.removeItem("account");
   localStorage.removeItem("userRole");
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("account");
   sessionStorage.removeItem("userRole");
-  
+
   localStorage.removeItem("chatKey");
   localStorage.removeItem("guestId");
-  // sessionStorage.removeItem("chatKey");
+  sessionStorage.removeItem("chatKey");
   sessionStorage.removeItem("guestId");
 
 
   if (typeof window !== "undefined") {
-    // Thông báo cho Header cập nhật UI
     window.dispatchEvent(new Event("authChange"));
-    // Chuyển về trang login
     window.location.href = "/auth";
   }
 };
+
 
 
 

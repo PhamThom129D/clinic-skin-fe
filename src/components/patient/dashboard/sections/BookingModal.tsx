@@ -1,7 +1,11 @@
 import React from "react";
 import { Modal, Box, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { BookingData } from "@/types/screen";
+import { registerAppointment } from "@/services/bookingService";
+import { notifyError, notifySuccess } from "@/utils/toast";
 import BookingForm from "@/components/forms/BookingForm";
+
 
 interface BookingModalProps {
   open: boolean;
@@ -9,6 +13,18 @@ interface BookingModalProps {
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
+  // 🔹 Xử lý khi user submit form
+  const handleUserSubmit = async (data: BookingData) => {
+    try {
+      await registerAppointment(data);
+      notifySuccess("🎉 Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm.");
+      onClose(); 
+    } catch (error) {
+      console.error("❌ Lỗi khi đặt lịch:", error);
+      notifyError("Không thể đặt lịch, vui lòng thử lại.");
+    }
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -27,6 +43,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
           mx: "auto",
         }}
       >
+        {/* Nút đóng */}
         <Box
           sx={{
             display: "flex",
@@ -40,10 +57,12 @@ const BookingModal: React.FC<BookingModalProps> = ({ open, onClose }) => {
           </IconButton>
         </Box>
 
-        <BookingForm onSubmit={onClose} />
+        {/* Form đặt lịch */}
+        <BookingForm onSubmit={handleUserSubmit} />
       </Box>
     </Modal>
   );
 };
 
 export default BookingModal;
+
