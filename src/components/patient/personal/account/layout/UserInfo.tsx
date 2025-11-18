@@ -50,7 +50,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, onEditClick }) => {
 
 
   return (
-    <Box>
       <StyledPaper elevation={3}>
         <Grid
           sx={{
@@ -85,7 +84,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ account, onEditClick }) => {
           </Box>
         </Grid>
       </StyledPaper>
-    </Box>
   );
 };
 

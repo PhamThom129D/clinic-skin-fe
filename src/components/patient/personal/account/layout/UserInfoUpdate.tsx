@@ -59,7 +59,6 @@ const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (formData) => {
 };
 
   return (
-    <Box sx={{ bgcolor: "#f0f2f5" }}>
       <StyledPaper elevation={3}>
         <form onSubmit={handleSubmit(handleUpdateSubmit)}>
           <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
@@ -125,7 +124,6 @@ const handleUpdateSubmit: SubmitHandler<AuthResponse> = async (formData) => {
           </Box>
         </form>
       </StyledPaper>
-    </Box>
   );
 };
 
