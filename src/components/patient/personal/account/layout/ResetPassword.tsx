@@ -80,6 +80,7 @@ const ResetPassword: React.FC<ChangePasswordProps> = ({ account}) => {
         email: account.email,
         newPassword: formData.newPassword,
       };
+      console.log("Dữ liệu đặt lại mật khẩu:", data);
       await resetPassword(data);
 
       notifySuccess("Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.");

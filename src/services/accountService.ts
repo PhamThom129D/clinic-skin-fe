@@ -7,11 +7,7 @@ import { AuthResponse } from "@/types/auth";
 import { buildFormData } from "@/utils/accountMappers";
 
 export const resetPassword = (data: PasswordResetData) => {
-  return api.post('/accounts/reset-password', data);
-}
-
-
-    return api.put('/accounts/reset-password', data);
+  return api.put('/accounts/reset-password', data);
 }
 
 export const changePassword = (data: PasswordChangeData) => {
