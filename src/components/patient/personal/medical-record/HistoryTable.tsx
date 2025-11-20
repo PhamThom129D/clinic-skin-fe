@@ -19,7 +19,6 @@ interface HistoryTableProps {
     onViewDetail: (appointmentId: number, recordId: number | null) => void; // callback xem chi tiết
 }
 
-// Hàm tiện ích để hiển thị màu sắc trạng thái
 const getStatusChipProps = (status: string) => {
     switch (status) {
         case 'COMPLETED': return { label: 'Đã hoàn thành', color: 'success' as const };

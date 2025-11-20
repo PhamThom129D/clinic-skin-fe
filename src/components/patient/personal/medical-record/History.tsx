@@ -6,8 +6,7 @@ import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import { AppointmentHistoryItem } from '@/types/patient';
 import StyledPaper from "../../../../../common/StyledPaper";
 import HistoryTable from './HistoryTable';
-import { useRouter } from 'next/navigation'; // nếu dùng Next.js
-
+import { useRouter } from 'next/navigation';
 interface HistoryTableContainerProps {
     historyList: AppointmentHistoryItem[];
     isLoading: boolean;
@@ -23,7 +22,6 @@ const History: React.FC<HistoryTableContainerProps> = ({
 
     const handleViewDetail = (appointmentId: number, recordId: number | null) => {
         if (recordId) {
-            // Ví dụ navigate sang trang chi tiết
             router.push(`/patient/history/${recordId}`);
         }
     };
