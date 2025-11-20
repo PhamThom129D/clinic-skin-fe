@@ -54,7 +54,7 @@ const History: React.FC<HistoryTableContainerProps> = ({
             </Typography>
             
             {historyList.length > 0 ? (
-                <HistoryTable data={historyList} onViewDetail={handleViewDetail} />
+                <HistoryTable data={historyList} onViewDetails={(item) => handleViewDetail(item.appointmentId, item.recordId)}/>
             ) : (
                 <Alert severity="info">
                     Bạn chưa có lịch sử khám bệnh nào được ghi nhận.
