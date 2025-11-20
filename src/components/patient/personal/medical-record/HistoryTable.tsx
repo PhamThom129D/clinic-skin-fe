@@ -6,6 +6,7 @@ import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box, Chip, IconButton, Tooltip, Paper } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AppointmentHistoryItem } from "@/types/patient";
+import { formatDateTimeForDisplay } from "@/utils/validation/validators";
 
 interface HistoryTableMRTProps {
   data: AppointmentHistoryItem[];
@@ -39,11 +40,12 @@ const HistoryTable: React.FC<HistoryTableMRTProps> = ({
         accessorKey: "appointmentDateTime",
         header: "Ngày & Giờ",
         minSize: 180,
+        Cell: ({ row }) => formatDateTimeForDisplay(row.original.appointmentDateTime),
       },
       {
         accessorKey: "status",
         header: "Trạng thái",
-        minSize: 160,
+        minSize: 10,
         enableColumnFilter: true,
         Cell: ({ row }) => {
           const { label, color } = getStatusChipProps(row.original.status);
