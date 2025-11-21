@@ -29,15 +29,9 @@ const sidebarSections = [
         { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/user/personal/account/change-password" },
         { text: "Đặt lại mật khẩu", icon: <VpnKeyIcon />, href: "/user/personal/account/reset-password" },
     ] },
-    { title: "Hồ sơ khám", mainIcon: <MedicalInformationIcon />,
+    { title: "Hồ sơ khám", mainIcon: <MedicalInformationIcon />, href: "/user/personal/medical-records/history",
       items: [
-        { text: "Hồ sơ chung", icon: <DescriptionIcon />, href: "/user/personal/medical-records/medical-record" },
         { text: "Lịch sử khám", icon: <HistoryIcon />, href: "/user/personal/medical-records/history" },
-        { text: "Toa thuốc", icon: <LocalPharmacyIcon />, href: "/user/personal/medical-records/prescriptions" },
-        { text: "Kết quả xét nghiệm", icon: <ScienceIcon />, href: "/user/personal/medical-records/tests" },
-        { text: "Tài liệu/Ảnh", icon: <InsertPhotoIcon />, href: "/user/personal/medical-records/documents" },
-        { text: "Ghi chú", icon: <NoteIcon />, href: "/user/personal/medical-records/notes" },
-        { text: "Xuất PDF", icon: <PictureAsPdfIcon />, href: "/user/personal/medical-records/export" },
     ] },
 ];
 

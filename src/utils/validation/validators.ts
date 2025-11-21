@@ -139,6 +139,31 @@ export const dateOfBirthRule = {
   },
 };
 
+export const formatDateTimeForDisplay = (dateTimeString: string | null | undefined): string => {
+  if (!dateTimeString) return '— Không có dữ liệu —';
+
+  try {
+    const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) return dateTimeString; 
+
+    // Sử dụng hàm pad đã định nghĩa ở trên
+    const pad = (num: number) => String(num).padStart(2, '0');
+
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1); // getMonth() trả về 0-11
+    const year = date.getFullYear();
+
+    // Trích xuất các thành phần giờ
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    // Kết hợp theo định dạng yêu cầu: HH:MM DD:MM:YYYY
+    return `${hours}:${minutes} ${day}-${month}-${year}`;
+    
+  } catch (e) {
+    return dateTimeString;
+  }
+};  
 
 // Tạo rule động để có thể dùng getValues() từ react-hook-form
 export const createBookingRules = (getValues?: GetValues) => {
