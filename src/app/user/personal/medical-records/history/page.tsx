@@ -6,7 +6,7 @@ import { useUser } from "@/hooks/useUser";
 import { useState, useEffect, useCallback } from "react";
 import { AppointmentHistoryItem } from "@/types/patient";
 import { getPatientAppointmentHistory } from "@/services/medicalRecordService";
-import History from "@/components/patient/personal/medical-record/History"; 
+import History from "@/components/patient/personal/medical-record/layout/History"; 
 
 export default function Page() {
     const { account } = useUser();

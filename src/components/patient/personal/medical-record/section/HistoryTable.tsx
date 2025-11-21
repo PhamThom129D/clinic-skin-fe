@@ -7,11 +7,11 @@ import { Box, Chip, IconButton, Tooltip, Paper } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AppointmentHistoryItem } from "@/types/patient";
 import { formatDateTimeForDisplay } from "@/utils/validation/validators";
+import { useRouter } from "next/navigation";
 
 interface HistoryTableMRTProps {
   data: AppointmentHistoryItem[];
   darkMode?: boolean;
-  onViewDetails: (item: AppointmentHistoryItem) => void;
 }
 
 const getStatusChipProps = (status: string) => {
@@ -32,8 +32,8 @@ const getStatusChipProps = (status: string) => {
 const HistoryTable: React.FC<HistoryTableMRTProps> = ({
   data,
   darkMode = false,
-  onViewDetails,
 }) => {
+  const router = useRouter();
   const columns = useMemo<MRT_ColumnDef<AppointmentHistoryItem>[]>(
     () => [
       {
@@ -76,27 +76,35 @@ const HistoryTable: React.FC<HistoryTableMRTProps> = ({
           const item = row.original;
           const hasRecord = !!item.recordId;
           const tooltipTitle = hasRecord ? "Xem chi tiết hồ sơ" : "Chưa có hồ sơ y tế (Đang chờ/Đã hủy)";
-
+          const detailPath = hasRecord 
+                        ? `/record-detail` // Tạo đường dẫn chi tiết
+                        : '';
+          const handleViewDetails = () => {
+                        if (hasRecord && detailPath) {
+                            const targetPath = `/user/personal/medical-records/record-detail/${item.recordId}`; 
+                          router.push(targetPath); // Chuyển hướng tới URL thân thiện
+                        }
+                    };
           return (
-            <Box sx={{ width: "80%", display: 'flex', justifyContent: 'center' }}>
-              <Tooltip title={tooltipTitle}>
-                <span>
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={() => onViewDetails(item)}
-                    disabled={!hasRecord} // Vô hiệu hóa nếu không có recordId
-                  >
-                    <VisibilityIcon fontSize="medium" />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </Box>
-          );
+                        <Box sx={{ width: "80%", display: 'flex', justifyContent: 'center' }}>
+                            <Tooltip title={tooltipTitle}>
+                                <span>
+                                    <IconButton
+                                        size="small"
+                                        color="primary"
+                                        onClick={handleViewDetails} // Gắn hàm chuyển hướng
+                                        disabled={!hasRecord} // Vô hiệu hóa nếu không có recordId
+                                    >
+                                        <VisibilityIcon fontSize="medium" />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                        </Box>
+                    );
         },
       },
     ],
-    [onViewDetails]
+    [router]
   );
 
   return (

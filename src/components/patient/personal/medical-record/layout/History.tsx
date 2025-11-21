@@ -4,8 +4,8 @@
 import React from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import { AppointmentHistoryItem } from '@/types/patient';
-import StyledPaper from "../../../../../common/StyledPaper";
-import HistoryTable from './HistoryTable';
+import StyledPaper from "../../../../../../common/StyledPaper";
+import HistoryTable from '../section/HistoryTable';
 import { useRouter } from 'next/navigation';
 interface HistoryTableContainerProps {
     historyList: AppointmentHistoryItem[];
@@ -50,11 +50,11 @@ const History: React.FC<HistoryTableContainerProps> = ({
     return (
         <StyledPaper>
             <Typography variant="h5" component="h1" gutterBottom fontWeight={600} sx={{ mb: 3 }}>
-                📝 Lịch sử Khám bệnh
+                Lịch sử khám bệnh
             </Typography>
             
             {historyList.length > 0 ? (
-                <HistoryTable data={historyList} onViewDetails={(item) => handleViewDetail(item.appointmentId, item.recordId)}/>
+                <HistoryTable data={historyList}/>
             ) : (
                 <Alert severity="info">
                     Bạn chưa có lịch sử khám bệnh nào được ghi nhận.

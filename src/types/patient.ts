@@ -1,5 +1,7 @@
 // types/patient.ts
 
+import { ConsultationStatus } from "./enums";
+
 // --- Tóm tắt Lịch sử Khám ---
 export interface AppointmentHistoryItem {
     appointmentId: number;
@@ -12,36 +14,60 @@ export interface AppointmentHistoryItem {
 
 export type PatientHistoryList = AppointmentHistoryItem[];
 
-// --- II. Interface Chi tiết Hồ sơ Khám (Dùng cho Detail) ---
-
-export interface PrescriptionItem {
-    drugName: string;
-    dosage: string; // Liều lượng
-    instructions: string; // Hướng dẫn sử dụng
+// --- II. Chi tiết Hồ sơ Khám (Dùng cho Detail) ---
+// -------------------------------------------------------------------
+// 1. AppointmentSummaryDTO
+export interface AppointmentSummary {
+  appointmentId: number;
+  status: ConsultationStatus | string;
+  appointmentDateTime: string; // Định dạng "yyyy-MM-dd HH:mm"
+  note: string;
 }
 
-export interface TestResultItem {
-    testName: string;
-    result: string;
-    unit: string;
-    referenceRange: string;
+// 2. DoctorSummaryDTO
+export interface DoctorSummary {
+  doctorId: number;
+  doctorName: string;
+  specialty: string;
 }
 
-// -- Chi tiết Hồ sơ khám bệnh -- /
+// 3. ClinicalDetailsDTO
+export interface ClinicalDetails {
+  symptoms: string | null; // Triệu chứng
+  diagnosis: string | null; // Chẩn đoán
+  clinicalNotes: string | null; // Ghi chú lâm sàng
+}
+
+// 4. TreatmentPlanSummaryDTO
+export interface TreatmentPlanSummary {
+  planId: number;
+  treatmentName: string;
+  diseaseName: string; // Tên bệnh liên quan
+}
+
+// 5. TreatmentStepDTO
+export interface TreatmentStep {
+  stepNumber: number;
+  stepTypeName: 'LabTest' | 'Procedure' | string; // Loại: Xét nghiệm, Thủ thuật, v.v.
+  stepDescription: string; // Tên của Item (tên xét nghiệm/thủ thuật)
+  notes: string | null; // Ghi chú của bước
+  results: string | null; // Kết quả của bước
+}
+
+// 6. MedicalRecordDetailDTO
 export interface MedicalRecordDetail {
-    recordId: number;
-    patientName: string;
-    doctorName: string;
-    visitDate: string; // Ngày khám
-    
-    // Thông tin chi tiết hồ sơ
-    diagnosis: string; // Chẩn đoán của bác sĩ
-    treatment: string; // Kế hoạch điều trị
+  // Mục 1: Thông tin Lịch hẹn
+  appointmentInfo: AppointmentSummary;
 
-    // Các thành phần phức tạp khác
-    prescriptions: PrescriptionItem[];
-    testResults: TestResultItem[];
-    
-    // Tóm tắt từ AI (nếu có)
-    summary?: string; 
+  // Mục 2: Thông tin Bác sĩ
+  doctorInfo: DoctorSummary | null;
+
+  // Mục 3: Khám Lâm sàng
+  clinicalDetails: ClinicalDetails; 
+
+  // Mục 4: Phác đồ Điều trị
+  treatmentPlan: TreatmentPlanSummary | null;
+
+  // Mục 5: Danh sách các Bước
+  steps: TreatmentStep[];
 }

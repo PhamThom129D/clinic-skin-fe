@@ -16,15 +16,7 @@ export const getPatientAppointmentHistory = async (): Promise<AppointmentHistory
 };
 
 // // --- II. Chức năng Lấy Chi tiết Hồ sơ Khám (Endpoint /medical-records/{recordId}) ---
-// export const getMedicalRecordDetail = async (recordId: number): Promise<MedicalRecordDetail> => {
-//     try {
-//         console.log(`Đang tải chi tiết hồ sơ khám có ID: ${recordId}`);
-//         const response = await api.get<MedicalRecordDetail>(
-//             `/medical-records/${recordId}`
-//         );
-//         return response.data;
-//     } catch (error) {
-//         console.error(`Lỗi khi tải chi tiết hồ sơ khám ID ${recordId}:`, error);
-//         throw new Error("Không thể tải chi tiết Hồ sơ khám bệnh.");
-//     }
-// };
+export const getMedicalRecordDetails = async (recordId: number): Promise<MedicalRecordDetail> => {
+    const response = await api.get<MedicalRecordDetail>(`/appointments/records/${recordId}`); 
+    return response.data;
+};
