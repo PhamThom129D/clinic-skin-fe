@@ -31,7 +31,7 @@ const sidebarSections = [
     ] },
     { title: "Hồ sơ khám", mainIcon: <MedicalInformationIcon />, href: "/user/personal/medical-records/history",
       items: [
-        { text: "Lịch sử khám", icon: <HistoryIcon />, href: "/user/personal/medical-records/history" },
+        { text: "Hồ sơ bệnh án", icon: <HistoryIcon />, href: "/user/personal/medical-records/record-summary" },
     ] },
 ];
 

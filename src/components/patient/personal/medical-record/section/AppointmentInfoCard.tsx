@@ -14,7 +14,6 @@ const AppointmentInfoCard: React.FC<{ info: AppointmentSummary }> = ({ info }) =
 
     const getStatusStyle = (status: string) => {
         if (status === "COMPLETED") {
-            // Hoàn thành (Green - Tương tự như trong ảnh 2)
             return { 
                 text: "Hoàn thành", 
                 bgcolor: '#dcfce7', // bg-green-100
@@ -22,7 +21,6 @@ const AppointmentInfoCard: React.FC<{ info: AppointmentSummary }> = ({ info }) =
                 borderColor: '#bbf7d0' // border-green-200
             }; 
         }
-        // Đang tiến hành (Blue - Tương tự như trong ảnh 1)
         return { 
             text: "Đang tiến hành", 
             bgcolor: '#eff6ff', // bg-blue-100

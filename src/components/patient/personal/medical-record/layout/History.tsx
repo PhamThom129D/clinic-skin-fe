@@ -3,12 +3,12 @@
 
 import React from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
-import { AppointmentHistoryItem } from '@/types/patient';
+import { AppointmentHistoryItem, PatientMedicalHistoryDTO } from '@/types/patient';
 import StyledPaper from "../../../../../../common/StyledPaper";
 import HistoryTable from '../section/HistoryTable';
 import { useRouter } from 'next/navigation';
 interface HistoryTableContainerProps {
-    historyList: AppointmentHistoryItem[];
+    historyList: PatientMedicalHistoryDTO[];
     isLoading: boolean;
     error: string | null;
 }

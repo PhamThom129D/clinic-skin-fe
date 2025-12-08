@@ -5,12 +5,12 @@ import React, { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box, Chip, IconButton, Tooltip, Paper } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { AppointmentHistoryItem } from "@/types/patient";
+import { PatientMedicalHistoryDTO } from "@/types/patient";
 import { formatDateTimeForDisplay } from "@/utils/validation/validators";
 import { useRouter } from "next/navigation";
 
 interface HistoryTableMRTProps {
-  data: AppointmentHistoryItem[];
+  data: PatientMedicalHistoryDTO[];
   darkMode?: boolean;
 }
 
@@ -34,44 +34,41 @@ const HistoryTable: React.FC<HistoryTableMRTProps> = ({
   darkMode = false,
 }) => {
   const router = useRouter();
-  const columns = useMemo<MRT_ColumnDef<AppointmentHistoryItem>[]>(
+  const columns = useMemo<MRT_ColumnDef<PatientMedicalHistoryDTO>[]>(
     () => [
       {
-        accessorKey: "appointmentDateTime",
+        accessorKey: "sessionDateTime",
         header: "Ngày & Giờ",
-        minSize: 180,
-        Cell: ({ row }) => formatDateTimeForDisplay(row.original.appointmentDateTime),
+        minSize: 140,
+        Cell: ({ row }) => formatDateTimeForDisplay(row.original.sessionDate),
       },
       {
-        accessorKey: "status",
-        header: "Trạng thái",
+        accessorKey: "symptoms",
+        header: "Triệu chứng",
         minSize: 10,
         enableColumnFilter: true,
-        Cell: ({ row }) => {
-          const { label, color } = getStatusChipProps(row.original.status);
-          return <Chip label={label} color={color} size="small" />;
-        },
+        Cell: ({ row }) => row.original.symptoms,
       },
       {
-        accessorKey: "note",
-        header: "Ghi chú",
-        minSize: 293,
+        accessorKey: "diagnosis",
+        header: "Chẩn đoán của bác sĩ",
+        minSize: 250,
         enableColumnFilter: true,
-        Cell: ({ row }) => row.original.appointmentNote || "— Không có dữ liệu —",
+        Cell: ({ row }) => row.original.diagnosis,
       },
       {
         accessorKey: "doctorName",
-        header: "Bác sĩ",
-        minSize: 180,
+        header: "Bác sĩ phụ trách",
+        minSize: 190,
         enableColumnFilter: true,
-        Cell: ({ row }) => row.original.doctorName || "— Chưa phân công —",
+        Cell: ({ row }) => row.original.doctorFullName
       },
       {
         accessorKey: "actions",
-        header: "Hành động",
+        header: "Xem chi tiết",
         enableSorting: false,
         enableColumnFilter: false,
-        size: 130,
+        size: 150,
         Cell: ({ row }) => {
           const item = row.original;
           const hasRecord = !!item.recordId;

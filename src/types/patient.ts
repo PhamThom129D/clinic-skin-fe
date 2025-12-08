@@ -12,11 +12,21 @@ export interface AppointmentHistoryItem {
     doctorName: string | null;
 }
 
+// -- Tóm tắt Hồ sơ Khám --
+export interface PatientMedicalHistoryDTO {
+    recordId: number;
+    sessionId: number;
+    symptoms: string;
+    diagnosis: string;
+    doctorFullName: string;
+    sessionDate: string; // dạng: "YYYY-MM-DD HH:MM"
+}
+
 export type PatientHistoryList = AppointmentHistoryItem[];
 
 // --- II. Chi tiết Hồ sơ Khám (Dùng cho Detail) ---
 // -------------------------------------------------------------------
-// 1. AppointmentSummaryDTO
+// AppointmentSummaryDTO
 export interface AppointmentSummary {
   appointmentId: number;
   status: ConsultationStatus | string;
@@ -24,28 +34,38 @@ export interface AppointmentSummary {
   note: string;
 }
 
-// 2. DoctorSummaryDTO
+// AppointmentSummaryDTO
+export interface PatientMedicalHistoryDTO {
+    recordId: number;
+    sessionId: number;
+    symptoms: string;
+    diagnosis: string;
+    doctorFullName: string;
+    sessionDate: string; // dạng: "YYYY-MM-DD"
+}
+
+// DoctorSummaryDTO
 export interface DoctorSummary {
   doctorId: number;
   doctorName: string;
   specialty: string;
 }
 
-// 3. ClinicalDetailsDTO
+// ClinicalDetailsDTO
 export interface ClinicalDetails {
   symptoms: string | null; // Triệu chứng
   diagnosis: string | null; // Chẩn đoán
   clinicalNotes: string | null; // Ghi chú lâm sàng
 }
 
-// 4. TreatmentPlanSummaryDTO
+// TreatmentPlanSummaryDTO
 export interface TreatmentPlanSummary {
   planId: number;
   treatmentName: string;
   diseaseName: string; // Tên bệnh liên quan
 }
 
-// 5. TreatmentStepDTO
+// TreatmentStepDTO
 export interface TreatmentStep {
   stepNumber: number;
   stepTypeName: 'LabTest' | 'Procedure' | string; // Loại: Xét nghiệm, Thủ thuật, v.v.
@@ -54,7 +74,7 @@ export interface TreatmentStep {
   results: string | null; // Kết quả của bước
 }
 
-// 6. MedicalRecordDetailDTO
+// MedicalRecordDetailDTO
 export interface MedicalRecordDetail {
   // Mục 1: Thông tin Lịch hẹn
   appointmentInfo: AppointmentSummary;
