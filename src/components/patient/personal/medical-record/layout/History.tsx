@@ -5,7 +5,7 @@ import React from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import { AppointmentHistoryItem, PatientMedicalHistoryDTO } from '@/types/patient';
 import StyledPaper from "../../../../../../common/StyledPaper";
-import HistoryTable from '../section/HistoryTable';
+import HistoryTable from '../section/SummaryTable';
 import { useRouter } from 'next/navigation';
 interface HistoryTableContainerProps {
     historyList: PatientMedicalHistoryDTO[];

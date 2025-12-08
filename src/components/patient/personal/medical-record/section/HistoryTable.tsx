@@ -1,17 +1,15 @@
-// src/components/patient/personal/history/HistoryTableMRT.tsx
 "use client";
 
 import React, { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box, Chip, IconButton, Tooltip, Paper } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { PatientMedicalHistoryDTO } from "@/types/patient";
-import { formatDateTimeForDisplay } from "@/utils/validation/validators";
-import { useRouter } from "next/navigation";
+import { AppointmentHistoryItem } from "@/types/patient";
 
 interface HistoryTableMRTProps {
-  data: PatientMedicalHistoryDTO[];
+  data: AppointmentHistoryItem[];
   darkMode?: boolean;
+  onViewDetails: (item: AppointmentHistoryItem) => void;
 }
 
 const getStatusChipProps = (status: string) => {
@@ -32,79 +30,58 @@ const getStatusChipProps = (status: string) => {
 const HistoryTable: React.FC<HistoryTableMRTProps> = ({
   data,
   darkMode = false,
+  onViewDetails,
 }) => {
-  const router = useRouter();
-  const columns = useMemo<MRT_ColumnDef<PatientMedicalHistoryDTO>[]>(
+  const columns = useMemo<MRT_ColumnDef<AppointmentHistoryItem>[]>(
     () => [
       {
-        accessorKey: "sessionDateTime",
+        accessorKey: "appointmentDateTime",
         header: "Ngày & Giờ",
-        minSize: 140,
-        Cell: ({ row }) => formatDateTimeForDisplay(row.original.sessionDate),
+        minSize: 180,
       },
       {
-        accessorKey: "symptoms",
-        header: "Triệu chứng",
-        minSize: 10,
+        accessorKey: "status",
+        header: "Trạng thái",
+        minSize: 180,
         enableColumnFilter: true,
-        Cell: ({ row }) => row.original.symptoms,
+        Cell: ({ row }) => {
+          const { label, color } = getStatusChipProps(row.original.status);
+          return <Chip label={label} color={color} size="small" />;
+        },
       },
       {
-        accessorKey: "diagnosis",
-        header: "Chẩn đoán của bác sĩ",
-        minSize: 250,
+        accessorKey: "notes", 
+        header: "Triệu chứng / Ghi chú",
+        minSize: 245,
         enableColumnFilter: true,
-        Cell: ({ row }) => row.original.diagnosis,
+        Cell: ({ row }) => row.original.appointmentNote || "— Không có dữ liệu —",
       },
       {
         accessorKey: "doctorName",
-        header: "Bác sĩ phụ trách",
-        minSize: 190,
+        header: "Bác sĩ",
+        minSize: 180,
         enableColumnFilter: true,
-        Cell: ({ row }) => row.original.doctorFullName
+        Cell: ({ row }) => row.original.doctorName || "— Chưa phân công —",
       },
       {
         accessorKey: "actions",
-        header: "Xem chi tiết",
+        header: "Hành động",
         enableSorting: false,
         enableColumnFilter: false,
-        size: 150,
-        Cell: ({ row }) => {
-          const item = row.original;
-          const hasRecord = !!item.recordId;
-          const tooltipTitle = hasRecord ? "Xem chi tiết hồ sơ" : "Chưa có hồ sơ y tế (Đang chờ/Đã hủy)";
-          const detailPath = hasRecord 
-                        ? `/record-detail` // Tạo đường dẫn chi tiết
-                        : '';
-          const handleViewDetails = () => {
-                        if (hasRecord && detailPath) {
-                            const targetPath = `/user/personal/medical-records/record-detail/${item.recordId}`; 
-                          router.push(targetPath); // Chuyển hướng tới URL thân thiện
-                        }
-                    };
-          return (
-                        <Box sx={{ width: "80%", display: 'flex', justifyContent: 'center' }}>
-                            <Tooltip title={tooltipTitle}>
-                                <span>
-                                    <IconButton
-                                        size="small"
-                                        color="primary"
-                                        onClick={handleViewDetails} // Gắn hàm chuyển hướng
-                                        disabled={!hasRecord} // Vô hiệu hóa nếu không có recordId
-                                    >
-                                        <VisibilityIcon fontSize="medium" />
-                                    </IconButton>
-                                </span>
-                            </Tooltip>
-                        </Box>
-                    );
+        size: 100, 
+        muiTableHeadCellProps: {
+          align: 'center', // Căn giữa tiêu đề cột
         },
+        muiTableBodyCellProps: {
+          align: 'center', // Căn giữa nội dung ô (đảm bảo Box căn giữa)
+        }
       },
     ],
-    [router]
+    [onViewDetails]
   );
 
   return (
+    <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
       <MaterialReactTable
         columns={columns}
         data={data}
@@ -117,12 +94,13 @@ const HistoryTable: React.FC<HistoryTableMRTProps> = ({
           sx: {
             backgroundColor: darkMode ? "#2e2e3e" : "#fff",
             color: darkMode ? "#f0f0f0" : "#000",
+            boxShadow: 'none',
           },
         }}
         muiTableContainerProps={{
-            sx: {
-                overflowX: 'auto',
-            },
+          sx: {
+            overflowX: 'auto',
+          },
         }}
         muiTableHeadCellProps={{
           sx: {
@@ -136,6 +114,7 @@ const HistoryTable: React.FC<HistoryTableMRTProps> = ({
         }}
         initialState={{ pagination: { pageSize: 10, pageIndex: 0 } }}
       />
+    </Paper>
   );
 };
 

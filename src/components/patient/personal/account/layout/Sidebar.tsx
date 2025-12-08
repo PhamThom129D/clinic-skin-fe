@@ -29,7 +29,7 @@ const sidebarSections = [
         { text: "Đổi mật khẩu", icon: <LockResetIcon />, href: "/user/personal/account/change-password" },
         { text: "Đặt lại mật khẩu", icon: <VpnKeyIcon />, href: "/user/personal/account/reset-password" },
     ] },
-    { title: "Hồ sơ khám", mainIcon: <MedicalInformationIcon />, href: "/user/personal/medical-records/history",
+    { title: "Hồ sơ khám", mainIcon: <MedicalInformationIcon />,
       items: [
         { text: "Hồ sơ bệnh án", icon: <HistoryIcon />, href: "/user/personal/medical-records/record-summary" },
     ] },
