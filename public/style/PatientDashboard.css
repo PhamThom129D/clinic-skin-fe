@@ -1,0 +1,191 @@
+/* PatientDashboard.css */
+
+/* --- Container chính */
+.dashboard-container {
+  padding: 24px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Dark mode */
+.dashboard-container.dark {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+}
+
+/* --- Button chung */
+.dashboard-btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.dashboard-btn:hover {
+  opacity: 0.85;
+}
+
+/* Back button */
+.dashboard-btn-back {
+  background-color: #f0f0f0;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.dashboard-container.dark .dashboard-btn-back {
+  background-color: #2c2c44;
+  color: #f0f0f0;
+}
+
+/* Save button */
+.dashboard-btn-save {
+  background-color: #4caf50;
+  color: white;
+}
+
+.dashboard-btn-save:hover {
+  background-color: #45a049;
+}
+
+/* --- Card box */
+.dashboard-card {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+.dashboard-container.dark .dashboard-card {
+  background-color: #2c2c44;
+}
+
+/* Textarea */
+.dashboard-textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.dashboard-container.dark .dashboard-textarea {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+  border: 1px solid #555;
+}
+
+/* Info box */
+.dashboard-info-box {
+  background-color: #fafafa;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.dashboard-container.dark .dashboard-info-box {
+  background-color: #2c2c44;
+}
+
+/* Title */
+.dashboard-title {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Lab / Disease buttons */
+.lab-tests-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+
+.lab-test-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #888;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.lab-test-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.lab-test-btn.selected {
+  background-color: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.dashboard-container.dark .lab-test-btn {
+  background-color: #3a3a5a;
+  color: #f0f0f0;
+  border: 1px solid #555;
+}
+
+.dashboard-container.dark .lab-test-btn.selected {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+/* Exam result input */
+.exam-result-form {
+  margin-top: 8px;
+}
+
+.exam-result-input {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.dashboard-container.dark .exam-result-input {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+  border: 1px solid #555;
+}
+
+/* Medications table wrapper */
+.medications-wrapper {
+  margin-top: 20px;
+}
+
+.save-btn-wrapper {
+  text-align: right;
+  margin-top: 12px;
+}
+
+/* Visit history */
+.visit-history-box {
+  margin-top: 12px;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.dashboard-container.dark .visit-history-box {
+  background-color: #3a3a5a;
+}
+
+.visit-history-title {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.visit-history-list {
+  padding-left: 18px;
+  margin: 0;
+  list-style-type: disc;
+  font-size: 14px;
+}

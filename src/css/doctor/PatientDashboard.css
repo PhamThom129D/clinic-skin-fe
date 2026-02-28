@@ -1,0 +1,323 @@
+/* Layout tổng */
+.dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f5f7fb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card box chung */
+.dashboard-card {
+  margin-top: 30px;
+  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Tiêu đề */
+.dashboard-title {
+  margin-bottom: 15px;
+  color: #1a73e8;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+/* Box thông tin bệnh nhân */
+.dashboard-info-box {
+  background: #eef5ff;
+  font-size: 1.1em;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid #1a73e8;
+}
+
+.dashboard-symptoms ul {
+  margin: 5px 0 0 20px;
+}
+
+/* Textarea nhập kết luận */
+.dashboard-textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-textarea:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 4px rgba(26, 115, 232, 0.3);
+}
+
+/* Nút bấm chung */
+.dashboard-btn {
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  border: none;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.ai-typing {
+  display: inline-block;
+  min-width: 20px;
+  word-break: break-word;
+}
+
+
+.dashboard-btn:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-btn-back {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.dashboard-btn-ai {
+  font-size: 1em;
+  background: #28a745;
+  color: white;
+  margin-top: 10px;
+}
+
+.dashboard-btn-ai:hover {
+  background: #218838;
+}
+
+.dashboard-btn-save {
+  padding: 12px 20px;
+  background: #6f42c1;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.dashboard-btn-save:hover {
+  background: #5a32a3;
+}
+
+/* Box AI gợi ý bệnh */
+.dashboard-ai-box {
+  background: #f9fbfc;
+  padding: 20px;
+  border: 1px solid #e5eaf0;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-size: 1.1em;
+  color: #333;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Item mỗi bệnh */
+.ai-disease-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.ai-disease-item:hover {
+  background: #eef5ff;
+  transform: translateX(4px);
+}
+
+/* Nút thêm bệnh */
+.add-disease-btn {
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.add-disease-btn:hover {
+  background-color: #3a9e40;
+  transform: scale(1.1);
+}
+
+/* Wrapper cho bảng thuốc + nút lưu */
+.medications-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Nút lưu nằm bên phải */
+.save-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Hiệu ứng chung */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Box chứa danh sách xét nghiệm */
+.lab-tests-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Button xét nghiệm */
+.lab-test-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  background: #f5f7fa;
+  color: #333;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* giữ chữ không bị xuống dòng */
+}
+
+.lab-test-btn:hover {
+  background: #eaf4ff;
+  border-color: #1a73e8;
+  color: #1a73e8;
+  transform: translateY(-1px);
+}
+
+/* Trạng thái được chọn */
+.lab-test-btn.selected {
+  background: #1a73e8;
+  color: #fff;
+  font-weight: 600;
+  border-color: #1a73e8;
+}
+/* Form nhập kết quả xét nghiệm */
+.exam-result-form {
+  margin-top: 20px;
+  background: #f9fbfc;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5eaf0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exam-result-label {
+  font-weight: 600;
+  color: #1a73e8;
+  font-size: 1.1em;
+}
+
+.exam-result-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.exam-result-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.exam-result-input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 4px rgba(26, 115, 232, 0.3);
+}
+/* Form nhập kết quả xét nghiệm giống textarea triệu chứng */
+.exam-result-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exam-result-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  transition: border 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.exam-result-input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 4px rgba(26, 115, 232, 0.3);
+}
+
+.exam-result-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+/* Lịch sử khám */
+.visit-history-box {
+  background: #f9f9ff;
+  border: 1px solid #dcdcff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.visit-history-title {
+  font-size: 1em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4a4a9e;
+  display: flex;
+  align-items: center;
+}
+
+.visit-history-title::before {
+  content: "📜";
+  margin-right: 6px;
+}
+
+.visit-history-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.visit-history-list li {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.visit-history-list li::marker {
+  color: #4a4a9e;
+  font-size: 16px;
+}

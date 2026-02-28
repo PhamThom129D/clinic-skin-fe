@@ -1,0 +1,107 @@
+.med-container {
+  margin-top: 20px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.med-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 1.4em;
+}
+
+.med-btn-add {
+  margin-bottom: 12px;
+  background: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background 0.2s ease;
+}
+.med-btn-add:hover {
+  background: #1d4ed8;
+}
+
+.med-table-wrapper {
+  overflow-x: auto;
+}
+
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.med-table th,
+.med-table td {
+  border: 1px solid #e5e7eb; /* viền xám nhạt */
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;          /* căn giữa chữ */
+  vertical-align: middle;      /* căn giữa theo chiều dọc */
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.med-table th {
+  background: #dcfce7;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+}
+
+.med-input {
+  height: 38px;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 1.2em;
+  line-height: normal;
+  background: transparent;
+  text-align: center;
+  resize: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.med-input:focus {
+  background: #f0f9ff;
+  border-radius: 4px;
+}
+
+.med-btn-del {
+  text-align: center;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+.med-btn-del:hover {
+  background: #dc2626;
+}
+
+.med-total {
+  font-weight: 600;
+  color: #dc2626;      /* màu đỏ nổi bật */
+  text-align: center;   /* căn giữa ô */
+  font-size: 1.2em;
+}
+
+
+.med-table-wrapper {
+  position: relative;
+}
+
+.med-total-wrapper {
+  display: flex;
+  justify-content: flex-end; /* căn phải tổng tiền */
+  margin-top: 5px;
+}
+
